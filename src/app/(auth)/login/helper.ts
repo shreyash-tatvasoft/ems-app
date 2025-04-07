@@ -10,7 +10,7 @@ export const InitialLogInValues = {
 
 export const TITLE = {
     FORM_TITLE: "Log In",
-    FORM_SUBTITLE: ""
+    FORM_SUBTITLE: "Let’s Get You Logged In!"
 }
 
 export const style = {
