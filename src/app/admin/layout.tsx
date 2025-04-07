@@ -22,7 +22,11 @@ const layout : React.FC<{children : ReactNode}> = ( { children }) => {
   return (
     <div>
       <Header toggleSidebar={toggleSidebar} isAdmiRole/>
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>{children}</Sidebar>
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>
+         <main className='bg-gray-100 min-h-[calc(100vh-82px)]'>
+            {children}
+         </main>
+      </Sidebar>
     </div>
   );
 }
