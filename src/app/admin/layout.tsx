@@ -1,12 +1,28 @@
-import React, { ReactNode } from 'react'
+"use client";
+import React, { ReactNode, useState } from 'react'
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import { usePathname } from 'next/navigation';
 
 const layout : React.FC<{children : ReactNode}> = ( { children }) => {
+
+    const pathname = usePathname();
+
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(prev => !prev)
+    }
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false)
+    }
+
+
   return (
     <div>
-      <Header />
-      <Sidebar>{children}</Sidebar>
+      <Header toggleSidebar={toggleSidebar} isAdmiRole/>
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>{children}</Sidebar>
     </div>
   );
 }
