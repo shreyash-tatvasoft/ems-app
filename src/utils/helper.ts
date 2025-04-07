@@ -1,4 +1,4 @@
-// export const authToken = () => {
-//     const token = localStorage.getItem("authToken")
-//     return token ?? ""
-// }
+export const getAuthToken = () => {
+    const token = localStorage.getItem("authToken")
+    return token ? token : ""
+}

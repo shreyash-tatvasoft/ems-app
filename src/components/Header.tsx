@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { ROUTES } from '@/utils/constant';
 import { Button } from "@/components/ui/button"
-import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getAuthToken } from '@/utils/helper';
 
 const  Header : React.FC = () => {
 
@@ -22,6 +22,7 @@ const  Header : React.FC = () => {
     }
 
     const handleLogout = () => {
+        localStorage.clear()
         router.push(ROUTES.LOGIN)
     }
 
@@ -29,10 +30,18 @@ const  Header : React.FC = () => {
         router.push(ROUTES.USER_PROFILE)
     }
 
+    useEffect(() => {
+      const token = getAuthToken()
+      if(token !== "") {
+         setAuthToken(token)
+
+      }
+    }, [authToken])
+
     return (
       <div>
         <header className="text-gray-600 body-font shadow-md border-b border-b-gray-200">
-          <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+          <div className="mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <Link
               className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
               href={ROUTES.HOME}
@@ -53,14 +62,10 @@ const  Header : React.FC = () => {
             </Link>
             <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav>
             <div className="flex gap-4 items-center">
-              <div>
-                <Input placeholder="Search" className="w-60" />
-              </div>
-
               {authToken !== "" ? (
                 <div className='flex gap-4 items-center'>
                   <Image
-                    src={"/assests/ProfileIcon.svg"}
+                    src={"/assets/ProfileIcon.svg"}
                     width={40}
                     height={40}
                     alt="Logo"
