@@ -12,7 +12,7 @@ export const InitialSignupValues = {
 
 export const TITLE = {
     FORM_TITLE: "Create an account",
-    FORM_SUBTITLE: "Create an account and take control of your events today!"
+    FORM_SUBTITLE: "Simplify Event Planning!"
 }
 
 export const style = {
