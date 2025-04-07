@@ -24,7 +24,7 @@ function SignUpPage() {
     };
 
     return (
-        <section className='min-h-[100vh]'>
+        <section>
             <div className="p-5">
                 <div className="flex flex-wrap -m-4 justify-between">
 
@@ -82,7 +82,7 @@ function SignUpPage() {
                                                 className="cursor-pointer w-full bg-sidebar-border text-black font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
                                                 onClick={() => { router.push(ROUTES.LOGIN) }}
                                             >
-                                                Sign in
+                                                Log In
                                             </button>
                                         </Form>
 
