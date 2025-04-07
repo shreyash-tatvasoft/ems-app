@@ -2,6 +2,7 @@ import { ADMIN_SIDEBAR_ITEMS } from "@/utils/constant";
 import Link from "next/link";
 import React, { ReactNode} from "react";
 import Image from "next/image";
+import CrossIconPath from "../../public/assets/CrossIcon.svg"
 
 interface SidebarPageProps {
   children : ReactNode, 
@@ -10,14 +11,14 @@ interface SidebarPageProps {
   activeLink? : string
 }
 
-const Sidebar: React.FC<SidebarPageProps> = ({ children, isOpen, onClose, activeLink }) => {
+const Sidebar: React.FC<SidebarPageProps> = ({ children, isOpen, onClose, activeLink = "" }) => {
 
   return (
     <>
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-white z-30 md:hidden"
           onClick={onClose}
         />
       )}
@@ -27,16 +28,33 @@ const Sidebar: React.FC<SidebarPageProps> = ({ children, isOpen, onClose, active
         <div className={"md:flex flex-col md:w-64 sm:w-0"}>
           <div className="flex flex-col flex-1 overflow-y-auto">
             <div
-              className={`fixed z-40 md:static md:translate-x-0 top-0 left-0 h-full w-64 bg-gray-100 transform ${
+              className={`fixed z-40 md:static md:translate-x-0 top-0 left-0 h-full w-full transform ${
                 isOpen ? "translate-x-0" : "-translate-x-full"
               } transition-transform duration-300 ease-in-out`}
             >
-              <nav className="flex-1 p-4 bg-gray-100">
+              <nav className="flex flex-col p-4">
+                <div
+                  onClick={onClose}
+                  className={`${
+                    isOpen ? "block" : "hidden"
+                  } md:hidden flex justify-end`}
+                >
+                  <Image
+                    src={CrossIconPath}
+                    alt="cross-icon"
+                    width={40}
+                    height={40}
+                    className="font-bold"
+                  />
+                </div>
                 {ADMIN_SIDEBAR_ITEMS.map((item) => (
                   <Link
                     key={item.id}
                     href={item.route}
-                    className={`flex items-center rounded-xl px-4 py-3 my-2 font-bold text-gray-700  hover:bg-blue-200 ${item.route === activeLink && "bg-blue-200"}`}
+                    onClick={onClose}
+                    className={`flex items-center rounded-xl px-4 py-3 my-2 font-bold text-gray-700  hover:bg-blue-200 ${
+                      activeLink.includes(item.route) && "bg-blue-200"
+                    }`}
                   >
                     <div className="flex gap-1">
                       <Image

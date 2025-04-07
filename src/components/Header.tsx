@@ -45,26 +45,43 @@ const  Header : React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false
 
     return (
       <div>
-        <header className="text-gray-600 body-font shadow-md border-b border-b-gray-200">
+        <header className="text-gray-600 body-font border-b border-b-gray-200">
           <div className="mx-auto flex flex-wrap p-5 flex-row items-center justify-between">
-            <div className='flex gap-10'>
+            <div className="flex gap-2">
               <Link
                 className="flex title-font font-medium items-center text-gray-900 md:mb-0"
                 href={ROUTES.HOME}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"
-                  viewBox="0 0 24 24"
+                  viewBox="0 0 130 60"
+                  width="130"
+                  height="40"
+                  fill="url(#gradient)"
                 >
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                  <defs>
+                    <linearGradient
+                      id="gradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="0%"
+                    >
+                      <stop offset="0%" stopColor="#1e3a8a" />
+                      <stop offset="100%" stopColor="#67e8f9" />
+                    </linearGradient>
+                  </defs>
+                  <text
+                    x="0"
+                    y="45"
+                     fontFamily="'Poppins', sans-serif"
+                    fontSize="40"
+                    fontWeight="600"
+                    fill="url(#gradient)"
+                  >
+                    Evently
+                  </text>
                 </svg>
-                <span className="ml-3 text-xl">Evently</span>
               </Link>
 
               {isAdmiRole && (
@@ -90,7 +107,6 @@ const  Header : React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false
               )}
             </div>
 
-            {/* <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav> */}
             <div className="flex gap-4 items-center">
               {authToken !== "" ? (
                 <div className="flex gap-4 items-center">
