@@ -1,11 +1,11 @@
-export const ROUTES =  {
-    LOGIN  : "/login",
-    SIGN_UP : "/sign-up",
-    HOME : "/",
-    USER_PROFILE : "/user/profile",
-    ADMIN : {
-        DASHBOARD : "/admin/dashboard",
-        EVENTS : "/admin/event"
+export const ROUTES = {
+    LOGIN: "/login",
+    SIGN_UP: "/sign-up",
+    HOME: "/",
+    USER_PROFILE: "/user/profile",
+    ADMIN: {
+        DASHBOARD: "/admin/dashboard",
+        EVENTS: "/admin/event"
     }
 }
 
@@ -26,3 +26,8 @@ export const CATOGORIES_ITEMS = [
     { id: 8, label: "Gaming", value: "Gaming", icon: "🎮" },
     { id: 9, label: "Business", value: "Business", icon: "💼" },
 ]
+
+export enum ROLE {
+    Admin = "admin",
+    User = "user",
+}
