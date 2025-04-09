@@ -70,3 +70,13 @@ export const InitialEventFormDataErrorTypes = {
     ticket_type: false,
     images: false,
 };
+
+
+export type Ticket = {
+  id: string;
+  type: string;
+  price: string;
+  maxQty: number;
+  description: string;
+  isEditing?: boolean;
+};

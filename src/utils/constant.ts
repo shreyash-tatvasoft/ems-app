@@ -535,3 +535,9 @@ export enum ROLE {
     Admin = "admin",
     User = "user",
 }
+
+export const INITIAL_TICKETS_TYPES = [
+  { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
+  { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
+  { id: "3", type: "Free", price: "-", maxQty: 50, description: "General admission" },
+]
