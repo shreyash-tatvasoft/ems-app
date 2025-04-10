@@ -61,6 +61,7 @@ const GoogleAutoComplete: React.FC<Props> = ({
               borderRadius: "6px",
               margin: "5px 0",
               height: "48px",
+              border : errorKey ? "1px solid #ef4444" : "1px solid #d1d5db"
             }),
             menu: (provided) => ({
               ...provided,

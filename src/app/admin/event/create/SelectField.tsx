@@ -2,13 +2,8 @@
 
 import React from 'react';
 import Select from 'react-select';
+import { OptionType } from './helper';
 
-
-type OptionType = {
-    label: string;
-    value: string;
-    icon: string;
-};
 
 
 type SelectFieldsProps = {
@@ -46,7 +41,7 @@ const CustomSelectField: React.FC<SelectFieldsProps> = ({
           ? "#3b82f6" // Tailwind blue-500
           : state.selectProps.menuIsOpen
           ? "#3b82f6"
-          : state.selectProps.error
+          : state.selectProps.error || errorKey
           ? "#ef4444" // red-500
           : "#d1d5db", // gray-300
         boxShadow: state.isFocused ? "0 0 0 1px #3b82f6" : "none",

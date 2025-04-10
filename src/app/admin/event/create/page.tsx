@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
-import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, Ticket } from './helper';
+import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
 import { CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
@@ -226,6 +226,25 @@ function CreateEventpage() {
     }));
   }
 
+  const handleCatogoryField = (value : OptionType | null) => {
+    if(value === null) {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "category": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "category": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "category": value,
+    }));
+  }
+
   const calculateDuration = () => {
     const startTime = formValues.start_time;
     const endTime = formValues.end_time;
@@ -252,37 +271,58 @@ function CreateEventpage() {
   const handleAllValidations = () => {
 
     let errorFields = {
-      service_name_en: false,
-      service_name_ar: false,
-      service_desc_en: false,
-      service_desc_ar: false,
-      service_price: false,
-      service_pick_up_fees: false
-    }
+      title: false,
+      description: false,
+      location: false,
+      start_time: false,
+      end_time: false,
+      duration: false,
+      category: false,
+      ticket_type: false,
+      images: false,
+    };
+
+    const { title, description, location, start_time, end_time, category, duration, images} = formValues
      
-    // if (this.state.serviceFormFields.service_name_en.trim() === "") {
-    //   errorFields.service_name_en = true;
+    if (title.trim() === "") {
+      errorFields.title = true;
+    }
+    if (description.trim() === "") {
+      errorFields.description = true;
+    }
+    // if (location.address.trim() === "") {
+    //   errorFields.location = true;
     // }
-    // if (this.state.serviceFormFields.service_name_ar.trim() === "") {
-    //   errorFields.service_name_ar = true;
-    // }
-    // if (this.state.serviceFormFields.service_desc_en.trim() === "" ) {
-    //   errorFields.service_desc_en = true;
-    // }
-    // if (this.state.serviceFormFields.service_desc_ar.trim() === "") {
-    //   errorFields.service_desc_ar = true;
-    // }
-    // if (this.state.serviceFormFields.service_price.trim() === "" || isNaN(Number(this.state.serviceFormFields.service_price))) {
-    //   errorFields.service_price = true;
-    // }
-    // if (this.state.PickupChecked && this.state.serviceFormFields.service_pick_up_fees.trim() === "" || isNaN(Number(this.state.serviceFormFields.service_pick_up_fees))) {
-    //   errorFields.service_pick_up_fees = true;
+    if (start_time === null) {
+      errorFields.start_time = true;
+    }
+    if (end_time === null) {
+      errorFields.end_time = true;
+    }
+    if (duration.trim() === "") {
+      errorFields.duration = true;
+    }
+    if (category === null) {
+      errorFields.category = true;
+    }
+    if (tickets.length === 0) {
+      errorFields.ticket_type = true;
+    }
+    // if (images.length === 0) {
+    //   errorFields.images = true;
     // }
 
+    setFormValuesError(errorFields)
 
-    // this.setState({ serviceErrorFields: errorFields})
+    return  Object.values(errorFields).every((value) => value === false);
+  }
 
-    return  Object.values(formValuesError).every((value) => value === false);
+  const handleSubmit = () => {
+    if(!handleAllValidations()) {
+       return false
+    }
+
+    console.log("first", formValues, tickets)
   }
 
   useEffect(() => {
@@ -375,8 +415,8 @@ function CreateEventpage() {
                 <CustomSelectField
                   label="Catogory"
                   name={"category"}
-                  value={null}
-                  onChange={(option) => console.log("first", option)}
+                  value={formValues.category}
+                  onChange={(option) => handleCatogoryField(option)}
                   placeholder="Select category"
                   options={CATOGORIES_ITEMS}
                   errorKey={formValuesError.category}
@@ -564,6 +604,8 @@ function CreateEventpage() {
                 </div>
               )}
             </div>
+
+            {formValuesError.ticket_type && <p className="text-red-500 text-sm mt-1">At least one ticket is required</p>}
           </div>
 
           <CustomTextField
@@ -581,7 +623,7 @@ function CreateEventpage() {
 
           <div className="text-end my-6">
             <button 
-                onClick={handleAllValidations} 
+                onClick={handleSubmit} 
                 className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer">
               Create Event
             </button>

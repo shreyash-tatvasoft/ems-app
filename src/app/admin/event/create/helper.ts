@@ -18,7 +18,7 @@ export type EventFormData = {
     start_time: Date | null;
     end_time: Date | null;
     duration: string;
-    category: string;
+    category: OptionType | null;
     ticket_type: TicketType[];
     images: File[];
 };
@@ -53,7 +53,7 @@ export const InitialEventFormDataValues : EventFormData = {
         start_time: null,
         end_time: null,
         duration: "",
-        category: "",
+        category: null,
         ticket_type: [
           {
             type: "",
@@ -75,6 +75,12 @@ export const InitialEventFormDataErrorTypes = {
     category: false,
     ticket_type: false,
     images: false,
+};
+
+export type OptionType = {
+  label: string;
+  value: string;
+  icon: string;
 };
 
 
