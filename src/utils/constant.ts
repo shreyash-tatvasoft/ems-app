@@ -545,3 +545,19 @@ export const INITIAL_TICKETS_TYPES = [
 
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
+
+export const BE_URL = "https://event-management-system-5zdg.onrender.com"
+
+export const API_ROUTES = {
+  ADMIN : {
+    CREATE_EVENT : `${BE_URL}/events`
+  }
+}
+
+export const API_TYPES = {
+  GET : "GET",
+  POST : "POST",
+  DELETE : "DELETE",
+  PUT : "PUT",
+  PATCH: "PATCH"
+}

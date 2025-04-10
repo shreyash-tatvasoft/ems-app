@@ -46,9 +46,9 @@ export const InitialEventFormDataValues : EventFormData = {
         title: "",
         description: "",
         location: {
-          address: "",
-          lat: 0,
-          long: 0,
+          address: "Ahmedabad",
+          lat: 23.022505,
+          long: 72.5713621,
         },
         start_time: null,
         end_time: null,

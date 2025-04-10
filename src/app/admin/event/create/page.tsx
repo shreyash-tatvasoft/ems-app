@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { ALLOWED_FILE_FORMATS, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, API_TYPES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
@@ -126,27 +126,6 @@ function CreateEventpage() {
     setTickets((prev) => prev.filter((t) => t.id !== id));
   };
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-
-    if(value.trim() === "") {
-        setFormValuesError((prevState) => ({
-            ...prevState,
-            [name]: true,
-          }));
-    } else {
-        setFormValuesError((prevState) => ({
-            ...prevState,
-            [name]: false,
-          }));
-    }
-
-    setFormValues((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-  }
-
   const handleTitleChange = (value : string) => {
     if(value.trim() === "" || value.length < 5 || value.length > 100) {
       setFormValuesError((prevState) => ({
@@ -356,12 +335,50 @@ function CreateEventpage() {
     return  Object.values(errorFields).every((value) => value === false);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if(!handleAllValidations()) {
        return false
     }
 
-    console.log("first", formValues, tickets)
+    const formData = new FormData();
+
+    formData.append("title", formValues.title);
+    formData.append("description", formValues.description);
+    
+    formData.append("location[address]", formValues.location.address);
+    formData.append("location[lat]", formValues.location.lat.toString());
+    formData.append("location[lng]", formValues.location.long.toString());
+    
+    formValues.start_time && formData.append("startDateTime", formValues.start_time.toString());
+    formValues.end_time && formData.append("startDateTime", formValues.end_time.toString());
+    formData.append("duration", formValues.duration);
+    formValues.category && formData.append("category", formValues.category.value);
+    
+    // Append ticket_type array items
+    tickets.forEach((ticket, index) => {
+      formData.append(`tickets[${index}][type]`, ticket.type);
+      formData.append(`tickets[${index}][price]`, ticket.price);
+      formData.append(`tickets[${index}][max_qty]`, `${ticket.maxQty}`);
+      formData.append(`tickets[${index}][description]`, ticket.description);
+    });
+    
+    // Append files
+    images.forEach((file) => {
+      formData.append("images", file); // assuming `file` is a File object
+    });
+
+
+    const request = await fetch(API_ROUTES.ADMIN.CREATE_EVENT, {
+      method : API_TYPES.POST,
+      headers : {
+         token : ""
+      },
+      body: formData
+    })
+
+    const result = await request.json();
+
+
   }
 
   useEffect(() => {
