@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
@@ -26,6 +26,45 @@ function CreateEventpage() {
   });
 
   const [editCache, setEditCache] = useState<{ [key: string]: Partial<Ticket> }>({});
+
+  const [images, setImages] = useState<File[]>([]);
+  const [fileError, setFileError] = useState<null | string>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+
+    const validFiles: File[] = [];
+    let hasInvalid = false;
+
+    files.forEach((file) => {
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      const isValidExt = ext && ALLOWED_FILE_FORMATS.includes(ext);
+      const isValidSize = file.size <= MAX_FILE_SIZE_MB * 1024 * 1024;
+
+      if (isValidExt && isValidSize) {
+        validFiles.push(file);
+      } else {
+        hasInvalid = true;
+      }
+    });
+
+    if (hasInvalid) {
+      setFileError("Only JPG, JPEG, PNG, WEBP formats under 2MB are allowed.");
+    } else {
+      setFileError(null);
+    }
+
+    const newFiles = validFiles.slice(0, 3 - images.length);
+    if (newFiles.length > 0) {
+      setImages((prev) => [...prev, ...newFiles]);
+    }
+
+    e.target.value = "";
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleAdd = () => {
     if (!newTicket.type || newTicket.maxQty <= 0) return;
@@ -282,7 +321,7 @@ function CreateEventpage() {
       images: false,
     };
 
-    const { title, description, location, start_time, end_time, category, duration, images} = formValues
+    const { title, description, location, start_time, end_time, category, duration} = formValues
      
     if (title.trim() === "") {
       errorFields.title = true;
@@ -290,9 +329,9 @@ function CreateEventpage() {
     if (description.trim() === "") {
       errorFields.description = true;
     }
-    // if (location.address.trim() === "") {
-    //   errorFields.location = true;
-    // }
+    if (location.address.trim() === "") {
+      errorFields.location = true;
+    }
     if (start_time === null) {
       errorFields.start_time = true;
     }
@@ -308,9 +347,9 @@ function CreateEventpage() {
     if (tickets.length === 0) {
       errorFields.ticket_type = true;
     }
-    // if (images.length === 0) {
-    //   errorFields.images = true;
-    // }
+    if (images.length === 0) {
+      errorFields.images = true;
+    }
 
     setFormValuesError(errorFields)
 
@@ -345,7 +384,11 @@ function CreateEventpage() {
             onChange={(e) => handleTitleChange(e.target.value)}
             placeholder="Enter event title"
             errorKey={formValuesError.title}
-            errorMsg={formValues.title === "" ? "Enter valid event title" : "Event title must be between 5 and 100 characters"}
+            errorMsg={
+              formValues.title === ""
+                ? "Enter valid event title"
+                : "Event title must be between 5 and 100 characters"
+            }
             required
           />
 
@@ -356,7 +399,11 @@ function CreateEventpage() {
             onChange={(e) => handleDescriptionChange(e.target.value)}
             placeholder="Describe your event"
             errorKey={formValuesError.description}
-            errorMsg={formValues.description === "" ? "Enter valid event description" : "Event description must be at least 20 characters long"}
+            errorMsg={
+              formValues.description === ""
+                ? "Enter valid event description"
+                : "Event description must be at least 20 characters long"
+            }
             required
           />
 
@@ -388,7 +435,11 @@ function CreateEventpage() {
                 onChange={(val) => handleEndTimeChange(val)}
                 label="Event Ends"
                 name={"end_time"}
-                minDate={formValues.start_time === null ? new Date() :formValues.start_time}
+                minDate={
+                  formValues.start_time === null
+                    ? new Date()
+                    : formValues.start_time
+                }
                 errorKey={formValuesError.end_time}
                 errorMsg="Enter valid event end time"
                 required
@@ -445,7 +496,9 @@ function CreateEventpage() {
                     <th className="border px-4 py-2 w-1/5">Price ($/₹)</th>
                     <th className="border px-4 py-2 w-1/5">Max Qty</th>
                     <th className="border px-4 py-2 w-1/5">Description</th>
-                    <th className="border px-4 py-2 w-1/5 text-center">Actions</th>
+                    <th className="border px-4 py-2 w-1/5 text-center">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -483,7 +536,13 @@ function CreateEventpage() {
                         <td className="border px-2 py-1">
                           <input
                             value={editCache[ticket.id]?.description || ""}
-                            onChange={(e) => handleUpdate(ticket.id, "description", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdate(
+                                ticket.id,
+                                "description",
+                                e.target.value
+                              )
+                            }
                             className="w-full border px-2 py-1 rounded"
                           />
                         </td>
@@ -605,26 +664,72 @@ function CreateEventpage() {
               )}
             </div>
 
-            {formValuesError.ticket_type && <p className="text-red-500 text-sm mt-1">At least one ticket is required</p>}
+            {formValuesError.ticket_type && (
+              <p className="text-red-500 text-sm mt-1">
+                At least one ticket is required
+              </p>
+            )}
           </div>
 
-          <CustomTextField
-            label="Images"
-            name={"images"}
-            value={formValues.images}
-            type="file"
-            multiple
-            onChange={handleChange}
-            placeholder="Upload Files"
-            errorKey={formValuesError.images}
-            errorMsg="upload files"
-            required
-          />
+          {/* file handleing code */}
+          <div className="space-y-4">
+            <label className="block text-sm font-bold text-gray-700 mb-1">
+              Images <span className="text-red-500">*</span>
+            </label>
+
+            {images.length < 3 && (
+              <input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                multiple
+                onChange={handleFileChange}
+                className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-sm file:font-semibold hover:file:bg-gray-50"
+              />
+            )}
+
+            {fileError && (
+              <p className="text-red-500 text-sm mt-1">{fileError}</p>
+            )}
+
+            {formValuesError.images && (
+              <p className="text-red-500 text-sm mt-1">
+                Atleast one image is required
+              </p>
+            )}
+
+            {images.length > 0 && (
+              <div className="grid grid-cols-12 gap-4">
+                {images.map((file, index) => {
+                  const url = URL.createObjectURL(file);
+                  return (
+                    <div
+                      key={index}
+                      className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-4"
+                    >
+                      <img
+                        src={url}
+                        alt={`preview-${index}`}
+                        className="object-cover w-full h-full"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-2 right-2 bg-white text-red-500 rounded-full p-1 shadow hover:bg-red-100 transition"
+                      >
+                        <TrashIcon className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           <div className="text-end my-6">
-            <button 
-                onClick={handleSubmit} 
-                className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer">
+            <button
+              onClick={handleSubmit}
+              className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
+            >
               Create Event
             </button>
           </div>

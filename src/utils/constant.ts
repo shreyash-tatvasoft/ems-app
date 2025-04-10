@@ -541,3 +541,7 @@ export const INITIAL_TICKETS_TYPES = [
   { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
   { id: "3", type: "Free", price: "-", maxQty: 50, description: "General admission" },
 ]
+
+
+export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
+export const MAX_FILE_SIZE_MB = 2;

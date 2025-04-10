@@ -8,7 +8,7 @@ type TextFieldProps = {
   errorKey : boolean;
   type?: string;
   placeholder?: string;
-  value: string | File[] | any;
+  value: string;
   errorMsg?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
