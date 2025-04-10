@@ -5,12 +5,9 @@ import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-google-places-autocomplete'
+import { LocationField } from './helper'
 
-interface LocationField {
-  latitude: number,
-  longitude: number,
-  location: string
-}
+
 
 interface Props {
   getLocationData: (locationData: LocationField) => void

@@ -14,13 +14,13 @@ type DateTimePickerFieldProps = {
   label: string;
   name: string;
   value: Value;
-  onChange: Dispatch<SetStateAction<Value>>;
-  placeholder?: string;
+  onChange: (value: Date | null) => void;
   errorMsg?: string;
   errorKey?: boolean;
   onBlur?: () => void;
   required?: boolean;
   disabled?: boolean;
+  minDate? : Date
 };
 
 const CustomDateTimePicker: React.FC<DateTimePickerFieldProps> = ({
@@ -28,12 +28,12 @@ const CustomDateTimePicker: React.FC<DateTimePickerFieldProps> = ({
   name,
   value,
   onChange,
-  placeholder,
   errorMsg,
   errorKey = false,
   onBlur,
   required = false,
   disabled = false,
+  minDate = new Date()
 }) => {
   return (
     <div className="flex flex-col gap-1 w-full mb-4">
@@ -48,9 +48,8 @@ const CustomDateTimePicker: React.FC<DateTimePickerFieldProps> = ({
         onChange={onChange}
         value={value}
         format="y-MM-dd h:mm a"
-        minDate={new Date()}
+        minDate={minDate}
         onCalendarClose={onBlur}
-        disableClock={true}
         calendarIcon={null}
         clearIcon={null}
         disabled={disabled}

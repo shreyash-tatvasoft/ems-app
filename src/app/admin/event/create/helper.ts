@@ -7,16 +7,16 @@ export type TicketType = {
 
 export type EventLocation = {
     address: string;
-    lat: string;
-    long: string;
+    lat: number;
+    long: number;
 };
 
 export type EventFormData = {
     title: string;
     description: string;
     location: EventLocation;
-    start_time: string;
-    end_time: string;
+    start_time: Date | null;
+    end_time: Date | null;
     duration: string;
     category: string;
     ticket_type: TicketType[];
@@ -35,17 +35,23 @@ export type EventFormDataErrorTypes = {
     images: boolean;
 };
 
+export interface LocationField {
+  latitude: number,
+  longitude: number,
+  location: string
+}
+
 
 export const InitialEventFormDataValues : EventFormData = {
         title: "",
         description: "",
         location: {
           address: "",
-          lat: "",
-          long: "",
+          lat: 0,
+          long: 0,
         },
-        start_time: "",
-        end_time: "",
+        start_time: null,
+        end_time: null,
         duration: "",
         category: "",
         ticket_type: [

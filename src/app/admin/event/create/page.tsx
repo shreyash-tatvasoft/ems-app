@@ -1,13 +1,14 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
-import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, Ticket } from './helper';
+import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, Ticket } from './helper';
 import { CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
 import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
+import moment from 'moment';
 
 function CreateEventpage() {
 
@@ -72,18 +73,6 @@ function CreateEventpage() {
     setEditCache(newCache);
   };
 
-  // const handleEdit = (id: string) => {
-  //   setTickets((prev) =>
-  //     prev.map((t) => (t.id === id ? { ...t, isEditing: true } : t))
-  //   );
-  // };
-
-  // const handleCancel = (id: string) => {
-  //   setTickets((prev) =>
-  //     prev.map((t) => (t.id === id ? { ...t, isEditing: false } : t))
-  //   );
-  // };
-
   const handleUpdate = (id: string, key: keyof Ticket, value: string | number) => {
     setEditCache((prev) => ({
       ...prev,
@@ -93,14 +82,7 @@ function CreateEventpage() {
       },
     }));
   }
-  // const handleUpdate = (id: string, updated: Partial<Ticket>) => {
-  //   setTickets((prev) =>
-  //     prev.map((t) =>
-  //       t.id === id ? { ...t, ...updated} : t
-  //     )
-  //   );
-  // };
-
+  
   const handleDelete = (id: string) => {
     setTickets((prev) => prev.filter((t) => t.id !== id));
   };
@@ -126,6 +108,190 @@ function CreateEventpage() {
       }));
   }
 
+  const handleTitleChange = (value : string) => {
+    if(value.trim() === "" || value.length < 5 || value.length > 100) {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "title": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "title": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "title": value,
+    }));
+  }
+
+  const handleDescriptionChange = (value : string) => {
+    if(value.trim() === "" || value.length < 20) {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "description": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "description": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "description": value,
+    }));
+  }
+
+  const handleLocationChange = (location: LocationField) => {
+    if (location.location.trim() === "") {
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        location: true,
+      }));
+    } else {
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        location: false,
+      }));
+    }
+
+    setFormValues((prevState) => ({
+      ...prevState,
+      location: {
+        address: location.location, // This should be a string
+        lat: location.latitude, // number
+        long: location.longitude, // number
+      },
+    }));
+  };
+
+  const handleStartTimeChange = (value : Date | null) => {
+    if(value === null) {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "start_time": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "start_time": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "start_time": value,
+    }));
+  }
+
+  const handleEndTimeChange = (value : Date | null) => {
+    if(value === null) {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "end_time": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "end_time": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "end_time": value,
+    }));
+  }
+
+  const handleDurationField = (value : string) => {
+    if(value.trim() === "") {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "duration": true,
+        }));
+  } else {
+      setFormValuesError((prevState) => ({
+          ...prevState,
+          "duration": false,
+        }));
+  }
+
+  setFormValues((prevState) => ({
+      ...prevState,
+      "duration": value,
+    }));
+  }
+
+  const calculateDuration = () => {
+    const startTime = formValues.start_time;
+    const endTime = formValues.end_time;
+
+    const startMoment = moment(startTime);
+    const endMoment = moment(endTime);
+
+    const duration = moment.duration(endMoment.diff(startMoment));
+
+    const days = duration.days();
+    const hours = duration.hours();
+    const minutes = duration.minutes();
+
+    // Optional: build a readable string
+    let result = "";
+    if (days > 0) result += `${days} day${days > 1 ? "s" : ""} `;
+    if (hours > 0) result += `${hours} hr${hours > 1 ? "s" : ""} `;
+    if (minutes > 0) result += `${minutes} min`;
+
+    return result.trim();
+
+  };
+
+  const handleAllValidations = () => {
+
+    let errorFields = {
+      service_name_en: false,
+      service_name_ar: false,
+      service_desc_en: false,
+      service_desc_ar: false,
+      service_price: false,
+      service_pick_up_fees: false
+    }
+     
+    // if (this.state.serviceFormFields.service_name_en.trim() === "") {
+    //   errorFields.service_name_en = true;
+    // }
+    // if (this.state.serviceFormFields.service_name_ar.trim() === "") {
+    //   errorFields.service_name_ar = true;
+    // }
+    // if (this.state.serviceFormFields.service_desc_en.trim() === "" ) {
+    //   errorFields.service_desc_en = true;
+    // }
+    // if (this.state.serviceFormFields.service_desc_ar.trim() === "") {
+    //   errorFields.service_desc_ar = true;
+    // }
+    // if (this.state.serviceFormFields.service_price.trim() === "" || isNaN(Number(this.state.serviceFormFields.service_price))) {
+    //   errorFields.service_price = true;
+    // }
+    // if (this.state.PickupChecked && this.state.serviceFormFields.service_pick_up_fees.trim() === "" || isNaN(Number(this.state.serviceFormFields.service_pick_up_fees))) {
+    //   errorFields.service_pick_up_fees = true;
+    // }
+
+
+    // this.setState({ serviceErrorFields: errorFields})
+
+    return  Object.values(formValuesError).every((value) => value === false);
+  }
+
+  useEffect(() => {
+    if (formValues.start_time && formValues.end_time) {
+       const duration = calculateDuration();
+      handleDurationField(duration)
+    }
+  }, [formValues.start_time, formValues.end_time]);
+
     return (
       <div className="my-5 lg:mx-40 md:mx-20 mx-5">
         <div className="rounded-[12px] bg-white p-5">
@@ -136,10 +302,10 @@ function CreateEventpage() {
             name={"title"}
             value={formValues.title}
             type="text"
-            onChange={handleChange}
+            onChange={(e) => handleTitleChange(e.target.value)}
             placeholder="Enter event title"
             errorKey={formValuesError.title}
-            errorMsg="Enter valid event title"
+            errorMsg={formValues.title === "" ? "Enter valid event title" : "Event title must be between 5 and 100 characters"}
             required
           />
 
@@ -147,15 +313,15 @@ function CreateEventpage() {
             label="Description"
             name={"description"}
             value={formValues.description}
-            onChange={handleChange}
+            onChange={(e) => handleDescriptionChange(e.target.value)}
             placeholder="Describe your event"
             errorKey={formValuesError.description}
-            errorMsg="Enter valid event description"
+            errorMsg={formValues.description === "" ? "Enter valid event description" : "Event description must be at least 20 characters long"}
             required
           />
 
           <GoogleAutoComplete
-            getLocationData={(location) => console.log("first", location)}
+            getLocationData={(location) => handleLocationChange(location)}
             label="Location"
             name={"location"}
             placeholder="Enter event location"
@@ -168,23 +334,22 @@ function CreateEventpage() {
             <div className="md:col-span-6 col-span-12">
               <CustomDateTimePicker
                 label="Event Starts"
-                name={"title"}
-                value={new Date()}
-                onChange={(val) => console.log("first", val)}
-                placeholder="Select start date/time"
-                errorKey={formValuesError.title}
+                name={"start_time"}
+                value={formValues.start_time}
+                onChange={(val) => handleStartTimeChange(val)}
+                errorKey={formValuesError.start_time}
                 errorMsg="Enter valid event start time"
                 required
               />
             </div>
             <div className="md:col-span-6 col-span-12">
               <CustomDateTimePicker
-                value={new Date()}
-                onChange={(val) => console.log("first", val)}
-                placeholder="Select start date/time"
+                value={formValues.end_time}
+                onChange={(val) => handleEndTimeChange(val)}
                 label="Event Ends"
-                name={"title"}
-                errorKey={formValuesError.title}
+                name={"end_time"}
+                minDate={formValues.start_time === null ? new Date() :formValues.start_time}
+                errorKey={formValuesError.end_time}
                 errorMsg="Enter valid event end time"
                 required
               />
@@ -197,10 +362,10 @@ function CreateEventpage() {
                 label="Durtion"
                 name={"duration"}
                 value={formValues.duration}
-                onChange={handleChange}
+                onChange={() => {}}
                 placeholder="Event duration"
-                errorKey={formValuesError.title}
-                errorMsg="Enter valid event duration"
+                errorKey={formValuesError.duration}
+                errorMsg="Enter valid event timings"
                 readOnly
                 disabled
               />
@@ -234,13 +399,13 @@ function CreateEventpage() {
               <table className="min-w-full table-auto border border-gray-300">
                 <thead>
                   <tr className="bg-gray-100 text-left">
-                    <th className="border px-4 py-2 font-semibold">
+                    <th className="border px-4 py-2 w-1/5 font-semibold">
                       Ticket Type
                     </th>
-                    <th className="border px-4 py-2">Price ($/₹)</th>
-                    <th className="border px-4 py-2">Max Qty</th>
-                    <th className="border px-4 py-2">Description</th>
-                    <th className="border px-4 py-2">Actions</th>
+                    <th className="border px-4 py-2 w-1/5">Price ($/₹)</th>
+                    <th className="border px-4 py-2 w-1/5">Max Qty</th>
+                    <th className="border px-4 py-2 w-1/5">Description</th>
+                    <th className="border px-4 py-2 w-1/5 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -282,7 +447,7 @@ function CreateEventpage() {
                             className="w-full border px-2 py-1 rounded"
                           />
                         </td>
-                        <td className="border px-2 py-1 space-x-2">
+                        <td className="border text-center px-2 py-1 space-x-2">
                           <button
                             onClick={() => handleSave(ticket.id)}
                             className="bg-green-600 p-1 text-white rounded-full hover:bg-green-700"
@@ -305,15 +470,15 @@ function CreateEventpage() {
                         <td className="border px-4 py-2">
                           {ticket.description}
                         </td>
-                        <td className="border px-4 py-2 space-x-2">
+                        <td className="border px-4 py-2 text-center space-x-2">
                           <button
-                            className="bg-blue-600 p-1 text-white rounded-full cursor-pointer hover:bg-blue-700"
+                            className="text-blue-600 p-1 cursor-pointer font-bold"
                             onClick={() => handleEdit(ticket.id)}
                           >
                             <PencilSquareIcon className="h-5 w-5" />
                           </button>
                           <button
-                            className="bg-red-600 p-1 text-white rounded-full hover:bg-red-700"
+                            className="text-red-800 p-1 cursor-pointer font-bold"
                             onClick={() => handleDelete(ticket.id)}
                           >
                             <TrashIcon className="h-5 w-5" />
@@ -414,9 +579,10 @@ function CreateEventpage() {
             required
           />
 
-          <div className="text-end">
-            full
-            <button className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition cursor-pointer">
+          <div className="text-end my-6">
+            <button 
+                onClick={handleAllValidations} 
+                className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer">
               Create Event
             </button>
           </div>
