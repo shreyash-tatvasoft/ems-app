@@ -9,6 +9,8 @@ import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
 import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
 import moment from 'moment';
+import { apiCall } from '@/utils/helper';
+import { toast } from 'react-toastify';
 
 function CreateEventpage() {
 
@@ -367,16 +369,26 @@ function CreateEventpage() {
       formData.append("images", file); // assuming `file` is a File object
     });
 
+    const headersWeb = {
+      token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQyODEyNTEsImV4cCI6MTc0NDM2NzY1MX0.0-vyxXItekmWQRbtr3I6ejE0WTqBOI_bfcbKbnivF-E"
+    }
 
-    const request = await fetch(API_ROUTES.ADMIN.CREATE_EVENT, {
-      method : API_TYPES.POST,
-      headers : {
-         token : ""
-      },
+
+    const request = await apiCall({
+      endPoint : API_ROUTES.ADMIN.CREATE_EVENT,
+      headers : headersWeb,
+      method: "POST",
       body: formData
     })
-
+    
     const result = await request.json();
+
+    if(result.success) {
+      toast.success("Event added successfully.")
+    } else {
+      toast.error("Some error has occured.")
+
+    }
 
 
   }
