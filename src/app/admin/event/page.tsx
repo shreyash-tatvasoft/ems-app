@@ -3,12 +3,13 @@
 import React, { useEffect, useState} from 'react'
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { useRouter } from 'next/navigation';
-import { API_ROUTES, EVENTS_DUMMY_DATA, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
+import { API_ROUTES, EVENTS_DUMMY_DATA, INITIAL_TICKETS_TYPES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
 import moment from 'moment';
 import Select from 'react-select';
 import { apiCall } from '@/utils/helper';
-import { EventResponse, EventsDataTypes } from './helper';
+import { EventResponse, EventsDataTypes, EventTicket, getTicketPriceRange } from './helper';
 import Image from 'next/image';
+import Loader from '@/components/Loader';
 
 function EventsListpage() {
     const router = useRouter()
@@ -16,21 +17,13 @@ function EventsListpage() {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const [eventsData, setEventsData] = useState<EventsDataTypes[]>([]) 
-    const [loading, setLoading] = useState<boolean>(true)
+    const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
+    const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
-    const totalItems = eventsData.length;
+    const totalItems = allEventsData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-     
-
-
-    const paginatedData = EVENTS_DUMMY_DATA.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
-
-  
     const handlePrev = () => {
       if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
@@ -96,19 +89,15 @@ function EventsListpage() {
             ),  
             duration: item.duration,
             location: item.location.address,
-            price: "",
-            ticketsAvailable: 0,
+            price: getTicketPriceRange(item.tickets ),
+            ticketsAvailable: item.tickets.reduce((sum, ticket) => sum + ticket.max_qty, 0),
           }
          })
 
-         const paginatedData = modifiedArray.slice(
-          (currentPage - 1) * itemsPerPage,
-          currentPage * itemsPerPage
-        );
-        setEventsData(paginatedData)
+        setAllEventsData(modifiedArray)
         setLoading(false)
       } else {
-         setEventsData([])
+         setAllEventsData([])
          setLoading(false)
       }
      
@@ -118,19 +107,18 @@ function EventsListpage() {
        fetchEvents()
     },[])
 
+    useEffect(() => {
+      const paginated = allEventsData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+      setEventsData(paginated);
+    }, [allEventsData, currentPage, itemsPerPage]);
 
     return (
       <div className="my-5 lg:mx-20 md:mx-10 mx-5">
-        {loading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
-            <Image
-              src="/assets/Loader.gif"
-              alt="loading"
-              width={100}
-              height={100}
-            />
-          </div>
-        )}
+        {loading && <Loader />}
+
         <div className="rounded-[12px] bg-white p-5">
           <p className="text-2xl font-bold">All Events</p>
 
@@ -173,16 +161,16 @@ function EventsListpage() {
             <table className="min-w-full text-sm text-left text-gray-700">
               <thead className="bg-gray-100 text-xs uppercase">
                 <tr>
-                  <th className="p-3">Image</th>
-                  <th className="p-3">Title</th>
-                  <th className="p-3">Category</th>
-                  <th className="p-3">Start Date/Time</th>
-                  <th className="p-3">Duration</th>
-                  <th className="p-3">Location</th>
-                  <th className="p-3">Ticket Price</th>
-                  <th className="p-3">Tickets Available</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Actions</th>
+                  <th className="p-3 text-center">Image</th>
+                  <th className="p-3 text-center">Title</th>
+                  <th className="p-3 text-center">Category</th>
+                  <th className="p-3 text-center">Start Date/Time</th>
+                  <th className="p-3 text-center">Duration</th>
+                  <th className="p-3 text-center">Location</th>
+                  <th className="p-3 text-center">Ticket Price</th>
+                  <th className="p-3 text-center">Tickets Available</th>
+                  <th className="p-3 text-center">Status</th>
+                  <th className="p-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,7 +182,7 @@ function EventsListpage() {
                       event.ticketsAvailable
                     );
                     return (
-                      <tr key={idx} className="border-b hover:bg-gray-50">
+                      <tr key={idx} className="border-b hover:bg-gray-50 text-center">
                         <td className="p-3">
                           {event.img === "" ? (
                             "-"

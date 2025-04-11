@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { ALLOWED_FILE_FORMATS, API_ROUTES, API_TYPES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, token } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES, token } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
@@ -11,8 +11,12 @@ import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/re
 import moment from 'moment';
 import { apiCall } from '@/utils/helper';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
 
 function CreateEventpage() {
+
+  const router = useRouter()
 
   const [formValues, setFormValues] = useState<EventFormData>(InitialEventFormDataValues)
   const [formValuesError, setFormValuesError] = useState<EventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
@@ -31,6 +35,7 @@ function CreateEventpage() {
 
   const [images, setImages] = useState<File[]>([]);
   const [fileError, setFileError] = useState<null | string>(null)
+  const [loader, setLoder] = useState(false)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -342,6 +347,8 @@ function CreateEventpage() {
        return false
     }
 
+    setLoder(true)
+
     const formData = new FormData();
 
     formData.append("title", formValues.title);
@@ -352,7 +359,7 @@ function CreateEventpage() {
     formData.append("location[lng]", formValues.location.long.toString());
     
     formValues.start_time && formData.append("startDateTime", formValues.start_time.toString());
-    formValues.end_time && formData.append("startDateTime", formValues.end_time.toString());
+    formValues.end_time && formData.append("endDateTime", formValues.end_time.toString());
     formData.append("duration", formValues.duration);
     formValues.category && formData.append("category", formValues.category.value);
     
@@ -370,9 +377,8 @@ function CreateEventpage() {
     });
 
     const headersWeb = {
-      token : token
+      token : token,
     }
-
 
     const request = await apiCall({
       endPoint : API_ROUTES.ADMIN.CREATE_EVENT,
@@ -384,10 +390,13 @@ function CreateEventpage() {
     const result = await request.json();
 
     if(result.success) {
+      setLoder(false)
+      router.push(ROUTES.ADMIN.EVENTS)
       toast.success("Event added successfully.")
+      setFormValues(InitialEventFormDataValues)
     } else {
       toast.error("Some error has occured.")
-
+      setLoder(false)
     }
 
 
@@ -402,6 +411,7 @@ function CreateEventpage() {
 
     return (
       <div className="my-5 lg:mx-40 md:mx-20 mx-5">
+        {loader && <Loader />}
         <div className="rounded-[12px] bg-white p-5">
           <p className="text-2xl font-bold mb-10 text-center">Create Event</p>
 
