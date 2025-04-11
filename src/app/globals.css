@@ -120,3 +120,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+.react-datetime-picker__wrapper {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.react-datetime-picker__inputGroup {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: white;
+}
