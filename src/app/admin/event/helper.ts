@@ -21,7 +21,8 @@ export type EventLocation = {
     _id: string;
     type: string;
     price: number;
-    max_qty: number;
+    totalSeats: number,
+    totalBookedSeats: number,
     description: string;
   };
   
@@ -41,7 +42,7 @@ export type EventLocation = {
     endDateTime: string;   // ISO string
     location: EventLocation;
     tickets: EventTicket[];
-    images?: EventImage[]; // optional, since second object has no images
+    images: EventImage[]; // optional, since second object has no images
     createdAt: string;
     updatedAt: string;
     __v?: number;

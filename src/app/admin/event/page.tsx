@@ -3,12 +3,11 @@
 import React, { useEffect, useState} from 'react'
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { useRouter } from 'next/navigation';
-import { API_ROUTES, EVENTS_DUMMY_DATA, INITIAL_TICKETS_TYPES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
+import { API_ROUTES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
 import moment from 'moment';
 import Select from 'react-select';
 import { apiCall } from '@/utils/helper';
-import { EventResponse, EventsDataTypes, EventTicket, getTicketPriceRange } from './helper';
-import Image from 'next/image';
+import { EventResponse, EventsDataTypes, getTicketPriceRange } from './helper';
 import Loader from '@/components/Loader';
 
 function EventsListpage() {
@@ -19,7 +18,7 @@ function EventsListpage() {
 
     const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
     const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
 
     const totalItems = allEventsData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -75,13 +74,13 @@ function EventsListpage() {
 
       const result = await request.json()
 
-      if(result && result.success && result?.data?.length > 0) {
+      if(result && result.success && result.data.length > 0) {
          const receivedArrayObj : EventResponse = result.data
 
          const modifiedArray = receivedArrayObj.map(item => {
           return {
             id : item._id,
-            img: "",
+            img: item.images?.length > 0 ? item.images[0]?.url : "",
             title: item.title,
             category: item.category,
             startTime:moment(item.startDateTime).format(
@@ -90,7 +89,10 @@ function EventsListpage() {
             duration: item.duration,
             location: item.location.address,
             price: getTicketPriceRange(item.tickets ),
-            ticketsAvailable: item.tickets.reduce((sum, ticket) => sum + ticket.max_qty, 0),
+            ticketsAvailable: item.tickets.reduce(
+              (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
+              0
+            ),
           }
          })
 
@@ -100,7 +102,6 @@ function EventsListpage() {
          setAllEventsData([])
          setLoading(false)
       }
-     
     }
 
     useEffect(() => {
@@ -204,7 +205,7 @@ function EventsListpage() {
                         <td className="p-3">{event.duration}</td>
                         <td className="p-3">{event.location}</td>
                         <td className="p-3">
-                          {event.price === 0 ? "Free" : `$${event.price}`}
+                          {event.price}
                         </td>
                         <td className="p-3">{event.ticketsAvailable}</td>
                         <td className="p-3">

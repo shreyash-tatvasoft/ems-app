@@ -13,6 +13,7 @@ import { apiCall } from '@/utils/helper';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
+import QuilEditor from './QuilEditor';
 
 function CreateEventpage() {
 
@@ -153,7 +154,7 @@ function CreateEventpage() {
   }
 
   const handleDescriptionChange = (value : string) => {
-    if(value.trim() === "" || value.length < 20) {
+    if(value.trim() === "" ||  value.length < 20) {
       setFormValuesError((prevState) => ({
           ...prevState,
           "description": true,
@@ -367,7 +368,7 @@ function CreateEventpage() {
     tickets.forEach((ticket, index) => {
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
-      formData.append(`tickets[${index}][max_qty]`, `${ticket.maxQty}`);
+      formData.append(`tickets[${index}][totalSeats]`, `${ticket.maxQty}`);
       formData.append(`tickets[${index}][description]`, ticket.description);
     });
     
@@ -412,6 +413,7 @@ function CreateEventpage() {
     return (
       <div className="my-5 lg:mx-40 md:mx-20 mx-5">
         {loader && <Loader />}
+
         <div className="rounded-[12px] bg-white p-5">
           <p className="text-2xl font-bold mb-10 text-center">Create Event</p>
 
@@ -431,11 +433,11 @@ function CreateEventpage() {
             required
           />
 
-          <CustomTextField
+          <QuilEditor
             label="Description"
             name={"description"}
             value={formValues.description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
+            onChange={(value) => handleDescriptionChange(value)}
             placeholder="Describe your event"
             errorKey={formValuesError.description}
             errorMsg={
