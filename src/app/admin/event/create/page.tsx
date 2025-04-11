@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { ALLOWED_FILE_FORMATS, API_ROUTES, API_TYPES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, API_TYPES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, token } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
@@ -370,7 +370,7 @@ function CreateEventpage() {
     });
 
     const headersWeb = {
-      token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQyODEyNTEsImV4cCI6MTc0NDM2NzY1MX0.0-vyxXItekmWQRbtr3I6ejE0WTqBOI_bfcbKbnivF-E"
+      token : token
     }
 
 
