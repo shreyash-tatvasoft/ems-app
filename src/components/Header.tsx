@@ -52,42 +52,19 @@ const  Header : React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false
                 className="flex title-font font-medium items-center text-gray-900 md:mb-0"
                 href={ROUTES.HOME}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 130 60"
-                  width="130"
-                  height="40"
-                  fill="url(#gradient)"
-                >
-                  <defs>
-                    <linearGradient
-                      id="gradient"
-                      x1="0%"
-                      y1="0%"
-                      x2="100%"
-                      y2="0%"
-                    >
-                      <stop offset="0%" stopColor="#1e3a8a" />
-                      <stop offset="100%" stopColor="#67e8f9" />
-                    </linearGradient>
-                  </defs>
-                  <text
-                    x="0"
-                    y="45"
-                     fontFamily="'Poppins', sans-serif"
-                    fontSize="40"
-                    fontWeight="600"
-                    fill="url(#gradient)"
-                  >
-                    Evently
-                  </text>
-                </svg>
+                <Image
+                  src={"/assets/eventlyLogo1.png"}
+                  alt='logo'
+                  className='object-contain'
+                  width={130}
+                  height={60}
+                />
               </Link>
 
               {isAdmiRole && (
                 <button
                   onClick={toggleSidebar}
-                  className="text-gray-700 md:hidden"
+                  className="text-gray-700 ml-3 md:hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

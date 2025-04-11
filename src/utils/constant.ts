@@ -539,7 +539,7 @@ export enum ROLE {
 export const INITIAL_TICKETS_TYPES = [
   { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
   { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
-  { id: "3", type: "Free", price: "-", maxQty: 50, description: "General admission" },
+  { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission" },
 ]
 
 
@@ -550,7 +550,8 @@ export const BE_URL = "https://event-management-system-5zdg.onrender.com"
 
 export const API_ROUTES = {
   ADMIN : {
-    CREATE_EVENT : `${BE_URL}/events`
+    CREATE_EVENT : `${BE_URL}/events`,
+    GET_EVENTS : `${BE_URL}/events`
   }
 }
 
@@ -561,3 +562,12 @@ export const API_TYPES = {
   PUT : "PUT",
   PATCH: "PATCH"
 }
+
+export const PAGINATION_OPTIONS = [
+  { value: 5, label: '5' },
+  { value: 10, label: '10' },
+  { value: 15, label: '15' },
+  { value: 20, label: '20' },
+];
+
+export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQzNjc3NTYsImV4cCI6MTc0NDQ1NDE1Nn0.jFgAhlkgOEVbxdaILm3M7kLK44PrmJkIxQAFr0mbvSw"
