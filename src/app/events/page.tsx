@@ -1,52 +1,66 @@
-'use client';
-import React, { useState } from 'react'
-import FeaturedEvent from '@/components/ui/FeaturedEvent'
-import EventCard from '@/components/ui/EventCard';
-import { CATEGORIES,EVENT_DATA } from '@/utils/constant';
-import { Category, EventData } from "@/types/events"
-const EventsPage = () => {
-  const events : EventData[] = EVENT_DATA;
-  const categories : Category[] = CATEGORIES;
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const filteredEvents =
-    selectedCategory === 'all'
-      ? events
-      : events.filter((event) => event.category === selectedCategory)
+'use client'
+import React, { useEffect, useState } from 'react'
+import { SearchBar } from '@/components/events-components/SearchBar'
+import { CategoryTabs } from '@/components/events-components/CategoryTabs'
+import { FilterOptions } from '@/components/events-components/FilterOptions'
+import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
+import { EventList } from '@/components/events-components/EventList'
+import { EVENT_DATA } from '@/utils/constant'
+import { EventData, EventCategory, SortOption } from "@/types/events";
+const EventsPage: React.FC = () => {
+  const [events, setEvents] = useState<EventData[]>(EVENT_DATA)
+  const [filteredEvents, setFilteredEvents] = useState<EventData[]>(EVENT_DATA)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState<EventCategory>('all')
+  const [sortOption, setSortOption] = useState<SortOption>('none')
+  const featuredEvent = EVENT_DATA.find((event) => event.isFeatured)
+  const regularEvents = filteredEvents.filter((event) => !event.isFeatured)
+  useEffect(() => {
+    let result = [...EVENT_DATA]
+    if (searchQuery) {
+      result = result.filter((event) =>
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    }
+    if (activeCategory !== 'all') {
+      result = result.filter((event) => event.category === activeCategory)
+    }
+    if (sortOption === 'date-asc') {
+      result = [...result].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      )
+    } else if (sortOption === 'date-desc') {
+      result = [...result].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      )
+    } else if (sortOption === 'title-asc') {
+      result = [...result].sort((a, b) => a.title.localeCompare(b.title))
+    } else if (sortOption === 'title-desc') {
+      result = [...result].sort((a, b) => b.title.localeCompare(a.title))
+    }
+    setFilteredEvents(result)
+  }, [searchQuery, activeCategory, sortOption])
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Upcoming Events
-        </h1>
-        <p className="text-gray-600">
-          Discover and book tickets for the best events in your area
-        </p>
-      </header>
-      <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 no-scrollbar">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`flex items-center px-4 py-2 rounded-full whitespace-nowrap ${selectedCategory === category.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
-          >
-            <span className="mr-2"><category.icon size={20}/></span>
-            {category.name}
-          </button>
-        ))}
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <FilterOptions sortOption={sortOption} setSortOption={setSortOption} />
       </div>
-      {filteredEvents.length > 0 && <FeaturedEvent event={filteredEvents[0]} />}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {filteredEvents.slice(1).map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
-      {filteredEvents.length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">
-            No events found in this category
-          </p>
+      <CategoryTabs
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+      />
+      {featuredEvent && (
+        <div className="mb-8 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Featured Event</h2>
+          <FeaturedEvent event={featuredEvent} />
         </div>
       )}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">All Events</h2>
+        <EventList events={regularEvents} />
+      </div>
     </div>
   )
 }
