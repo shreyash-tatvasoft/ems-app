@@ -1,3 +1,5 @@
+export const BE_URL = "https://event-management-system-5zdg.onrender.com"
+
 import { Category, EventData } from "@/types/events"
 import {
     MusicIcon,
@@ -10,6 +12,7 @@ export const ROUTES = {
     LOGIN: "/login",
     SIGN_UP: "/sign-up",
     HOME: "/",
+    USER_EVENTS: "/user/events",
     USER_PROFILE: "/user/profile",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
@@ -554,12 +557,14 @@ export const INITIAL_TICKETS_TYPES = [
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
-export const BE_URL = "https://event-management-system-5zdg.onrender.com"
 
 export const API_ROUTES = {
   ADMIN : {
     CREATE_EVENT : `${BE_URL}/events`,
     GET_EVENTS : `${BE_URL}/events`
+  }, 
+  AUTH: {
+    LOGIN: `${BE_URL}/login`,
   }
 }
 
@@ -578,7 +583,7 @@ export const PAGINATION_OPTIONS = [
   { value: 20, label: '20' },
 ];
 
-export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQzNjc3NTYsImV4cCI6MTc0NDQ1NDE1Nn0.jFgAhlkgOEVbxdaILm3M7kLK44PrmJkIxQAFr0mbvSw"
+export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VmYTgzMTg3M2YxMzg1ZDlhY2QwOTEiLCJuYW1lIjoiUHJpdGVzaCBNYWthc2FuYSIsImVtYWlsIjoicHJpdGVzaEB5b3BtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ0NjA5MjMxLCJleHAiOjE3NDQ2OTU2MzF9.2u3LEWTwgKZNbVI-_qC-xJdAhxQivBRzQUyJAU-03V8"
 export const EVENT_DATA : EventData[] = [
         {
           id: "1",
