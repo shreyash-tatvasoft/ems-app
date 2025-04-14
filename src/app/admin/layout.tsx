@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { usePathname } from 'next/navigation';
 
-const layout : React.FC<{children : ReactNode}> = ( { children }) => {
+const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
 
     const pathname = usePathname();
 
@@ -31,4 +31,4 @@ const layout : React.FC<{children : ReactNode}> = ( { children }) => {
   );
 }
 
-export default layout
+export default Layout
