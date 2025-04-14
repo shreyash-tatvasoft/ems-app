@@ -19,6 +19,7 @@ function EventsListpage() {
     const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
     const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [searchQuery, setSearchQuery] = useState("")
 
     const totalItems = allEventsData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -36,6 +37,25 @@ function EventsListpage() {
     const navToCreateEventPage = () => {
         router.push(ROUTES.ADMIN.CREATE_EVENT)
     } 
+
+    const navToEditPage = (eventId : string) => {
+      router.push(`${ROUTES.ADMIN.EVENTS}/${eventId}`)
+    }
+
+    const searchEvents = (keyword: string) => {
+      const lowerKeyword = keyword.toString().toLowerCase();
+      const searchResult =  allEventsData.filter(event =>
+        event.title.toLowerCase().includes(lowerKeyword) ||
+        event.category.toLowerCase().includes(lowerKeyword) ||
+        event.startTime.toLowerCase().includes(lowerKeyword) ||
+        event.location.toLowerCase().includes(lowerKeyword) ||
+        event.price.toString().toLowerCase().includes(lowerKeyword)
+      );
+
+      setSearchQuery(keyword)
+      setEventsData(searchResult)
+      setCurrentPage(1)
+    };
 
     const getStatus = (startTime: string, durationStr: string, tickets: number) => {
         const now = moment();
@@ -117,7 +137,7 @@ function EventsListpage() {
     }, [allEventsData, currentPage, itemsPerPage]);
 
     return (
-      <div className="my-5 lg:mx-20 md:mx-10 mx-5">
+      <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
         {loading && <Loader />}
 
         <div className="rounded-[12px] bg-white p-5">
@@ -134,6 +154,8 @@ function EventsListpage() {
                 </span>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => searchEvents(e.target.value)}
                   placeholder="Search events"
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:w-80 md:w-40 w-full"
                 />
@@ -216,10 +238,10 @@ function EventsListpage() {
                           </span>
                         </td>
                         <td className="p-3 space-x-2">
-                          <button className="text-blue-500 hover:text-blue-700">
+                          <button onClick={() => navToEditPage(event.id)} className="text-blue-500 hover:text-blue-700 cursor-pointer">
                             <PencilSquareIcon className="h-5 w-5" />
                           </button>
-                          <button className="text-red-500 hover:text-red-700">
+                          <button className="text-red-500 hover:text-red-700 cursor-pointer">
                             <TrashIcon className="h-5 w-5" />
                           </button>
                         </td>
