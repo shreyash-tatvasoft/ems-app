@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { ALLOWED_FILE_FORMATS, API_ROUTES, API_TYPES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES, token } from '@/utils/constant';
 import CustomSelectField from './SelectField';
 import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
@@ -11,8 +11,13 @@ import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/re
 import moment from 'moment';
 import { apiCall } from '@/utils/helper';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
+import QuilEditor from './QuilEditor';
 
 function CreateEventpage() {
+
+  const router = useRouter()
 
   const [formValues, setFormValues] = useState<EventFormData>(InitialEventFormDataValues)
   const [formValuesError, setFormValuesError] = useState<EventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
@@ -31,6 +36,7 @@ function CreateEventpage() {
 
   const [images, setImages] = useState<File[]>([]);
   const [fileError, setFileError] = useState<null | string>(null)
+  const [loader, setLoder] = useState(false)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -148,7 +154,7 @@ function CreateEventpage() {
   }
 
   const handleDescriptionChange = (value : string) => {
-    if(value.trim() === "" || value.length < 20) {
+    if(value.trim() === "" ||  value.length < 20) {
       setFormValuesError((prevState) => ({
           ...prevState,
           "description": true,
@@ -342,6 +348,8 @@ function CreateEventpage() {
        return false
     }
 
+    setLoder(true)
+
     const formData = new FormData();
 
     formData.append("title", formValues.title);
@@ -352,7 +360,7 @@ function CreateEventpage() {
     formData.append("location[lng]", formValues.location.long.toString());
     
     formValues.start_time && formData.append("startDateTime", formValues.start_time.toString());
-    formValues.end_time && formData.append("startDateTime", formValues.end_time.toString());
+    formValues.end_time && formData.append("endDateTime", formValues.end_time.toString());
     formData.append("duration", formValues.duration);
     formValues.category && formData.append("category", formValues.category.value);
     
@@ -360,7 +368,7 @@ function CreateEventpage() {
     tickets.forEach((ticket, index) => {
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
-      formData.append(`tickets[${index}][max_qty]`, `${ticket.maxQty}`);
+      formData.append(`tickets[${index}][totalSeats]`, `${ticket.maxQty}`);
       formData.append(`tickets[${index}][description]`, ticket.description);
     });
     
@@ -370,9 +378,8 @@ function CreateEventpage() {
     });
 
     const headersWeb = {
-      token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQyODEyNTEsImV4cCI6MTc0NDM2NzY1MX0.0-vyxXItekmWQRbtr3I6ejE0WTqBOI_bfcbKbnivF-E"
+      token : token,
     }
-
 
     const request = await apiCall({
       endPoint : API_ROUTES.ADMIN.CREATE_EVENT,
@@ -384,10 +391,13 @@ function CreateEventpage() {
     const result = await request.json();
 
     if(result.success) {
+      setLoder(false)
+      router.push(ROUTES.ADMIN.EVENTS)
       toast.success("Event added successfully.")
+      setFormValues(InitialEventFormDataValues)
     } else {
       toast.error("Some error has occured.")
-
+      setLoder(false)
     }
 
 
@@ -402,6 +412,8 @@ function CreateEventpage() {
 
     return (
       <div className="my-5 lg:mx-40 md:mx-20 mx-5">
+        {loader && <Loader />}
+
         <div className="rounded-[12px] bg-white p-5">
           <p className="text-2xl font-bold mb-10 text-center">Create Event</p>
 
@@ -421,11 +433,11 @@ function CreateEventpage() {
             required
           />
 
-          <CustomTextField
+          <QuilEditor
             label="Description"
             name={"description"}
             value={formValues.description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
+            onChange={(value) => handleDescriptionChange(value)}
             placeholder="Describe your event"
             errorKey={formValuesError.description}
             errorMsg={

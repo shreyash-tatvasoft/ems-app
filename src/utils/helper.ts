@@ -15,13 +15,12 @@ type ApiParams = {
       const options: RequestInit = {
         method,
         headers: {
-          'Content-Type': 'application/json',
           ...headers,
         },
       };
   
       if (body && method !== 'GET') {
-        options.body = JSON.stringify(body);
+        options.body = body;
       }
   
      return await fetch(endPoint, options);
