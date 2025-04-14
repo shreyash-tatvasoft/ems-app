@@ -198,7 +198,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
   }
 
   const handleDescriptionChange = (value : string) => {
-    if(value.trim() === "" ||  value.length < 20) {
+    if(value.length !== 11 ) {
       setFormValuesError((prevState) => ({
           ...prevState,
           "description": true,
@@ -357,7 +357,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     if (title.trim() === "") {
       errorFields.title = true;
     }
-    if (description.trim() === "") {
+    if (description.length === 11 || description.length < 20) {
       errorFields.description = true;
     }
     if (location.address.trim() === "") {
@@ -584,9 +584,9 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
             placeholder="Describe your event"
             errorKey={formValuesError.description}
             errorMsg={
-              formValues.description === ""
+              formValues.description.length < 11
                 ? "Enter valid event description"
-                : "Event description must be at least 20 characters long"
+                : formValues.description.length < 20 ? "Event description must be at least 20 characters long" : ""
             }
             required
           />
