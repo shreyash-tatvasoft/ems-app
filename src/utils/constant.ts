@@ -555,6 +555,7 @@ export const API_ROUTES = {
     CREATE_EVENT : `${BE_URL}/events`,
     GET_EVENTS : `${BE_URL}/events`,
     DELETE_EVENT: (id: string) => `${BE_URL}/events/${id}`,
+    SHOW_EVENT: (id: string) => `${BE_URL}/events/${id}`,
   }, 
   AUTH: {
     LOGIN: `${BE_URL}/login`,

@@ -412,6 +412,59 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     }
   }, [formValues.start_time, formValues.end_time]);
 
+   const fetchEventWithId = async () => {
+    setLoder(true)
+
+     const request = await apiCall({
+       endPoint: API_ROUTES.ADMIN.SHOW_EVENT(eventType),
+       method: "GET",
+       headers: {
+         token: token,
+       },
+     });
+
+     const result = await request.json();
+
+     if (result && result.success && result.data) {
+       const receivedObj = result.data;
+
+       
+       const modifiedObj = {
+         title: receivedObj.title,
+         description: receivedObj.description,
+         location: {
+           address: "Ahmedabad",
+           lat: 23.022505,
+           long: 72.5713621,
+         },
+         start_time: null,
+         end_time: null,
+         duration: receivedObj.duration,
+         category: null,
+         ticket_type: [
+           {
+             type: "",
+             price: "",
+             max_qty: "",
+             description: "",
+           },
+         ],
+         images: [],
+       };
+       setFormValues(modifiedObj)
+      setLoder(false)
+     } else {
+      setLoder(false)
+       
+     }
+   };
+
+  useEffect(() => {
+     if(eventType !== "create") {
+        fetchEventWithId()
+     }
+  },[eventType])
+
     return (
       <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
         {loader && <Loader />}
