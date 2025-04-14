@@ -9,6 +9,8 @@ import Select from 'react-select';
 import { apiCall } from '@/utils/helper';
 import { EventResponse, EventsDataTypes, getTicketPriceRange } from './helper';
 import Loader from '@/components/Loader';
+import DeleteDialog from '@/components/DeleteModal';
+import { toast } from 'react-toastify';
 
 function EventsListpage() {
     const router = useRouter()
@@ -19,6 +21,8 @@ function EventsListpage() {
     const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
     const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [deletableEventId, setDeletableId] = useState<string>("")
+
     const [searchQuery, setSearchQuery] = useState("")
 
     const totalItems = allEventsData.length;
@@ -40,6 +44,10 @@ function EventsListpage() {
 
     const navToEditPage = (eventId : string) => {
       router.push(`${ROUTES.ADMIN.EVENTS}/${eventId}`)
+    }
+
+    const openDeleteModal = (eventId : string) => {
+      setDeletableId(eventId)
     }
 
     const searchEvents = (keyword: string) => {
@@ -124,6 +132,28 @@ function EventsListpage() {
       }
     }
 
+    const deleteEvents = async () => {
+      setLoading(true)
+      const request = await apiCall({
+        endPoint : API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
+        method : "DELETE",
+        headers : {
+          token : token
+        }
+      })
+
+      const result = await request.json()
+
+      if(result && result.success) {
+        fetchEvents()
+        setDeletableId("")
+        toast.success("Event deleted successfully")
+      } else {
+          toast.warning("Something went wrong. try again later")
+          setLoading(false)
+      }
+    }
+
     useEffect(() => {
        fetchEvents()
     },[])
@@ -180,7 +210,7 @@ function EventsListpage() {
 
           {/* Data Table  */}
 
-          <div className="overflow-x-auto p-4 bg-white rounded-lg shadow">
+          <div className="overflow-x-auto p-4 bg-white rounded-lg">
             <table className="min-w-full text-sm text-left text-gray-700">
               <thead className="bg-gray-100 text-xs uppercase">
                 <tr>
@@ -241,7 +271,7 @@ function EventsListpage() {
                           <button onClick={() => navToEditPage(event.id)} className="text-blue-500 hover:text-blue-700 cursor-pointer">
                             <PencilSquareIcon className="h-5 w-5" />
                           </button>
-                          <button className="text-red-500 hover:text-red-700 cursor-pointer">
+                          <button onClick={() => openDeleteModal(event.id)} className="text-red-500 hover:text-red-700 cursor-pointer">
                             <TrashIcon className="h-5 w-5" />
                           </button>
                         </td>
@@ -261,7 +291,7 @@ function EventsListpage() {
 
           {/* Pagination */}
           {eventsData.length > 0 && (
-            <div className="flex items-center justify-between p-4 border-t">
+            <div className="flex items-center justify-between p-4">
               <span className="text-sm font-medium">
                 Total items: {totalItems}
               </span>
@@ -347,6 +377,14 @@ function EventsListpage() {
             </div>
           )}
         </div>
+
+        {/* Delete Popup */}
+        <DeleteDialog 
+           isOpen={deletableEventId !== ""}
+           onClose={() => setDeletableId("")}
+           onConfirm={deleteEvents}
+           loading={loading}
+        />
       </div>
     );
 }

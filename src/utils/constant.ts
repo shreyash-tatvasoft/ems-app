@@ -551,7 +551,8 @@ export const BE_URL = "https://event-management-system-5zdg.onrender.com"
 export const API_ROUTES = {
   ADMIN : {
     CREATE_EVENT : `${BE_URL}/events`,
-    GET_EVENTS : `${BE_URL}/events`
+    GET_EVENTS : `${BE_URL}/events`,
+    DELETE_EVENT: (id: string) => `${BE_URL}/events/${id}`,
   }
 }
 
@@ -570,4 +571,4 @@ export const PAGINATION_OPTIONS = [
   { value: 20, label: '20' },
 ];
 
-export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQzNjc3NTYsImV4cCI6MTc0NDQ1NDE1Nn0.jFgAhlkgOEVbxdaILm3M7kLK44PrmJkIxQAFr0mbvSw"
+export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQ2MDQ4MjYsImV4cCI6MTc0NDY5MTIyNn0.MJ9rlUzejJUWDmnBYUdafEOIhfmgsY-wmtbm5OIYec0"
