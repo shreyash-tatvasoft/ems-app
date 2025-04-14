@@ -7,10 +7,11 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant'
 import moment from 'moment';
 import Select from 'react-select';
 import { apiCall } from '@/utils/helper';
-import { EventResponse, EventsDataTypes, getTicketPriceRange } from './helper';
+import { getTicketPriceRange } from './helper';
 import Loader from '@/components/Loader';
 import DeleteDialog from '@/components/DeleteModal';
 import { toast } from 'react-toastify';
+import { EventResponse, EventsDataTypes } from '@/utils/interfaces';
 
 function EventsListpage() {
     const router = useRouter()

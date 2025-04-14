@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import QuilEditor from './QuilEditor';
+import { EventDataObjResponse } from '@/utils/interfaces';
 
 interface EventFormProps {
   eventType : string
@@ -426,8 +427,17 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
      const result = await request.json();
 
      if (result && result.success && result.data) {
-       const receivedObj = result.data;
+       const receivedObj : EventDataObjResponse = result.data;
 
+       const ticketsArray = receivedObj.tickets.map(item => {
+        return {
+          id: item._id,
+          type: item.type, 
+          price: item.price.toString(), 
+          maxQty: item.totalSeats - item.totalBookedSeats, 
+          description: item.description
+        }
+       })
        
        const modifiedObj = {
          title: receivedObj.title,
@@ -452,6 +462,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
          images: [],
        };
        setFormValues(modifiedObj)
+       setTickets(ticketsArray)
       setLoder(false)
      } else {
       setLoder(false)

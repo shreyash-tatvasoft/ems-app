@@ -1,15 +1,10 @@
+import { ApiParams } from "./interfaces";
+
 export const getAuthToken = () => {
-    const token = localStorage.getItem("authToken")
+    const token = localStorage.getItem("token")
     return token ? token : ""
 }
-
-type ApiParams = {
-    endPoint: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-    body?: string | FormData;
-    headers?: HeadersInit;
-  };
-  
+ 
   export const apiCall = async ({ endPoint, method = 'GET', body, headers = {} }: ApiParams) => {
     try {
       const options: RequestInit = {
