@@ -564,6 +564,7 @@ export const API_ROUTES = {
     GET_EVENTS : `${BE_URL}/events`,
     DELETE_EVENT: (id: string) => `${BE_URL}/events/${id}`,
     SHOW_EVENT: (id: string) => `${BE_URL}/events/${id}`,
+    UPDATE_EVENT : (id: string) => `${BE_URL}/events/${id}`
   }, 
   AUTH: {
     LOGIN: `${BE_URL}/login`,

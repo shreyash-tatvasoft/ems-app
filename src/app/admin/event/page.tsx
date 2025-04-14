@@ -3,10 +3,10 @@
 import React, { useEffect, useState} from 'react'
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { useRouter } from 'next/navigation';
-import { API_ROUTES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
+import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 import moment from 'moment';
 import Select from 'react-select';
-import { apiCall } from '@/utils/helper';
+import { apiCall, getAuthToken } from '@/utils/helper';
 import { getTicketPriceRange } from './helper';
 import Loader from '@/components/Loader';
 import DeleteDialog from '@/components/DeleteModal';
@@ -97,7 +97,7 @@ function EventsListpage() {
         endPoint : API_ROUTES.ADMIN.GET_EVENTS,
         method : "GET",
         headers : {
-          token : token
+          token : getAuthToken()
         }
       })
 
@@ -139,7 +139,7 @@ function EventsListpage() {
         endPoint : API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
         method : "DELETE",
         headers : {
-          token : token
+          token : getAuthToken()
         }
       })
 
