@@ -553,7 +553,8 @@ export const MAX_FILE_SIZE_MB = 2;
 export const API_ROUTES = {
   ADMIN : {
     CREATE_EVENT : `${BE_URL}/events`,
-    GET_EVENTS : `${BE_URL}/events`
+    GET_EVENTS : `${BE_URL}/events`,
+    DELETE_EVENT: (id: string) => `${BE_URL}/events/${id}`,
   }, 
   AUTH: {
     LOGIN: `${BE_URL}/login`,
@@ -575,4 +576,4 @@ export const PAGINATION_OPTIONS = [
   { value: 20, label: '20' },
 ];
 
-export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VmYTgzMTg3M2YxMzg1ZDlhY2QwOTEiLCJuYW1lIjoiUHJpdGVzaCBNYWthc2FuYSIsImVtYWlsIjoicHJpdGVzaEB5b3BtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ0NjA5MjMxLCJleHAiOjE3NDQ2OTU2MzF9.2u3LEWTwgKZNbVI-_qC-xJdAhxQivBRzQUyJAU-03V8"
+export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQ2MDQ4MjYsImV4cCI6MTc0NDY5MTIyNn0.MJ9rlUzejJUWDmnBYUdafEOIhfmgsY-wmtbm5OIYec0"
