@@ -1,7 +1,10 @@
+export const BE_URL = "https://event-management-system-5zdg.onrender.com"
+
 export const ROUTES = {
     LOGIN: "/login",
     SIGN_UP: "/sign-up",
     HOME: "/",
+    USER_EVENTS: "/user/events",
     USER_PROFILE: "/user/profile",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
@@ -546,13 +549,15 @@ export const INITIAL_TICKETS_TYPES = [
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
-export const BE_URL = "https://event-management-system-5zdg.onrender.com"
 
 export const API_ROUTES = {
   ADMIN : {
     CREATE_EVENT : `${BE_URL}/events`,
     GET_EVENTS : `${BE_URL}/events`,
     DELETE_EVENT: (id: string) => `${BE_URL}/events/${id}`,
+  }, 
+  AUTH: {
+    LOGIN: `${BE_URL}/login`,
   }
 }
 
