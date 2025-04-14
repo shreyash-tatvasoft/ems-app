@@ -46,7 +46,7 @@ const LogInPage = () => {
       if (role === "admin") {
         router.push("/admin/dashboard");
       } else {
-        router.push("/user/events");
+        router.push("/events");
       }
 
       toast.success(result.message);

@@ -12,7 +12,7 @@ export const ROUTES = {
     LOGIN: "/login",
     SIGN_UP: "/sign-up",
     HOME: "/",
-    USER_EVENTS: "/user/events",
+    USER_EVENTS: "/events",
     USER_PROFILE: "/user/profile",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
@@ -584,8 +584,6 @@ export const PAGINATION_OPTIONS = [
   { value: 20, label: '20' },
 ];
 
-<<<<<<< HEAD
-export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VmYTgzMTg3M2YxMzg1ZDlhY2QwOTEiLCJuYW1lIjoiUHJpdGVzaCBNYWthc2FuYSIsImVtYWlsIjoicHJpdGVzaEB5b3BtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ0NjA5MjMxLCJleHAiOjE3NDQ2OTU2MzF9.2u3LEWTwgKZNbVI-_qC-xJdAhxQivBRzQUyJAU-03V8"
 export const EVENT_DATA : EventData[] = [
         {
           id: "1",
@@ -772,6 +770,4 @@ export const CATEGORIES : Category[] = [
         icon: FilmIcon,
       },
 ]
-=======
 export const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2Y3OWNmNThhZDgwNTRkYjBmOGI3NTUiLCJuYW1lIjoiU2hyZXlhc2giLCJlbWFpbCI6InNocmV5YXNoQHlvcG1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDQ2MDQ4MjYsImV4cCI6MTc0NDY5MTIyNn0.MJ9rlUzejJUWDmnBYUdafEOIhfmgsY-wmtbm5OIYec0"
->>>>>>> 358ff1dccfabbad938e455667ef4550e4461e654
