@@ -1,6 +1,6 @@
 import { AUTOCOMPLETE_API } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
-import { LocationField } from "./helper";
+import { EventLocation, LocationField } from "./helper";
 
 interface Suggestion {
   display_name: string;
@@ -16,6 +16,7 @@ interface Props {
   placeholder?: string;
   errorMsg?: string;
   errorKey?: boolean
+  defaultValue?: EventLocation; 
 }
 
 
@@ -27,6 +28,11 @@ const AddressAutocomplete: React.FC<Props> = ({
   errorKey,
   errorMsg,
   placeholder = "Enter event location",
+  defaultValue = {
+    address: "",
+    lat: 0,
+    long: 0,
+  },
 }) => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -48,32 +54,49 @@ const AddressAutocomplete: React.FC<Props> = ({
     const fetchSuggestions = async () => {
       if (!debouncedQuery.trim()) {
         setSuggestions([]);
+        setShowDropdown(false);
         return;
       }
-
+  
       try {
         const res = await fetch(`${AUTOCOMPLETE_API(debouncedQuery)}`);
         const data = await res.json();
+  
+        // ✅ Avoid opening dropdown for already-selected value
+        if (data.length === 1 && data[0].display_name === query) {
+          setShowDropdown(false);
+          setSuggestions([]);
+          return;
+        }
+  
         setSuggestions(data);
         setShowDropdown(true);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
       }
     };
-
+  
     fetchSuggestions();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, query]);
+  
+
+  useEffect(() => {
+    if (defaultValue) {
+      setQuery(defaultValue.address); // pre-fill input
+    }
+  }, [defaultValue]);
 
   const handleSelect = (fullLocation: Suggestion) => {
     setQuery(fullLocation.display_name);
     setShowDropdown(false);
     const locationFields = {
       latitude: parseFloat(fullLocation.lat),
-    longitude: parseFloat(fullLocation.lon),
+      longitude: parseFloat(fullLocation.lon),
       location: fullLocation.display_name,
     };
 
-    getLocationData(locationFields)
+    
+    getLocationData(locationFields);
   };
 
   return (
@@ -116,7 +139,7 @@ const AddressAutocomplete: React.FC<Props> = ({
           </ul>
         )}
 
-        {errorMsg && errorKey && (
+        {errorKey && (
           <p className="text-sm text-red-500 mt-1">{errorMsg}</p>
         )}
       </div>

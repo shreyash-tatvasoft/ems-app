@@ -32,13 +32,8 @@ const LogInPage = () => {
 
     if (result.success) {
       const { token, role } = result.data;
-      if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
-      } else {
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("role", role);
-      }
 
       if (role === "admin") {
         router.push("/admin/dashboard");

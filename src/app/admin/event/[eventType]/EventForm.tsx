@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
 import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
@@ -45,6 +45,13 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
 
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const handleRefClick = () => {
+    fileRef.current?.click();
+  };
+
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
@@ -72,6 +79,10 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     const newFiles = validFiles.slice(0, 3 - images.length);
     if (newFiles.length > 0) {
       setImages((prev) => [...prev, ...newFiles]);
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        "images": false,
+      }));
     }
 
     e.target.value = "";
@@ -105,6 +116,10 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     const newFiles = validFiles.slice(0,slotsLeft);
     if (newFiles.length > 0) {
       setExistingImages((prev) => [...prev, ...newFiles]);
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        "images": false,
+      }));
     }
 
     e.target.value = "";
@@ -517,9 +532,9 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
          title: receivedObj.title,
          description: receivedObj.description,
          location: {
-           address: "Ahmedabad",
-           lat: 23.022505,
-           long: 72.5713621,
+           address: receivedObj.location.address,
+           lat: receivedObj.location.lat,
+           long: receivedObj.location.lng,
          },
          start_time: new Date(receivedObj.startDateTime),
          end_time: new Date(receivedObj.endDateTime),
@@ -597,6 +612,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
             getLocationData={(location) => handleLocationChange(location)}
             label="Location"
             name={"location"}
+            defaultValue={formValues.location}
             placeholder="Enter event location"
             errorKey={formValuesError.location}
             errorMsg="Enter valid event location"
@@ -826,7 +842,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
                           }
                         />
                       </td>
-                      <td className="border px-2 py-1">
+                      <td className="border px-2 py-1 text-center">
                         <button
                           onClick={handleAdd}
                           className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
@@ -860,32 +876,38 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
           {/* file handleing code */}
           {isEditMode ? (
             <div className="space-y-4">
-              <label className="block text-sm font-bold text-gray-700 mb-1">
-                Images <span className="text-red-500">*</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="block text-sm font-bold text-gray-700 mb-1">
+                  Images <span className="text-red-500">*</span>
+                </label>
 
-              {existingImages.length < 3 && (
-                <input
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  multiple
-                  onChange={handleExistingFileChange}
-                  className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-sm file:font-semibold hover:file:bg-gray-50"
-                />
-              )}
+                <button
+                  onClick={handleRefClick}
+                  disabled={existingImages.length === 3}
+                  className="flex items-center font-bold cursor-pointer underline text-blue-500 px-4 py-2 disabled:cursor-not-allowed disabled:text-gray-500 rounded-md"
+                >
+                  Upload images
+                  <input
+                    type="file"
+                    ref={fileRef}
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    multiple
+                    onChange={handleExistingFileChange}
+                    className="hidden"
+                  />
+                </button>
+              </div>
 
-              {fileError && (
-                <p className="text-red-500 text-sm mt-1">{fileError}</p>
-              )}
-
-              {formValuesError.images && (
-                <p className="text-red-500 text-sm mt-1">
-                  Atleast one image is required
-                </p>
+              {existingImages.length === 0 && (
+                <div className="h-40 flex items-center justify-center mx-auto border-dashed rounded-[12px] border-gray-300 border-2">
+                  <p className="block text-lg font-semibold text-gray-500">
+                    Upload your images
+                  </p>
+                </div>
               )}
 
               {existingImages.length > 0 && (
-                <div className="grid grid-cols-12 gap-4">
+                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {existingImages.map((file, index) => {
                     const imageUrl =
                       "url" in file
@@ -913,22 +935,6 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
                   })}
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <label className="block text-sm font-bold text-gray-700 mb-1">
-                Images <span className="text-red-500">*</span>
-              </label>
-
-              {images.length < 3 && (
-                <input
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  multiple
-                  onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:bg-white file:text-sm file:font-semibold hover:file:bg-gray-50"
-                />
-              )}
 
               {fileError && (
                 <p className="text-red-500 text-sm mt-1">{fileError}</p>
@@ -939,9 +945,40 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
                   Atleast one image is required
                 </p>
               )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <label className="block text-sm font-bold text-gray-700 mb-1">
+                  Images <span className="text-red-500">*</span>
+                </label>
+
+                <button
+                  onClick={handleRefClick}
+                  disabled={images.length === 3}
+                  className="flex items-center font-bold cursor-pointer underline text-blue-500 px-4 py-2 disabled:cursor-not-allowed disabled:text-gray-500 rounded-md"
+                >
+                  Upload Images
+                  <input
+                    type="file"
+                    ref={fileRef}
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </button>
+              </div>
+              {images.length === 0 && (
+                <div className="h-40 flex items-center justify-center mx-auto border-dashed rounded-[12px] border-gray-300 border-2">
+                  <p className="block text-lg font-semibold text-gray-500">
+                    Upload your images
+                  </p>
+                </div>
+              )}
 
               {images.length > 0 && (
-                <div className="grid grid-cols-12 gap-4">
+                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {images.map((file, index) => {
                     const url = URL.createObjectURL(file);
                     return (
@@ -966,13 +1003,23 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
                   })}
                 </div>
               )}
+
+              {fileError && (
+                <p className="text-red-500 text-sm mt-1">{fileError}</p>
+              )}
+
+              {formValuesError.images && (
+                <p className="text-red-500 text-sm mt-1">
+                  Atleast one image is required
+                </p>
+              )}
             </div>
           )}
 
           <div className="text-end my-6">
             <button
               onClick={handleSubmit}
-              className="bg-primary hover:bg-primary-foreground text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
+              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
             >
               {isEditMode ? "Update" : "Create"} Event
             </button>
