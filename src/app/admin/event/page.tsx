@@ -3,14 +3,21 @@
 import React, { useEffect, useState} from 'react'
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { useRouter } from 'next/navigation';
-import { API_ROUTES, PAGINATION_OPTIONS, ROUTES, token } from '@/utils/constant';
+import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 import moment from 'moment';
 import Select from 'react-select';
-import { apiCall } from '@/utils/helper';
-import { EventResponse, EventsDataTypes, getTicketPriceRange } from './helper';
+import { apiCall, getAuthToken } from '@/utils/helper';
+import { getTicketPriceRange } from './helper';
 import Loader from '@/components/Loader';
 import DeleteDialog from '@/components/DeleteModal';
 import { toast } from 'react-toastify';
+import { EventResponse, EventsDataTypes } from '@/utils/interfaces';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 function EventsListpage() {
     const router = useRouter()
@@ -57,7 +64,8 @@ function EventsListpage() {
         event.category.toLowerCase().includes(lowerKeyword) ||
         event.startTime.toLowerCase().includes(lowerKeyword) ||
         event.location.toLowerCase().includes(lowerKeyword) ||
-        event.price.toString().toLowerCase().includes(lowerKeyword)
+        event.price.toString().toLowerCase().includes(lowerKeyword) || 
+        event.ticketsAvailable.toString().toLowerCase().includes(lowerKeyword)
       );
 
       setSearchQuery(keyword)
@@ -65,18 +73,10 @@ function EventsListpage() {
       setCurrentPage(1)
     };
 
-    const getStatus = (startTime: string, durationStr: string, tickets: number) => {
+    const getStatus = (startDate: string, endDate: string, tickets: number) => {
         const now = moment();
-        const start = moment(startTime);
-      
-        // Extract hours and minutes from duration string like "2h 30m"
-        const hoursMatch = durationStr.match(/(\d+)h/);
-        const minsMatch = durationStr.match(/(\d+)m/);
-      
-        const hours = hoursMatch ? parseInt(hoursMatch[1]) : 0;
-        const minutes = minsMatch ? parseInt(minsMatch[1]) : 0;
-      
-        const end = moment(start).add(moment.duration({ hours, minutes }));
+        const start = moment(startDate);
+        const end = moment(endDate);
       
         if (tickets === 0) return "Sold Out";
         if (now.isBefore(start)) return "Upcoming";
@@ -96,7 +96,7 @@ function EventsListpage() {
         endPoint : API_ROUTES.ADMIN.GET_EVENTS,
         method : "GET",
         headers : {
-          token : token
+          token : getAuthToken()
         }
       })
 
@@ -112,6 +112,9 @@ function EventsListpage() {
             title: item.title,
             category: item.category,
             startTime:moment(item.startDateTime).format(
+              "DD MMM YYYY, h:mm A"
+            ), 
+            endTime:moment(item.endDateTime).format(
               "DD MMM YYYY, h:mm A"
             ),  
             duration: item.duration,
@@ -138,7 +141,7 @@ function EventsListpage() {
         endPoint : API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
         method : "DELETE",
         headers : {
-          token : token
+          token : getAuthToken()
         }
       })
 
@@ -175,10 +178,10 @@ function EventsListpage() {
 
           {/* Search Bar & Filters  */}
 
-          <div className="flex justify-between items-start sm:items-center my-5">
-            <div className="flex  items-baseline sm:items-center sm:flex-row flex-col gap-3 space-x-2">
+          <div className="flex gap-4 justify-between items-start sm:items-center my-5">
+            <div className="flex  items-baseline sm:items-center sm:flex-row flex-col gap-2 space-x-2 w-full">
               {/* Search Input */}
-              <div className="relative">
+              <div className="relative w-full">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   <MagnifyingGlassIcon className="h-6 w-6" />
                 </span>
@@ -187,7 +190,7 @@ function EventsListpage() {
                   value={searchQuery}
                   onChange={(e) => searchEvents(e.target.value)}
                   placeholder="Search events"
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:w-80 md:w-40 w-full"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                 />
               </div>
 
@@ -201,29 +204,29 @@ function EventsListpage() {
             {/* Add Event Button */}
             <button
               onClick={navToCreateEventPage}
-              className="flex items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              className="md:w-40 w-auto flex items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
-              <PlusIcon className="w-6 h-6 font-bold mr-0 md:mr-2" />
+              <PlusIcon className="w-6 h-6 font-bold" />
               <p className="hidden md:block">Add Event</p>
             </button>
           </div>
 
           {/* Data Table  */}
 
-          <div className="overflow-x-auto p-4 bg-white rounded-lg">
+          <div className="overflow-x-auto py-4 bg-white rounded-lg">
             <table className="min-w-full text-sm text-left text-gray-700">
               <thead className="bg-gray-100 text-xs uppercase">
                 <tr>
-                  <th className="p-3 text-center">Image</th>
-                  <th className="p-3 text-center">Title</th>
-                  <th className="p-3 text-center">Category</th>
-                  <th className="p-3 text-center">Start Date/Time</th>
-                  <th className="p-3 text-center">Duration</th>
-                  <th className="p-3 text-center">Location</th>
-                  <th className="p-3 text-center">Ticket Price</th>
-                  <th className="p-3 text-center">Tickets Available</th>
-                  <th className="p-3 text-center">Status</th>
-                  <th className="p-3 text-center">Actions</th>
+                  <th className="p-3">Image</th>
+                  <th className="p-3">Title</th>
+                  <th className="p-3">Category</th>
+                  <th className="p-3">Start Date/Time</th>
+                  <th className="p-3">Duration</th>
+                  <th className="p-3">Location</th>
+                  <th className="p-3">Ticket Price</th>
+                  <th className="p-3">Tickets Available</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,11 +234,11 @@ function EventsListpage() {
                   eventsData.map((event, idx) => {
                     const status = getStatus(
                       event.startTime,
-                      event.duration,
+                      event.endTime,
                       event.ticketsAvailable
                     );
                     return (
-                      <tr key={idx} className="border-b hover:bg-gray-50 text-center">
+                      <tr key={idx} className="border-b hover:bg-gray-50">
                         <td className="p-3">
                           {event.img === "" ? (
                             "-"
@@ -255,10 +258,19 @@ function EventsListpage() {
                           )}
                         </td>
                         <td className="p-3">{event.duration}</td>
-                        <td className="p-3">{event.location}</td>
-                        <td className="p-3">
-                          {event.price}
+                        <td className="p-3 max-w-40">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger className='truncate max-w-40'>{event.location}</TooltipTrigger>
+                              <TooltipContent>
+                                <p className=' text-white font-bold'>{event.location}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          
                         </td>
+                        <td className="p-3">{event.price}</td>
                         <td className="p-3">{event.ticketsAvailable}</td>
                         <td className="p-3">
                           <span
@@ -268,10 +280,16 @@ function EventsListpage() {
                           </span>
                         </td>
                         <td className="p-3 space-x-2">
-                          <button onClick={() => navToEditPage(event.id)} className="text-blue-500 hover:text-blue-700 cursor-pointer">
+                          <button
+                            onClick={() => navToEditPage(event.id)}
+                            className="text-blue-500 hover:text-blue-700 cursor-pointer"
+                          >
                             <PencilSquareIcon className="h-5 w-5" />
                           </button>
-                          <button onClick={() => openDeleteModal(event.id)} className="text-red-500 hover:text-red-700 cursor-pointer">
+                          <button
+                            onClick={() => openDeleteModal(event.id)}
+                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                          >
                             <TrashIcon className="h-5 w-5" />
                           </button>
                         </td>
