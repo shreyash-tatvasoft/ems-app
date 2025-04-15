@@ -73,18 +73,10 @@ function EventsListpage() {
       setCurrentPage(1)
     };
 
-    const getStatus = (startTime: string, durationStr: string, tickets: number) => {
+    const getStatus = (startDate: string, endDate: string, tickets: number) => {
         const now = moment();
-        const start = moment(startTime);
-      
-        // Extract hours and minutes from duration string like "2h 30m"
-        const hoursMatch = durationStr.match(/(\d+)h/);
-        const minsMatch = durationStr.match(/(\d+)m/);
-      
-        const hours = hoursMatch ? parseInt(hoursMatch[1]) : 0;
-        const minutes = minsMatch ? parseInt(minsMatch[1]) : 0;
-      
-        const end = moment(start).add(moment.duration({ hours, minutes }));
+        const start = moment(startDate);
+        const end = moment(endDate);
       
         if (tickets === 0) return "Sold Out";
         if (now.isBefore(start)) return "Upcoming";
@@ -120,6 +112,9 @@ function EventsListpage() {
             title: item.title,
             category: item.category,
             startTime:moment(item.startDateTime).format(
+              "DD MMM YYYY, h:mm A"
+            ), 
+            endTime:moment(item.endDateTime).format(
               "DD MMM YYYY, h:mm A"
             ),  
             duration: item.duration,
@@ -239,7 +234,7 @@ function EventsListpage() {
                   eventsData.map((event, idx) => {
                     const status = getStatus(
                       event.startTime,
-                      event.duration,
+                      event.endTime,
                       event.ticketsAvailable
                     );
                     return (

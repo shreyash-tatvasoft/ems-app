@@ -29,6 +29,7 @@ export interface EventsDataTypes {
   title: string;
   category: string;
   startTime: string;
+  endTime: string;
   duration: string;
   location: string;
   price: string | number;
