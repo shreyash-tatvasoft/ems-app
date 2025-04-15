@@ -43,17 +43,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
         </div>
-        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-          {event.description}
-        </p>
+        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:event.description}}/>
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
             <CalendarIcon className="h-4 w-4 mr-2" />
             <span>{formattedDate}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <ClockIcon className="h-4 w-4 mr-2" />
-            <span>{event.time}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <TagIcon className="h-4 w-4 mr-2" />
