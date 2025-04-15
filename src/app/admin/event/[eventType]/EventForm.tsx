@@ -5,7 +5,6 @@ import CustomTextField from './InputField';
 import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
 import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
 import CustomSelectField from './SelectField';
-import GoogleAutoComplete from './GoogleMapAutoComplete';
 import CustomDateTimePicker from './DateTimePicker';
 import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
 import moment from 'moment';
@@ -15,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import QuilEditor from './QuilEditor';
 import { EventDataObjResponse, EventImage } from '@/utils/interfaces';
-import AddressAutocomplete from './LoactionAutoComplete.web';
+import AddressAutocomplete from './AddressAutoComplete.web';
 
 interface EventFormProps {
   eventType : string
@@ -587,14 +586,14 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
             errorMsg={
               formValues.description.length < 11
                 ? "Enter valid event description"
-                : formValues.description.length < 20 ? "Event description must be at least 20 characters long" : ""
+                : formValues.description.length < 20
+                ? "Event description must be at least 20 characters long"
+                : ""
             }
             required
           />
 
-          <AddressAutocomplete />
-
-          <GoogleAutoComplete
+          <AddressAutocomplete
             getLocationData={(location) => handleLocationChange(location)}
             label="Location"
             name={"location"}
@@ -889,9 +888,9 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
                 <div className="grid grid-cols-12 gap-4">
                   {existingImages.map((file, index) => {
                     const imageUrl =
-                    'url' in file
-                      ? file.url // EventImage
-                      : URL.createObjectURL(file); // File
+                      "url" in file
+                        ? file.url // EventImage
+                        : URL.createObjectURL(file); // File
                     return (
                       <div
                         key={index}
