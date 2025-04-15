@@ -1,5 +1,13 @@
 export const BE_URL = "https://event-management-system-5zdg.onrender.com"
 
+
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
+
+export const AUTOCOMPLETE_API = (debouncedQuery: string) => `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(
+  debouncedQuery
+)}&format=json&limit=5`
+
+
 import { Category, EventData } from "@/types/events"
 import {
     MusicIcon,

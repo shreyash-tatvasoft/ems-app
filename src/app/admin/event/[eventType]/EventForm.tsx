@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import QuilEditor from './QuilEditor';
 import { EventDataObjResponse, EventImage } from '@/utils/interfaces';
+import AddressAutocomplete from './LoactionAutoComplete.web';
 
 interface EventFormProps {
   eventType : string
@@ -435,7 +436,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
 
 
     // update exisitng iamges (edit mode)
-    {isEditMode && existingImageIdsArray.length > 0 &&  formData.append("existingImages", existingImageIdsArray.toString());}
+    {isEditMode && existingImageIdsArray.length > 0 &&  formData.append("existingImages", JSON.stringify(existingImageIdsArray));}
 
     // update new images (edit mode)
    {isEditMode && updatedImagesArray.forEach((file) => {
@@ -590,6 +591,8 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
             }
             required
           />
+
+          <AddressAutocomplete />
 
           <GoogleAutoComplete
             getLocationData={(location) => handleLocationChange(location)}
