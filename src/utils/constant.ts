@@ -73,6 +73,7 @@ export const API_ROUTES = {
   }, 
   AUTH: {
     LOGIN: `${BE_URL}/login`,
+    SIGNUP: `${BE_URL}/signup`,
   }
 }
 

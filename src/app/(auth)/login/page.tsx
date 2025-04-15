@@ -32,9 +32,6 @@ const LogInPage = () => {
 
     if (result.success) {
       const { token, role } = result.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
@@ -96,9 +93,9 @@ const LogInPage = () => {
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
-                    Log In
+                    {isSubmitting ? "Logging In..." : "Log In"}
                   </button>
-
+                 
                   <p className="text-center text-sm text-gray-500 mt-4">
                     Don’t have an account?{" "}
                     <Link href={ROUTES.SIGN_UP} className="text-[#4F46E5] font-medium hover:underline">
