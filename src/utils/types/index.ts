@@ -9,6 +9,12 @@ export interface IDeleteModalProps {
     loading?: boolean
 }
 
+export interface IFilterModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    applyFilters: () => void;
+}
+
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
 export type EventCategory = 'movies' | 'conference' | 'party' | 'music' | 'dance' | 'all';
 export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';
