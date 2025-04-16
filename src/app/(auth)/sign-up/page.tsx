@@ -4,13 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
-import { ROUTES, API_ROUTES } from "@/utils/constant";
-import { SignupFormSchema } from "@/app/(auth)/sign-up/schema";
-import { InitialSignupValues, ISignupFormValues, TITLE } from "./helper";
-import FormikTextField from "@/app/components/common/FormikTextField";
-import Logo from "@/app/components/common/Logo";
-import { apiCall } from "@/utils/helper";
 import { toast } from "react-toastify";
+import { ROUTES, API_ROUTES } from "@/utils/constant";
+import Logo from "@/components/common/Logo";
+import FormikTextField from "@/components/common/FormikTextField";
+import { apiCall } from "@/utils/helper";
+
+import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
+import { ISignupFormValues } from "./types";
 
 const SignUpPage = () => {
   const router = useRouter();
