@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import { ROUTES, API_ROUTES } from "@/utils/constant";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
-import FormikTextField from "@/app/components/common/FormikTextField";
-import Logo from "@/app/components/common/Logo";
+import FormikTextField from "@/components/common/FormikTextField";
+import Logo from "@/components/common/Logo";
 import { apiCall } from "@/utils/helper";
 import { toast } from "react-toastify";
 import { ILogInFormValues } from "./types";
@@ -32,8 +32,13 @@ const LogInPage = () => {
 
     if (result.success) {
       const { token, role } = result.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+      } else {
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("role", role);
+      }
 
       if (role === "admin") {
         router.push("/admin/dashboard");
