@@ -26,7 +26,13 @@ export async function middleware(request: NextRequest) {
         const secret = new TextEncoder().encode(process.env.TOKEN_SECRET);
         const { payload } = await jwtVerify(token, secret);
 
-        const userRole = payload.role as string;
+        const role = localStorage.getItem("role") || sessionStorage.getItem("role") || ""
+
+        const userRole = payload.role as string || role;
+
+        if (!role) {
+            return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+        }
 
         const roleRoutes: Record<string, string[]> = {
             [ROLE.Admin]: adminRoutes,
