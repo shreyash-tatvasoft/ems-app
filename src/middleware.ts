@@ -14,6 +14,7 @@ export async function middleware(request: NextRequest) {
 
     const isPublicRoute = publicRoutes.includes(currentPath);
     const token = request.cookies.get("token")?.value;
+    // const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
 
     if (!token) {
         if (!isPublicRoute) {
@@ -26,7 +27,8 @@ export async function middleware(request: NextRequest) {
         const secret = new TextEncoder().encode(process.env.TOKEN_SECRET);
         const { payload } = await jwtVerify(token, secret);
 
-        const role = localStorage.getItem("role") || sessionStorage.getItem("role") || ""
+        // const role = localStorage.getItem("role") || sessionStorage.getItem("role") || ""
+        const role = payload.role as string || ""
 
         const userRole = payload.role as string || role;
 
