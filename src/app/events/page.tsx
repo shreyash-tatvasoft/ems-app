@@ -6,9 +6,8 @@ import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
 import { API_ROUTES } from '@/utils/constant'
-import { EventData, EventCategory, SortOption } from "@/types/events";
+import { EventData, EventCategory, SortOption, EventResponse } from "@/types/events";
 import { apiCall, getAuthToken } from '@/utils/helper'
-import { EventResponse } from '@/utils/interfaces'
 import moment from 'moment'
 import { getTicketPriceRange } from '../admin/event/helper'
 import { areAllTicketsBooked, getEventStatus, isNearbyWithUserLocation } from './event-helper'

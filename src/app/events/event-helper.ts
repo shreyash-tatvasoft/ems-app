@@ -1,4 +1,5 @@
-import { Ticket } from "@/types/events";
+import { EventData, Ticket } from "@/types/events";
+import { EventDataObjResponse, EventResponse } from "@/utils/types";
 
 export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 'upcoming' | 'ended' {
     const now = new Date();
@@ -55,3 +56,13 @@ export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 
 export const areAllTicketsBooked = (tickets : Ticket[]): boolean => {
     return tickets.every(ticket => ticket.totalBookedSeats >= ticket.totalSeats);
   };
+
+export const getSimilarEvents = (events:EventDataObjResponse[] | null,currentEventId :string) => {
+if(events){
+    const currentEvent = events.find(event => event._id === currentEventId);
+if (!currentEvent) return [];
+return events
+    .filter(event => event.category === currentEvent.category && event._id !== currentEventId)
+    .slice(0, 3); 
+}
+};

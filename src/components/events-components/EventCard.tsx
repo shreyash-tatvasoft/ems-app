@@ -2,6 +2,9 @@
 import React, { useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
 import { EventData } from '@/types/events'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/utils/constant'
+
 interface EventCardProps {
   event: EventData
 }
@@ -17,6 +20,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     day: 'numeric',
     year: 'numeric',
   })
+  const router = useRouter();
+  const navigateToEventDetails=(eventId:string)=>{
+    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
+  }
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -59,6 +66,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <button
           disabled={event.isSoldOut}
           className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+          onClick={()=>navigateToEventDetails(event.id)}
         >
           {event.isSoldOut ? 'Sold Out' : 'View Details'}
         </button>

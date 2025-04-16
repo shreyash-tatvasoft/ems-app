@@ -3,6 +3,7 @@ export const ROUTES = {
   SIGN_UP: "/sign-up",
   HOME: "/",
   USER_EVENTS: "/events",
+  USER_EVENTS_DETAILS: "/events/*",
   USER_PROFILE: "/user/profile",
   ADMIN: {
       DASHBOARD: "/admin/dashboard",
