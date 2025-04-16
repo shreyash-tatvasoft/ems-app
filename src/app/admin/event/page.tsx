@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react'
 
 // Custom Compoents
-import Loader from '@/components/Loader';
-import DeleteDialog from '@/components/DeleteModal';
+import Loader from '@/components/common/Loader';
+import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 
 // types import
@@ -28,10 +28,8 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 
 // helper functions
-import { apiCall, getAuthToken } from '@/utils/helper';
+import { apiCall } from '@/utils/services/request';
 import { getStatus, getTicketPriceRange, sortEvents } from './helper';
-
-
 
 function EventsListpage() {
   const router = useRouter()
@@ -115,18 +113,13 @@ function EventsListpage() {
   };
 
   const fetchEvents = async () => {
-    const request = await apiCall({
+    const response = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS,
       method: "GET",
-      headers: {
-        token: getAuthToken()
-      }
     })
 
-    const result = await request.json()
-
-    if (result && result.success && result.data.length > 0) {
-      const receivedArrayObj: EventResponse = result.data
+    if (response && response.success && response.data.length > 0) {
+      const receivedArrayObj: EventResponse = response.data
 
       const modifiedArray = receivedArrayObj.map(item => {
         return {
@@ -160,15 +153,10 @@ function EventsListpage() {
 
   const deleteEvents = async () => {
     setLoading(true)
-    const request = await apiCall({
+    const result = await apiCall({
       endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
       method: "DELETE",
-      headers: {
-        token: getAuthToken()
-      }
     })
-
-    const result = await request.json()
 
     if (result && result.success) {
       fetchEvents()

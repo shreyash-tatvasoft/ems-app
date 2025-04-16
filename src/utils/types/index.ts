@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-
 export interface IDeleteModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -13,6 +12,13 @@ export interface IFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
     applyFilters: () => void;
+}
+
+export interface ISidebarPageProps {
+  children : React.ReactNode, 
+  isOpen?: boolean; 
+  onClose?: () => void,
+  activeLink? : string
 }
 
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
