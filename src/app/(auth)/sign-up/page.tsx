@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import { ROUTES, API_ROUTES } from "@/utils/constant";
-import FormikTextField from "@/app/components/common/FormikTextField";
-import Logo from "@/app/components/common/Logo";
+import Logo from "@/components/common/Logo";
+import FormikTextField from "@/components/common/FormikTextField";
 import { apiCall } from "@/utils/helper";
 
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
