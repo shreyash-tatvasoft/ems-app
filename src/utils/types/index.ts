@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-
 export interface IDeleteModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -7,6 +6,19 @@ export interface IDeleteModalProps {
     title?: string;
     description?: string;
     loading?: boolean
+}
+
+export interface IFilterModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    applyFilters: () => void;
+}
+
+export interface ISidebarPageProps {
+  children : React.ReactNode, 
+  isOpen?: boolean; 
+  onClose?: () => void,
+  activeLink? : string
 }
 
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
@@ -93,3 +105,16 @@ export type EventDataObjResponse = {
 };
 
 export type EventResponse = EventDataObjResponse[];
+
+// API
+export type TRequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export interface IRequestParams {
+    endPoint: string;
+    method: TRequestMethod;
+    headers?: Record<string, string>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body?: any;
+    withToken?: boolean; // optional flag
+    isFormData?: boolean;
+}
