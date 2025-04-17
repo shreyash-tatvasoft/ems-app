@@ -1,74 +1,56 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { NextPage } from 'next';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapPinIcon, TagIcon } from 'lucide-react';
 import ImageCarousel from '@/components/events-components/ImageCarousel';
-import BookingButton from '@/components/events-components/BookingButton';
 import EventDescription from '@/components/events-components/EventDescription';
-import GoogleMap from '@/components/events-components/GoogleMap';
 import SimilarEvents from '@/components/events-components/SimilarEvents';
-import { EventData, EventDataObjResponse, EventDetails, EventResponse } from '@/types/events';
-import moment from 'moment';
+import { EventDataObjResponse, EventDetails } from '@/types/events';
 import { getTicketPriceRange } from '@/app/admin/event/helper';
 import { areAllTicketsBooked, getEventStatus, getSimilarEvents, isNearbyWithUserLocation } from "@/app/events/event-helper";
-import { apiCall, getAuthToken } from '@/utils/helper';
+import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { useRouter } from 'next/navigation';
+import Loader from '../common/Loader';
 
-interface EventPageProps { 
-  params: Promise<{ eventId: string }>;
-}
-
-export default async function EventDetailsPage ({ eventId}:{eventId:string}) {
+export default function EventDetailsPage ({ eventId}:{eventId:string}) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
   const [event, setEventDetail] = useState<EventDetails>()
+  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter();
   const navigateToHome=()=>{
     router.push("/events");
   }
+  
   const fetchEvents = async () => {
-    const request = await apiCall({
-        endPoint : API_ROUTES.ADMIN.GET_EVENTS,
-        method : "GET",
-        headers : {
-        token : getAuthToken()
-        }
+    const result = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS,
+      method: "GET",
     })
 
-    const result = await request.json()
-
-    if(result && result.success && result.data.length > 0) {
-        const receivedArrayObj : EventDataObjResponse[] = result.data
-
-        await setEventsDetails(receivedArrayObj)
-    } else {
-
+    if (result?.success && result.data?.length > 0) {
+      setEventsDetails(result.data)
     }
-      }
-      const getEventDetail = async () => {
-        const request = await apiCall({
-          endPoint : `${API_ROUTES.ADMIN.GET_EVENTS}\\${eventId}`,
-          method : "GET",
-          headers : {
-            token : getAuthToken()
-          }
-        })
-  
-        const result = await request.json()
-  
-        if(result && result.success && result.data.length > 0) {
-           const receivedArrayObj : EventDetails = result.data
-  
-           setEventDetail(receivedArrayObj)
-        } else {
-
-        }
+    setLoading(false)
   }
-      useEffect(()=>{
-        fetchEvents();
-        getEventDetail(); 
-      },[])
-  if (!event) {
+
+  const getEventDetail = async () => {
+    const result = await apiCall({
+      endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${eventId}`,
+      method: "GET",
+    })
+
+    if (result?.success && result.data) {
+      setEventDetail(result.data)
+    }
+    setLoading(false)
+  }
+  useEffect(() => {
+    if (eventId) {
+      fetchEvents()
+      getEventDetail()
+    }
+  }, [eventId])
+  if (!event || !eventId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -92,6 +74,7 @@ export default async function EventDetailsPage ({ eventId}:{eventId:string}) {
   const similarEvents = getSimilarEvents(eventsDetails,eventId)
   return (
     <div className="min-h-screen bg-gray-50">
+     {loading && <Loader />}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button

@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 interface EventDescriptionProps {
@@ -34,8 +35,11 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
       <div
         className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-96' : 'max-h-20'}`}
       >
-        <p className="text-gray-600">{description}</p>
-      </div>
+            <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: description }}
+        />      
+        </div>
     </div>
   )
 }

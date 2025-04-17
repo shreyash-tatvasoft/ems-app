@@ -7,11 +7,12 @@ import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
 import { API_ROUTES } from '@/utils/constant'
 import { EventData, EventCategory, SortOption, EventResponse } from "@/types/events";
-import { apiCall, getAuthToken } from '@/utils/helper'
+import { apiCall } from '@/utils/services/request';
+import { getAuthToken } from "@/utils/helper";
 import moment from 'moment'
 import { getTicketPriceRange } from '../admin/event/helper'
 import { areAllTicketsBooked, getEventStatus, isNearbyWithUserLocation } from './event-helper'
-import Loader from '@/components/Loader'
+import Loader from '@/components/common/Loader'
 const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -19,16 +20,14 @@ const EventsPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>('none')
   const [loading, setLoading] = useState<boolean>(true)
   const fetchEvents = async () => {
-        const request = await apiCall({
+        const response = await apiCall({
           endPoint : API_ROUTES.ADMIN.GET_EVENTS,
-          method : "GET",
-          headers : {
-            token : getAuthToken()
+          method : "GET", 
+          headers:{
+            'token':getAuthToken()
           }
         })
-  
-        const result = await request.json()
-  
+        let result = await response;
         if(result && result.success && result.data.length > 0) {
            const receivedArrayObj : EventResponse = result.data
   
