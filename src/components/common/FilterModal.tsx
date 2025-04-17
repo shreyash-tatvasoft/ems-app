@@ -42,8 +42,24 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     { id: 9, label: "Business", value: "Business" },
   ]
 
+  const STATUS_OPTIONS = [
+    { label : "Upcoming", value : "upcoming"},
+    { label : "Ongoing", value : "ongoing"},
+    { label : "Ended", value : "ended"}
+  ]
+
+  const TICKETS_OPTIONS = [
+    { label : "Available", value : "available", colorKey : "green"},
+    { label : "Filling Fast", value : "fastFilling", colorKey : "yellow"},
+    { label : "Almost Full", value : "almostFull", colorKey : "red"},
+    { label : "Sold Out", value : "soldOut", colorKey : "gray"}
+
+  ]
+
   const [selectedDurations, setSelectedDurations] = useState<string[]>([])
   const [selectedCatogory, setSelectedCatogory] = useState<string[]>([])
+  const [selectedStatus, setSelectedStatus] = useState("")
+  const [selectedTicket, setSelectedTicket] = useState("")
   const [showAll, setShowAll] = useState(false)
 
   const [date, setDate] = useState<{
@@ -79,16 +95,30 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
   const visibleCategories = showAll ? CATEGORIES_ITEMS : CATEGORIES_ITEMS.slice(0, 3)
   
+  const clearAllFilters = () => {
+    setSelectedStatus("")
+    setSelectedTicket("")
+    setSelectedCatogory([])
+    setSelectedDurations([])
+    onClose()
+  }
+
+  const submitFilters = () => {
+    const filterValues = {
+       catogories : selectedCatogory
+    }
+    applyFilters(filterValues)
+  }
   
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40">
-      <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative"> 
+      <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
         {/* Title Section Start */}
         <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
           <p className="font-bold text-2xl">Filters</p>
-          <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
+          <XMarkIcon onClick={clearAllFilters} className="h-6 w-6 cursor-pointer" />
         </div>
         {/* Title Section End */}
 
@@ -97,7 +127,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
           <div className="my-5">
             <p className="font-semibold text-lg">Price</p>
-              <Slider />
+            <Slider />
           </div>
 
           <div className="my-5">
@@ -138,14 +168,13 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                       setDate({
                         from: range?.from,
                         to: range?.to,
-                      })
+                      });
                     }}
                     numberOfMonths={2}
                   />
                 </PopoverContent>
               </Popover>
             </div>
-
           </div>
 
           <div className="my-5">
@@ -205,46 +234,47 @@ const FilterModal: React.FC<IFilterModalProps> = ({
             <p className="font-semibold text-lg mb-4">Status</p>
 
             <div className="flex w-full gap-4">
-              {/* Upcoming */}
-              <button className="flex-1 border-[1px] border-blue-500 text-blue-500 font-semibold px-4 py-2 rounded-md hover:bg-blue-100 transition cursor-pointer">
-                Upcoming
-              </button>
-
-              {/* Ongoing */}
-              <button className="flex-1 border-[1px] border-blue-500 text-blue-500 font-semibold px-4 py-2 rounded-md hover:bg-blue-100 transition cursor-pointer">
-                Ongoing
-              </button>
-
-              {/* Ended */}
-              <button className="flex-1 border-[1px] border-blue-500 text-blue-500 font-semibold px-4 py-2 rounded-md hover:bg-blue-100 transition cursor-pointer">
-                Ended
-              </button>
+              {STATUS_OPTIONS.map((item, index) => {
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedStatus(item.value)}
+                    className={`flex-1 border-[1px] border-blue-500 font-semibold px-4 py-2 rounded-md  transition cursor-pointer
+                  ${
+                    selectedStatus === item.value
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-white text-blue-500 hover:bg-blue-100"
+                  }
+                  `}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           <div className="my-5">
             <p className="font-semibold text-lg mb-4">Tickets Availability</p>
 
-            <div className="flex gap-4 flex-nowrap">
-              {/* Available */}
-              <button className="font-bold cursor-pointer border-1 border-green-500 text-green-500 px-4 py-2 rounded-md hover:bg-green-100 transition">
-                Available
-              </button>
-
-              {/* Filling Fast */}
-              <button className="font-bold cursor-pointer border-1 border-yellow-500 text-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-100 transition">
-                Filling Fast
-              </button>
-
-              {/* Almost Full */}
-              <button className="font-bold cursor-pointer border-1 border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-100 transition">
-                Almost Full
-              </button>
-
-              {/* Sold Out */}
-              <button className="font-bold cursor-pointer border-1 border-gray-400 text-gray-400 px-4 py-2 hover:bg-gray-100 rounded-md transition">
-                Sold Out
-              </button>
+            <div className="flex w-full gap-3">
+              {TICKETS_OPTIONS.map((item, index) => {
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedTicket(item.value)}
+                    className={`flex-1 border-[1px] border-${item.colorKey}-500  font-semibold p-2 rounded-md  transition cursor-pointer
+                  ${
+                    selectedTicket === item.value
+                      ? `bg-${item.colorKey}-600 text-white  hover:bg-${item.colorKey}-700`
+                      : `bg-white text-${item.colorKey}-500 hover:bg-${item.colorKey}-100`
+                  }
+                  `}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -277,14 +307,14 @@ const FilterModal: React.FC<IFilterModalProps> = ({
         {/* Buttons */}
         <div className="flex justify-center gap-3 p-6">
           <button
-            onClick={onClose}
-            className="w-full cursor-pointer px-4 py-2 rounded-[12px] font-bold border border-gray-300 text-gray-700 hover:bg-gray-100"
+            onClick={clearAllFilters}
+            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold border border-gray-500 text-gray-700 hover:bg-gray-100"
           >
             Clear All
           </button>
           <button
-            onClick={applyFilters}
-            className="w-full cursor-pointer px-4 py-2 rounded-[12px] font-bold bg-blue-500 text-white hover:bg-blue-600"
+            onClick={submitFilters}
+            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-blue-500 text-white hover:bg-blue-600"
           >
             Apply Filters
           </button>

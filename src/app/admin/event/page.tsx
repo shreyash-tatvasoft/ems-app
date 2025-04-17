@@ -8,7 +8,7 @@ import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 
 // types import
-import { EventResponse, EventsDataTypes } from '@/utils/types';
+import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
 
 // library support 
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,7 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents } from './helper';
+import { getStatus, getTicketPriceRange, sortEvents, filterByCatogories } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
@@ -104,6 +104,15 @@ function EventsListpage() {
     setEventsData(searchResult)
     setCurrentPage(1)
   };
+
+  const submitFilters = (filterValues : IApplyFiltersKey) => {
+    closeFilterModal()
+    setLoading(true)
+    const matchesByCatogories = filterByCatogories(allEventsData, filterValues.catogories)
+
+    setAllEventsData(matchesByCatogories)
+    setLoading(false)
+  }
 
   const statusColor = {
     Upcoming: "bg-blue-100 text-blue-700",
@@ -461,7 +470,7 @@ function EventsListpage() {
       <FilterModal
         isOpen={filterModal}
         onClose={closeFilterModal}
-        applyFilters={closeFilterModal}
+        applyFilters={submitFilters}
       />
     </div>
   );

@@ -11,7 +11,11 @@ export interface IDeleteModalProps {
 export interface IFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    applyFilters: () => void;
+    applyFilters: (filterValues : IApplyFiltersKey) => void;
+}
+
+export interface IApplyFiltersKey {
+    catogories : string[]
 }
 
 export interface ISidebarPageProps {

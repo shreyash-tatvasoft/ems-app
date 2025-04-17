@@ -132,3 +132,7 @@ export const sortEvents = (
         return 0;
     });
 };
+
+export const filterByCatogories = (events: EventsDataTypes[], catogoeriesArray : string[]) => {
+  return events.filter(event => catogoeriesArray.includes(event.category))
+}
