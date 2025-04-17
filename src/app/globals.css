@@ -131,3 +131,7 @@
   font-size: 1rem;
   background-color: white;
 }
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
