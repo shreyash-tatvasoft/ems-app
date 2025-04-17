@@ -7,7 +7,7 @@ const userDefaultRoute = ROUTES.USER_EVENTS;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
 const adminRoutes = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.EVENTS];
-const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS, ROUTES.USER_EVENTS_DETAILS];
+const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS,];
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
@@ -66,11 +66,6 @@ export const config = {
         "/sign-up",
         "/events",
         "/admin/:path*",
-<<<<<<< HEAD
-        "/user-profile",
-        "/events/:path*" // Include user route explicitly
-=======
         "/user/:path*",
->>>>>>> f66b40a06aa5e2c70c3ff627ef6389fdc6dfec6e
     ],
 };

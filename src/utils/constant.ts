@@ -1,17 +1,4 @@
 export const ROUTES = {
-<<<<<<< HEAD
-  LOGIN: "/login",
-  SIGN_UP: "/sign-up",
-  HOME: "/",
-  USER_EVENTS: "/events",
-  USER_EVENTS_DETAILS: "/events/*",
-  USER_PROFILE: "/user/profile",
-  ADMIN: {
-      DASHBOARD: "/admin/dashboard",
-      EVENTS: "/admin/event",
-      CREATE_EVENT : "/admin/event/create",
-  }
-=======
     LOGIN: "/login",
     SIGN_UP: "/sign-up",
     HOME: "/",
@@ -23,7 +10,6 @@ export const ROUTES = {
         CREATE_EVENT: "/admin/event/create",
     },
     RESET_PASSWORD:"/reset-password"
->>>>>>> fba02e264815539e5811d19ac587daa7e581fbf7
 }
 
 export const API_ROUTES = {
