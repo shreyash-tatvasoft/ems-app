@@ -1,4 +1,5 @@
 export const ROUTES = {
+<<<<<<< HEAD
   LOGIN: "/login",
   SIGN_UP: "/sign-up",
   HOME: "/",
@@ -10,6 +11,19 @@ export const ROUTES = {
       EVENTS: "/admin/event",
       CREATE_EVENT : "/admin/event/create",
   }
+=======
+    LOGIN: "/login",
+    SIGN_UP: "/sign-up",
+    HOME: "/",
+    USER_EVENTS: "/events",
+    USER_PROFILE: "/user/profile",
+    ADMIN: {
+        DASHBOARD: "/admin/dashboard",
+        EVENTS: "/admin/event",
+        CREATE_EVENT: "/admin/event/create",
+    },
+    RESET_PASSWORD:"/reset-password"
+>>>>>>> fba02e264815539e5811d19ac587daa7e581fbf7
 }
 
 export const API_ROUTES = {
@@ -23,6 +37,8 @@ export const API_ROUTES = {
     AUTH: {
         LOGIN: `/login`,
         SIGNUP: `/signup`,
+        FORGOT_PASSWORD: `/forgot_password`,
+        RESET_PASSWORD:`/reset_password`
     }
 }
 
