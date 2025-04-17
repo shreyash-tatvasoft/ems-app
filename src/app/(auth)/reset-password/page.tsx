@@ -1,17 +1,30 @@
 "use client";
+// React and Next.js Core Imports
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Third-party Libraries
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
+
+// Constants
 import { ROUTES, API_ROUTES } from "@/utils/constant";
+
+// Helper Functions and Schemas
 import { apiCall } from "@/utils/services/request";
 import { ResetPassSchema, InitialResetPassValues } from "./helper";
+
+// Custom Components
 import FormikTextField from "@/components/common/FormikTextField";
 import Logo from "@/components/common/Logo";
+
+// Types
 import { IResetPassValues } from "./types";
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+
+// Icons
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const ResetPasswordPage = () => {
   const router = useRouter();
