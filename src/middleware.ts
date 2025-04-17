@@ -11,68 +11,66 @@ const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS, ROUTES.USER_EVENTS_
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
-
     const isPublicRoute = publicRoutes.includes(currentPath);
-    const token = request.cookies.get("token")?.value;
-    // const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
+    const token = request.cookies.get("authToken")?.value;
 
-    // if (!token) {
-    //     if (!isPublicRoute) {
-    //         return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-    //     }
-    //     return NextResponse.next();
-    // }
+    if (!token) {
+        if (!isPublicRoute) {
+            return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+        }
+        return NextResponse.next();
+    }
 
-    // try {
-    //     const secret = new TextEncoder().encode(process.env.TOKEN_SECRET);
-    //     const { payload } = await jwtVerify(token, secret);
+    try {
+        const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_TOKEN_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        const userRole = payload.role as string;
 
-    //     // const role = localStorage.getItem("role") || sessionStorage.getItem("role") || ""
-    //     const role = payload.role as string || ""
+        if (!userRole) {
+            return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+        }
 
-    //     const userRole = payload.role as string || role;
+        const roleRoutes: Record<string, string[]> = {
+            [ROLE.Admin]: adminRoutes,
+            [ROLE.User]: userRoutes,
+        };
 
-    //     if (!role) {
-    //         return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-    //     }
+        const defaultRoutes: Record<string, string> = {
+            [ROLE.Admin]: adminDefaultRoute,
+            [ROLE.User]: userDefaultRoute,
+        };
 
-    //     const roleRoutes: Record<string, string[]> = {
-    //         [ROLE.Admin]: adminRoutes,
-    //         [ROLE.User]: userRoutes,
-    //     };
+        const allowedRoutes = roleRoutes[userRole] || [];
+        const defaultRedirect = defaultRoutes[userRole] || "/";
 
-    //     const defaultRoutes: Record<string, string> = {
-    //         [ROLE.Admin]: adminDefaultRoute,
-    //         [ROLE.User]: userDefaultRoute,
-    //     };
+        if (isPublicRoute) {
+            return NextResponse.redirect(new URL(defaultRedirect, request.url));
+        }
 
-    //     const allowedRoutes = roleRoutes[userRole] || [];
-    //     const defaultRedirect = defaultRoutes[userRole] || "/";
+        const isAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
+        if (!isAllowed) {
+            return NextResponse.redirect(new URL(defaultRedirect, request.url));
+        }
 
-    //     // If trying to access a public route while logged in, redirect to role-based default
-    //     if (isPublicRoute) {
-    //         return NextResponse.redirect(new URL(defaultRedirect, request.url));
-    //     }
-
-    //     // If current path is not allowed for the role, redirect
-    //     if (!allowedRoutes.includes(currentPath)) {
-    //         return NextResponse.redirect(new URL(defaultRedirect, request.url));
-    //     }
-
-    //     return NextResponse.next();
-    // } catch (error) {
-    //     console.error("Invalid token:", error);
-    //     return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-    // }
+        return NextResponse.next();
+    } catch (error) {
+        console.error("Invalid token:", error);
+        return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+    }
 }
 
 export const config = {
     matcher: [
         "/",
         "/login",
-        "/signup",
+        "/sign-up",
+        "/events",
         "/admin/:path*",
+<<<<<<< HEAD
         "/user-profile",
         "/events/:path*" // Include user route explicitly
+=======
+        "/user/:path*",
+>>>>>>> f66b40a06aa5e2c70c3ff627ef6389fdc6dfec6e
     ],
 };
