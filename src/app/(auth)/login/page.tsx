@@ -11,6 +11,7 @@ import { InitialLogInValues, LogInFormSchema } from "./helper";
 import { ILogInFormValues } from "./types";
 import FormikTextField from "@/components/common/FormikTextField";
 import Logo from "@/components/common/Logo";
+import Cookie from 'js-cookie'
 
 const LogInPage = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ const LogInPage = () => {
 
     if (response.success) {
       const { token, role } = response.data;
-
+      Cookie.set("authToken", token)
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
