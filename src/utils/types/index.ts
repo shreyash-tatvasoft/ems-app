@@ -31,7 +31,8 @@ export interface IApplyFiltersKey {
     status? : string
     ticketsTypes?: string
     eventsDates?: IEventRangeDate
-    priceRange?: IEventPrice 
+    priceRange?: IEventPrice
+    search? : string
 }
 
 export interface ISidebarPageProps {

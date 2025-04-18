@@ -42,6 +42,14 @@ export const getStatus = (startDate: string, endDate: string, tickets: number) =
     return "Ongoing";
 };
 
+export const getPaginatedData = (dataArray : EventsDataTypes[], currentPage : number,  itemsPerPage : number ) => {
+    const result = dataArray.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+    return result
+} 
+
 export const InitialEventFormDataValues: IEventFormData = {
     title: "",
     description: "",
@@ -262,11 +270,30 @@ export const filterByPriceRange = (
     });
 };
 
+export const filterBySearch = (
+    events: EventsDataTypes[],
+    keyword: string
+) => {
+    const lowerKeyword = keyword.toString().toLowerCase();
+    return events.filter(event =>
+      event.title.toLowerCase().includes(lowerKeyword) ||
+      event.category.toLowerCase().includes(lowerKeyword) ||
+      event.startTime.toLowerCase().includes(lowerKeyword) ||
+      event.location.toLowerCase().includes(lowerKeyword) ||
+      event.price.toString().toLowerCase().includes(lowerKeyword) ||
+      event.ticketsAvailable.toString().toLowerCase().includes(lowerKeyword)
+    );
+}
+
 export const getFilteredData = (events: EventsDataTypes[], filterValues : IApplyFiltersKey) => {
     let data = [...events]
     let activeFiltersKey = 0
 
-    const { catogories, durations, status, ticketsTypes, eventsDates, priceRange } = filterValues
+    const { catogories, durations, status, ticketsTypes, eventsDates, priceRange, search } = filterValues
+
+    if(search) {
+        data = filterBySearch(data, search)
+    }
 
     if(catogories && catogories.length > 0) {
         data = filterByCatogories(data, catogories)

@@ -29,16 +29,17 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice } from './helper';
+import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice, getPaginatedData } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
-  const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
+  const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
+  const [eventsData, setEventsData] = useState<EventsDataTypes[]>([]) // filtered
+  const [rowData, setRowData] = useState<EventsDataTypes[]>([]) // tableRow 
   const [loading, setLoading] = useState<boolean>(true)
   const [deletableEventId, setDeletableId] = useState<string>("")
 
@@ -48,7 +49,8 @@ function EventsListpage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
 
-  const totalItems = allEventsData.length;
+
+  const totalItems = eventsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handlePrev = () => {
@@ -81,34 +83,42 @@ function EventsListpage() {
     setFilterModal(false)
   }
 
-  const sortEventsByKey = (key : keyof Omit<EventsDataTypes, "img"> | "status") => {
+  const sortEventsByKey = (key: keyof Omit<EventsDataTypes, "img"> | "status") => {
     const sortingOrder = key === sortByKey ? sortOrder : "asc";
-    const result = sortEvents(allEventsData, key, sortingOrder);
+    const result = sortEvents(rowData, key, sortingOrder);
     const order = sortOrder === "asc" ? "desc" : "asc";
-    setAllEventsData(result);
+    setRowData(result);
     setSortOrder(order);
     setSortByKey(key);
   };
 
   const searchEvents = (keyword: string) => {
-    const lowerKeyword = keyword.toString().toLowerCase();
-    const searchResult = allEventsData.filter(event =>
-      event.title.toLowerCase().includes(lowerKeyword) ||
-      event.category.toLowerCase().includes(lowerKeyword) ||
-      event.startTime.toLowerCase().includes(lowerKeyword) ||
-      event.location.toLowerCase().includes(lowerKeyword) ||
-      event.price.toString().toLowerCase().includes(lowerKeyword) ||
-      event.ticketsAvailable.toString().toLowerCase().includes(lowerKeyword)
-    );
+    submitFilters({});
+    const searchKeyFilter = {
+      search: keyword,
+    };
 
-    setSearchQuery(keyword)
-    setEventsData(searchResult)
-    setCurrentPage(1)
+    const initialSearchedEvents = getFilteredData(
+      allEventsData,
+      searchKeyFilter
+    );
+    const rowResult = getPaginatedData(
+      initialSearchedEvents.data,
+      currentPage,
+      itemsPerPage
+    );
+    setRowData(rowResult);
+    setEventsData(initialSearchedEvents.data);
+    setSearchQuery(keyword);
+    setCurrentPage(1);
   };
 
-  const submitFilters = (filterValues : IApplyFiltersKey) => {
+  const submitFilters = (filterValues: IApplyFiltersKey) => {
+    setSearchQuery("")
     closeFilterModal()
-    const modifiedFilterValues = getFilteredData(allEventsData,filterValues)
+    const modifiedFilterValues = getFilteredData(allEventsData, filterValues)
+    const rowResult = getPaginatedData(modifiedFilterValues.data, currentPage, itemsPerPage)
+    setRowData(rowResult)
     setEventsData(modifiedFilterValues.data)
     setAppliedFiltersCount(modifiedFilterValues.filterCount)
   }
@@ -152,11 +162,15 @@ function EventsListpage() {
             (sum, ticket) => sum + ticket.totalSeats,
             0
           ),
-          ticketsArray : item.tickets
+          ticketsArray: item.tickets
         }
       })
 
+      const tableRowData = getPaginatedData(modifiedArray, currentPage, itemsPerPage)
+
       setAllEventsData(modifiedArray)
+      setEventsData(modifiedArray)
+      setRowData(tableRowData)
       setLoading(false)
     } else {
       setAllEventsData([])
@@ -186,12 +200,13 @@ function EventsListpage() {
   }, [])
 
   useEffect(() => {
-    const paginated = allEventsData.slice(
+    const paginated = eventsData.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
-    setEventsData(paginated);
-  }, [allEventsData, currentPage, itemsPerPage]);
+    console.log("first", paginated)
+    setRowData(paginated);
+  }, [currentPage, itemsPerPage]);
 
   const renderSortableRow = (
     title: string,
@@ -300,8 +315,8 @@ function EventsListpage() {
               </tr>
             </thead>
             <tbody>
-              {eventsData.length > 0 ? (
-                eventsData.map((event, idx) => {
+              {rowData.length > 0 ? (
+                rowData.map((event, idx) => {
                   const status = getStatus(
                     event.startTime,
                     event.endTime,
@@ -398,11 +413,10 @@ function EventsListpage() {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 text-sm rounded border ${
-                      currentPage === page
-                        ? "bg-black text-white"
-                        : "bg-white text-black"
-                    }`}
+                    className={`w-8 h-8 text-sm rounded border ${currentPage === page
+                      ? "bg-black text-white"
+                      : "bg-white text-black"
+                      }`}
                   >
                     {page}
                   </button>
