@@ -15,7 +15,11 @@ export interface IFilterModalProps {
 }
 
 export interface IApplyFiltersKey {
-    catogories : string[]
+    catogories?: string[]
+    durations?: string[]
+    status? : string
+    ticketsTypes?: string
+    eventsDates?: string
 }
 
 export interface ISidebarPageProps {
@@ -68,6 +72,7 @@ export interface EventsDataTypes {
     location: string;
     price: string | number;
     ticketsAvailable: number;
+    totalTickets : number
 }
 
 

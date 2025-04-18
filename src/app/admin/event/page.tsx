@@ -29,7 +29,7 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents, filterByCatogories } from './helper';
+import { getStatus, getTicketPriceRange, sortEvents, getFilteredData } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
@@ -46,6 +46,7 @@ function EventsListpage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
   const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
 
   const totalItems = allEventsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -107,11 +108,9 @@ function EventsListpage() {
 
   const submitFilters = (filterValues : IApplyFiltersKey) => {
     closeFilterModal()
-    setLoading(true)
-    const matchesByCatogories = filterByCatogories(allEventsData, filterValues.catogories)
-
-    setAllEventsData(matchesByCatogories)
-    setLoading(false)
+    const modifiedFilterValues = getFilteredData(allEventsData,filterValues)
+    setEventsData(modifiedFilterValues.data)
+    setAppliedFiltersCount(modifiedFilterValues.filterCount)
   }
 
   const statusColor = {
@@ -147,6 +146,10 @@ function EventsListpage() {
           price: getTicketPriceRange(item.tickets),
           ticketsAvailable: item.tickets.reduce(
             (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
+            0
+          ),
+          totalTickets: item.tickets.reduce(
+            (sum, ticket) => sum + ticket.totalSeats,
             0
           ),
         }
@@ -238,13 +241,21 @@ function EventsListpage() {
             </div>
 
             {/* Filters Button */}
-            <button
-              onClick={openFilterModal}
-              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
-            >
-              <FunnelIcon className="w-6 h-6 font-bold mr-2" />
-              Filters
-            </button>
+            <div className="relative inline-block">
+              <button
+                onClick={openFilterModal}
+                className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+              >
+                <FunnelIcon className="w-6 h-6 font-bold mr-2" />
+                Filters
+              </button>
+
+              {appliedFiltersCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                  {appliedFiltersCount}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Add Event Button */}
@@ -264,9 +275,7 @@ function EventsListpage() {
             <thead className="bg-gray-100 text-xs uppercase">
               <tr>
                 <th className="p-3">Image</th>
-                <th className="p-3">
-                  {renderSortableRow("Title", "title")}
-                </th>
+                <th className="p-3">{renderSortableRow("Title", "title")}</th>
                 <th className="p-3">
                   {renderSortableRow("Category", "category")}
                 </th>
@@ -280,14 +289,12 @@ function EventsListpage() {
                   {renderSortableRow("Location", "location")}
                 </th>
                 <th className="p-3">
-                  {renderSortableRow("Ticket Price","price")}
+                  {renderSortableRow("Ticket Price", "price")}
                 </th>
                 <th className="p-3">
                   {renderSortableRow("Tickets Available", "ticketsAvailable")}
                 </th>
-                <th className="p-3">
-                  {renderSortableRow("Status", "status")}
-                </th>
+                <th className="p-3">{renderSortableRow("Status", "status")}</th>
                 <th className="p-3">Actions</th>
               </tr>
             </thead>

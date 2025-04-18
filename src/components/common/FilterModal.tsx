@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 import moment from "moment";
 
 // types suppor
-import { IFilterModalProps } from "@/utils/types";
+import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
 import Slider from "./Slider";
 
 const FilterModal: React.FC<IFilterModalProps> = ({
@@ -53,8 +53,14 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     { label : "Filling Fast", value : "fastFilling", colorKey : "yellow"},
     { label : "Almost Full", value : "almostFull", colorKey : "red"},
     { label : "Sold Out", value : "soldOut", colorKey : "gray"}
-
   ]
+
+  const INITIAL_FILTER_VALUES : IApplyFiltersKey = {
+      catogories : [],
+      durations : [],
+      status : "",
+      ticketsTypes : "",
+  }
 
   const [selectedDurations, setSelectedDurations] = useState<string[]>([])
   const [selectedCatogory, setSelectedCatogory] = useState<string[]>([])
@@ -100,15 +106,18 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     setSelectedTicket("")
     setSelectedCatogory([])
     setSelectedDurations([])
-    onClose()
+    applyFilters(INITIAL_FILTER_VALUES)
   }
 
   const submitFilters = () => {
-    const filterValues = {
-       catogories : selectedCatogory
-    }
-    applyFilters(filterValues)
-  }
+    const filterValues: IApplyFiltersKey = {
+      catogories: selectedCatogory,
+      durations: selectedDurations,
+      status: selectedStatus,
+      ticketsTypes : selectedTicket
+    };
+    applyFilters(filterValues);
+  };
   
   if (!isOpen) return null;
 
@@ -118,7 +127,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
         {/* Title Section Start */}
         <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
           <p className="font-bold text-2xl">Filters</p>
-          <XMarkIcon onClick={clearAllFilters} className="h-6 w-6 cursor-pointer" />
+          <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
         </div>
         {/* Title Section End */}
 
@@ -263,11 +272,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <button
                     key={index}
                     onClick={() => setSelectedTicket(item.value)}
-                    className={`flex-1 border-[1px] border-${item.colorKey}-500  font-semibold p-2 rounded-md  transition cursor-pointer
+                    className={`flex-1 border-[1px] border-${item.colorKey}-500 font-semibold p-2 rounded-md  transition cursor-pointer
                   ${
                     selectedTicket === item.value
-                      ? `bg-${item.colorKey}-600 text-white  hover:bg-${item.colorKey}-700`
-                      : `bg-white text-${item.colorKey}-500 hover:bg-${item.colorKey}-100`
+                      ? `bg-${item.colorKey}-600 text-white hover:bg-${item.colorKey}-700`
+                      : `text-${item.colorKey}-500 hover:bg-${item.colorKey}-100`
                   }
                   `}
                   >
