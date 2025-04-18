@@ -11,7 +11,27 @@ export interface IDeleteModalProps {
 export interface IFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    applyFilters: () => void;
+    applyFilters: (filterValues : IApplyFiltersKey) => void;
+    maxTicketPrice?: number
+}
+
+export interface IEventRangeDate {
+    from : Date | string
+    to : Date | string
+}
+
+export interface IEventPrice {
+    max : number
+    min : number
+}
+
+export interface IApplyFiltersKey {
+    catogories?: string[]
+    durations?: string[]
+    status? : string
+    ticketsTypes?: string
+    eventsDates?: IEventRangeDate
+    priceRange?: IEventPrice 
 }
 
 export interface ISidebarPageProps {
@@ -64,6 +84,8 @@ export interface EventsDataTypes {
     location: string;
     price: string | number;
     ticketsAvailable: number;
+    totalTickets : number,
+    ticketsArray : EventTicket[]
 }
 
 
