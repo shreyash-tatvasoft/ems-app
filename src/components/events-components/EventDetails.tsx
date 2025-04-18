@@ -11,6 +11,7 @@ import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { useRouter } from 'next/navigation';
 import Loader from '../common/Loader';
+import BookingButton from './BookingButton';
 
 export default function EventDetailsPage ({ eventId}:{eventId:string}) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -151,7 +152,10 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
                   </span>
                 </div>
               </div>
-
+              <BookingButton 
+                tickets={event.tickets}
+                eventTitle={event.title}                
+              />
             </div>
           </div>
         </div>

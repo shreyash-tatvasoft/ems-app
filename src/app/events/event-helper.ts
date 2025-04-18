@@ -66,3 +66,25 @@ return events
     .slice(0, 3); 
 }
 };
+
+export const getTicketStatus = (ticket: Ticket): {
+  status: 'Available' | 'Filling Fast' | 'Almost Full' | 'Sold Out';
+  color: 'green' | 'yellow' | 'red' | 'gray';
+} => {
+  const availableSeats = ticket.totalSeats - ticket.totalBookedSeats;
+  const ratio = availableSeats / ticket.totalSeats;
+
+  if (availableSeats <= 0) {
+    return { status: 'Sold Out', color: 'gray' };
+  } else if (ratio > 0.5) {
+    return { status: 'Available', color: 'green' };
+  } else if (ratio > 0.2) {
+    return { status: 'Filling Fast', color: 'yellow' };
+  } else {
+    return { status: 'Almost Full', color: 'red' };
+  }
+};
+
+export const convertToSubCurrency=(amount:number,factor:100)=>{
+  return Math.round(amount * factor)
+}

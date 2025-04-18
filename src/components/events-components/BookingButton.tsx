@@ -1,26 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation';
+import TicketBookingModal from './TicketBookingModal'
+import { areAllTicketsBooked } from '@/app/events/event-helper';
+import { EventTicket } from '@/types/events';
 interface BookingButtonProps {
-  isLoggedIn: boolean
-  isFree: boolean
-  availableSeats: number
-  totalSeats: number
-  price: number
+  tickets:EventTicket[];
+  eventTitle: string;
 }
 const BookingButton: React.FC<BookingButtonProps> = ({
-  isLoggedIn,
-  isFree,
-  availableSeats,
-  totalSeats,
-  price,
+  tickets,
+  eventTitle,
 }) => {
-  const isSoldOut = availableSeats === 0
-  const isLowAvailability = availableSeats < totalSeats * 0.2
+  const navigate = useRouter()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const isSoldOut = areAllTicketsBooked(tickets)
+  const isLowAvailability = 0
   const handleBookingClick = () => {
-    if (!isLoggedIn) {
+    if (!true) {
       alert('Please log in to book this event')
     } else if (!isSoldOut) {
-      alert('Proceeding to payment...')
+      setIsModalOpen(true)
     }
+  }
+  const handlePaymentSuccess = (ticketDetails: {
+    type: string
+    quantity: number
+    totalPrice: number
+  }) => {
+    navigate.push('/payment-success')
   }
   if (isSoldOut) {
     return (
@@ -33,23 +40,21 @@ const BookingButton: React.FC<BookingButtonProps> = ({
     )
   }
   return (
-    <button
-      onClick={handleBookingClick}
-      className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
-    >
-      {isLoggedIn ? (
-        <>
-          {isFree ? 'Register Now' : `Book Now - $${price}`}
-          {isLowAvailability && (
-            <span className="ml-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
-              Only {availableSeats} left
-            </span>
-          )}
-        </>
-      ) : (
-        'Login to Book'
-      )}
-    </button>
+    <>
+      <button
+        onClick={handleBookingClick}
+        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+      >
+        Book Tickets
+      </button>
+      <TicketBookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handlePaymentSuccess}
+        eventTitle={eventTitle}
+        tickets={tickets}
+      />
+    </>
   )
 }
 export default BookingButton
