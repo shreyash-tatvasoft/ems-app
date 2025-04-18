@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState} from "react";
+import React, { useState, useRef , useEffect } from "react";
 
 // library support
 import { XMarkIcon } from "@heroicons/react/24/solid";
@@ -10,56 +10,37 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import moment from "moment";
+import moment, { min } from "moment";
 
 // types suppor
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
-import Slider from "./Slider";
+
+// constanst imports
+import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS,  } from "@/utils/constant";
 
 const FilterModal: React.FC<IFilterModalProps> = ({
   isOpen,
   onClose,
   applyFilters,
+  maxTicketPrice = 100,
 }) => {
-  
-  const durationOptions = [
-    { label: "Short - Less than 1 hour", value: "short" },
-    { label: "Medium - 1 to 4 hours", value: "medium" },
-    { label: "Long - 4 to 12 hours", value: "long" },
-    { label: "Full Day - 12 to 24 hours", value: "fullDay" },
-    { label: "Multi-Day - More than 1 day", value: "multiDay" },
-  ]
 
-  const CATEGORIES_ITEMS = [
-    { id: 1, label: "Music", value: "Music" },
-    { id: 2, label: "Art & Culture", value: "Art & Culture" },
-    { id: 3, label: "Film & Media", value: "Film & Media" },
-    { id: 4, label: "Education", value: "Education" },
-    { id: 5, label: "Sports", value: "Sports" },
-    { id: 6, label: "Food & Drink", value: "Food & Drink" },
-    { id: 7, label: "Wellness", value: "Wellness" },
-    { id: 8, label: "Gaming", value: "Gaming" },
-    { id: 9, label: "Business", value: "Business" },
-  ]
-
-  const STATUS_OPTIONS = [
-    { label : "Upcoming", value : "upcoming"},
-    { label : "Ongoing", value : "ongoing"},
-    { label : "Ended", value : "ended"}
-  ]
-
-  const TICKETS_OPTIONS = [
-    { label : "Available", value : "available", colorKey : "green"},
-    { label : "Filling Fast", value : "fastFilling", colorKey : "yellow"},
-    { label : "Almost Full", value : "almostFull", colorKey : "red"},
-    { label : "Sold Out", value : "soldOut", colorKey : "gray"}
-  ]
+  const MIN = 0;
+  const MAX = maxTicketPrice ?? 100;
 
   const INITIAL_FILTER_VALUES : IApplyFiltersKey = {
       catogories : [],
       durations : [],
       status : "",
       ticketsTypes : "",
+      eventsDates : {
+        from : "",
+        to : ""
+      },
+      priceRange : {
+        max : 100,
+        min : 0
+      }
   }
 
   const [selectedDurations, setSelectedDurations] = useState<string[]>([])
@@ -75,6 +56,32 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     from: undefined,
     to: undefined,
   })
+
+ 
+    const range = useRef<HTMLDivElement>(null)
+    const [minVal, setMinVal] = useState(0)
+    const [maxVal, setMaxVal] = useState(100)
+  
+    useEffect(() => {
+      if(maxTicketPrice) {
+         setMaxVal(maxTicketPrice)
+      }
+    },[maxTicketPrice])
+
+    const getPercent = (value: number) =>
+      Math.round(((value - MIN) / (MAX - MIN)) * 100)
+  
+    useEffect(() => {
+      if (range.current) {
+        const minPercent = getPercent(minVal)
+        const maxPercent = getPercent(maxVal)
+        range.current.style.left = `${minPercent}%`
+        range.current.style.width = `${maxPercent - minPercent}%`
+      }
+    }, [minVal, maxVal])
+
+    
+
 
   const toggleCheckbox = (value: string) => {
     setSelectedDurations((prev) =>
@@ -92,16 +99,23 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedCatogory(CATEGORIES_ITEMS.map((item) => item.value))
+      setSelectedCatogory(CATOGORIES_ITEMS_ARRAY.map((item) => item.value))
     } else {
       setSelectedCatogory([])
     }
   }
-  const isAllSelected = selectedCatogory.length === CATEGORIES_ITEMS.length
+  const isAllSelected = selectedCatogory.length === CATOGORIES_ITEMS_ARRAY.length
 
-  const visibleCategories = showAll ? CATEGORIES_ITEMS : CATEGORIES_ITEMS.slice(0, 3)
+  const visibleCategories = showAll ? CATOGORIES_ITEMS_ARRAY : CATOGORIES_ITEMS_ARRAY.slice(0, 3)
   
   const clearAllFilters = () => {
+    const emptyDate = {
+      from : undefined, to : undefined
+    }
+
+    setMaxVal(maxTicketPrice)
+    setMinVal(0)
+    setDate(emptyDate)
     setSelectedStatus("")
     setSelectedTicket("")
     setSelectedCatogory([])
@@ -110,11 +124,23 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   }
 
   const submitFilters = () => {
+    const dateObj = {
+       from : date.from !== undefined ? date.from : "",
+       to : date.to !== undefined ? date.to :  "",
+    }
+
+    const priceObj = {
+      max : maxVal,
+      min : minVal,
+    }
+
     const filterValues: IApplyFiltersKey = {
       catogories: selectedCatogory,
       durations: selectedDurations,
       status: selectedStatus,
-      ticketsTypes : selectedTicket
+      ticketsTypes : selectedTicket,
+      eventsDates : dateObj,
+      priceRange : priceObj
     };
     applyFilters(filterValues);
   };
@@ -136,7 +162,87 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
           <div className="my-5">
             <p className="font-semibold text-lg">Price</p>
-            <Slider />
+
+            <div className="w-full">
+              {/* Display Range Label */}
+              <div className="text-center mb-6 relative">
+                <div className="inline-block bg-blue-600 text-white text-sm font-semibold py-1 px-4 rounded-md relative">
+                  ${minVal} – ${maxVal}
+                  <div className="absolute left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-600 rotate-45" />
+                </div>
+              </div>
+
+              {/* Slider Track */}
+              <div className="relative h-2 rounded-full bg-gray-200">
+                {/* Filled Range */}
+                <div
+                  ref={range}
+                  className="absolute h-full bg-blue-600 rounded-full"
+                />
+
+                {/* Min Range Input */}
+                <input
+                  type="range"
+                  min={MIN}
+                  max={MAX}
+                  value={minVal}
+                  onChange={(e) =>
+                    setMinVal(Math.min(Number(e.target.value), maxVal - 1))
+                  }
+                  className="absolute z-20 w-full appearance-none pointer-events-none bg-transparent h-2 
+          [&::-webkit-slider-thumb]:appearance-none 
+          [&::-webkit-slider-thumb]:h-5 
+          [&::-webkit-slider-thumb]:w-5 
+          [&::-webkit-slider-thumb]:rounded-full 
+          [&::-webkit-slider-thumb]:bg-black 
+          [&::-webkit-slider-thumb]:cursor-pointer 
+          [&::-webkit-slider-thumb]:pointer-events-auto"
+                />
+
+                {/* Max Range Input */}
+                <input
+                  type="range"
+                  min={MIN}
+                  max={MAX}
+                  value={maxVal}
+                  onChange={(e) =>
+                    setMaxVal(Math.max(Number(e.target.value), minVal + 1))
+                  }
+                  className="absolute z-10 w-full appearance-none pointer-events-none bg-transparent h-2 
+          [&::-webkit-slider-thumb]:appearance-none 
+          [&::-webkit-slider-thumb]:h-5 
+          [&::-webkit-slider-thumb]:w-5 
+          [&::-webkit-slider-thumb]:rounded-full 
+          [&::-webkit-slider-thumb]:bg-black 
+          [&::-webkit-slider-thumb]:cursor-pointer 
+          [&::-webkit-slider-thumb]:pointer-events-auto"
+                />
+              </div>
+
+              {/* Inputs */}
+              <div className="mt-6 flex items-center gap-4">
+                <div className="w-1/2">
+                  <label className="text-sm">Min Price</label>
+                  <input
+                    type="number"
+                    className="w-full mt-1 border bg-gray-100 rounded px-3 py-2"
+                    value={minVal}
+                    disabled
+                    readOnly
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="text-sm">Max Price</label>
+                  <input
+                    type="number"
+                    className="w-full mt-1 bg-gray-100 border rounded px-3 py-2"
+                    value={maxVal}
+                    disabled
+                    readOnly
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="my-5">
@@ -172,6 +278,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <Calendar
                     initialFocus
                     mode="range"
+                    className="selectDateClass"
                     selected={date}
                     onSelect={(range) => {
                       setDate({
@@ -227,7 +334,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               ))}
 
               {/* Toggle Link */}
-              {CATEGORIES_ITEMS.length > 3 && (
+              {CATOGORIES_ITEMS_ARRAY.length > 3 && (
                 <button
                   type="button"
                   onClick={() => setShowAll((prev) => !prev)}
@@ -272,7 +379,9 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <button
                     key={index}
                     onClick={() => setSelectedTicket(item.value)}
-                    className={`flex-1 border-[1px] border-${item.colorKey}-500 font-semibold p-2 rounded-md  transition cursor-pointer
+                    className={`flex-1 border-[1px] border-${
+                      item.colorKey
+                    }-500 font-semibold p-2 rounded-md  transition cursor-pointer
                   ${
                     selectedTicket === item.value
                       ? `bg-${item.colorKey}-600 text-white hover:bg-${item.colorKey}-700`

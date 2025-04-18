@@ -72,6 +72,39 @@ export const PAGINATION_OPTIONS = [
     { value: 20, label: '20' },
 ];
 
+export const durationOptions = [
+    { label: "Short - Less than 1 hour", value: "short" },
+    { label: "Medium - 1 to 4 hours", value: "medium" },
+    { label: "Long - 4 to 12 hours", value: "long" },
+    { label: "Full Day - 12 to 24 hours", value: "fullDay" },
+    { label: "Multi-Day - More than 1 day", value: "multiDay" },
+]
+
+export const CATOGORIES_ITEMS_ARRAY = [
+    { id: 1, label: "Music", value: "Music" },
+    { id: 2, label: "Art & Culture", value: "Art & Culture" },
+    { id: 3, label: "Film & Media", value: "Film & Media" },
+    { id: 4, label: "Education", value: "Education" },
+    { id: 5, label: "Sports", value: "Sports" },
+    { id: 6, label: "Food & Drink", value: "Food & Drink" },
+    { id: 7, label: "Wellness", value: "Wellness" },
+    { id: 8, label: "Gaming", value: "Gaming" },
+    { id: 9, label: "Business", value: "Business" },
+]
+
+export const STATUS_OPTIONS = [
+    { label: "Upcoming", value: "upcoming" },
+    { label: "Ongoing", value: "ongoing" },
+    { label: "Ended", value: "ended" }
+]
+
+export const TICKETS_OPTIONS = [
+    { label: "Available", value: "available", colorKey: "green" },
+    { label: "Filling Fast", value: "fastFilling", colorKey: "yellow" },
+    { label: "Almost Full", value: "almostFull", colorKey: "red" },
+    { label: "Sold Out", value: "soldOut", colorKey: "gray" }
+]
+
 import {
     MusicIcon,
     PartyPopperIcon,

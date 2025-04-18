@@ -29,7 +29,7 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents, getFilteredData } from './helper';
+import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
@@ -152,6 +152,7 @@ function EventsListpage() {
             (sum, ticket) => sum + ticket.totalSeats,
             0
           ),
+          ticketsArray : item.tickets
         }
       })
 
@@ -478,6 +479,7 @@ function EventsListpage() {
         isOpen={filterModal}
         onClose={closeFilterModal}
         applyFilters={submitFilters}
+        maxTicketPrice={getMaxTicketPrice(allEventsData)}
       />
     </div>
   );

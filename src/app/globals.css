@@ -135,3 +135,7 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+.selectDateClass .aria-selected\:text-primary-foreground[aria-selected="true"] {
+  color : white !important
+}

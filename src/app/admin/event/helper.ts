@@ -1,4 +1,4 @@
-import { EventsDataTypes, EventTicket, IApplyFiltersKey } from "@/utils/types";
+import { EventsDataTypes, EventTicket, IApplyFiltersKey, IEventPrice, IEventRangeDate } from "@/utils/types";
 import { IEventFormData } from "./types";
 import moment from "moment";
 
@@ -16,6 +16,20 @@ export const getTicketPriceRange = (data: EventTicket[]) => {
                 : `${minPrice} - ${maxPrice}`;
     return priceRange
 };
+
+export const getMaxTicketPrice = (events: EventsDataTypes[]): number => {
+    let maxPrice = 0;
+  
+    events.forEach(event => {
+      event.ticketsArray.forEach(ticket => {
+        if (ticket.price > maxPrice) {
+          maxPrice = ticket.price;
+        }
+      });
+    });
+  
+    return maxPrice;
+  };
 
 export const getStatus = (startDate: string, endDate: string, tickets: number) => {
     const now = moment();
@@ -216,11 +230,43 @@ export const filterByTicketsAvailability = (
     })
 }
 
+export const filterByDateRange = (
+    events: EventsDataTypes[],
+    eventDates: IEventRangeDate
+  ): EventsDataTypes[] => {
+    const { from, to } = eventDates
+  
+    const fromDate = moment(from).startOf("day")
+    const toDate = to ? moment(to).endOf("day") : moment().endOf("day") // if `to` missing, use today
+  
+    return events.filter(event => {
+      const eventDate = moment(event.startTime)
+      return eventDate.isBetween(fromDate, toDate, undefined, "[]") // inclusive
+    })
+  }
+
+export const filterByPriceRange = (
+    events: EventsDataTypes[],
+    priceRange: IEventPrice
+): EventsDataTypes[] => {
+    const { min, max } = priceRange;
+
+    return events.filter(event => {
+        const prices = event.ticketsArray.map(ticket => ticket.price);
+        const minTicketPrice = Math.min(...prices);
+        const maxTicketPrice = Math.max(...prices);
+    
+        // Check if event's price range overlaps with filter range
+        const isOverlap = !(max < minTicketPrice || min > maxTicketPrice);
+        return isOverlap;
+    });
+};
+
 export const getFilteredData = (events: EventsDataTypes[], filterValues : IApplyFiltersKey) => {
     let data = [...events]
     let activeFiltersKey = 0
 
-    const { catogories, durations, status, ticketsTypes } = filterValues
+    const { catogories, durations, status, ticketsTypes, eventsDates, priceRange } = filterValues
 
     if(catogories && catogories.length > 0) {
         data = filterByCatogories(data, catogories)
@@ -238,6 +284,16 @@ export const getFilteredData = (events: EventsDataTypes[], filterValues : IApply
 
     if(ticketsTypes && ticketsTypes.trim() !== "") {
         data = filterByTicketsAvailability(data, ticketsTypes)
+        activeFiltersKey = activeFiltersKey + 1
+    }
+
+    if(eventsDates && eventsDates.from && eventsDates.to && eventsDates.from !== "") {
+        data = filterByDateRange(data, eventsDates)
+        activeFiltersKey = activeFiltersKey + 1
+    }
+
+    if(priceRange && priceRange.max && priceRange.min ) {
+        data = filterByPriceRange(data, priceRange)
         activeFiltersKey = activeFiltersKey + 1
     }
 
