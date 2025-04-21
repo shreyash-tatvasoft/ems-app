@@ -10,7 +10,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import moment, { min } from "moment";
+import moment from "moment";
 
 // types suppor
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";

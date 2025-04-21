@@ -1,15 +1,25 @@
 "use client";
 import React from "react";
+
+// Next library support
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Other library support
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
+
+// Constant imports
 import { ROUTES, API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import FormikTextField from "@/components/common/FormikTextField";
-import Logo from "@/components/common/Logo";
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
+
+// Logo image
+import Logo from "@/components/common/Logo";
+
+// Type support
 import { ISignupFormValues } from "./types";
 
 const SignUpPage = () => {

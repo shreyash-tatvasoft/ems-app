@@ -1,16 +1,28 @@
 "use client";
 import React, { useState } from "react";
+
+// Next library support
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Other library support
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
+
+// Constant imports
 import { ROUTES, API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
-import { ILogInFormValues } from "./types";
 import FormikTextField from "@/components/common/FormikTextField";
+
+// types support
+import { ILogInFormValues } from "./types";
+
+// Logo image path
 import Logo from "@/components/common/Logo";
+
+// Other library support
 import Cookie from 'js-cookie'
 
 const LogInPage = () => {
