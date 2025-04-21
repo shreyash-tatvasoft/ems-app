@@ -34,7 +34,7 @@ import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTick
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
@@ -44,6 +44,7 @@ function EventsListpage() {
   const [deletableEventId, setDeletableId] = useState<string>("")
 
   const [filterModal, setFilterModal] = useState(false)
+  const [filterValues, setFilterValues] = useState<IApplyFiltersKey>({})
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
   const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,43 +85,49 @@ function EventsListpage() {
   }
 
   const sortEventsByKey = (key: keyof Omit<EventsDataTypes, "img"> | "status") => {
-    const sortingOrder = key === sortByKey ? sortOrder : "asc";
-    const result = sortEvents(rowData, key, sortingOrder);
-    const order = sortOrder === "asc" ? "desc" : "asc";
+
+    let newOrder: "asc" | "desc" = "asc";
+
+    if (key === sortByKey) {
+      newOrder = sortOrder === "asc" ? "desc" : "asc";
+    }
+    const result = sortEvents(rowData, key, newOrder);
     setRowData(result);
-    setSortOrder(order);
+    setSortOrder(newOrder);
     setSortByKey(key);
   };
 
   const searchEvents = (keyword: string) => {
-    submitFilters({});
-    const searchKeyFilter = {
+    const updatedFilters = {
+      ...filterValues,
       search: keyword,
     };
-
-    const initialSearchedEvents = getFilteredData(
-      allEventsData,
-      searchKeyFilter
-    );
-    const rowResult = getPaginatedData(
-      initialSearchedEvents.data,
-      currentPage,
-      itemsPerPage
-    );
+  
+    const result = getFilteredData(allEventsData, updatedFilters);
+    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
+  
     setRowData(rowResult);
-    setEventsData(initialSearchedEvents.data);
+    setEventsData(result.data);
     setSearchQuery(keyword);
+    setFilterValues(updatedFilters);
     setCurrentPage(1);
   };
 
   const submitFilters = (filterValues: IApplyFiltersKey) => {
-    setSearchQuery("")
-    closeFilterModal()
-    const modifiedFilterValues = getFilteredData(allEventsData, filterValues)
-    const rowResult = getPaginatedData(modifiedFilterValues.data, currentPage, itemsPerPage)
-    setRowData(rowResult)
-    setEventsData(modifiedFilterValues.data)
-    setAppliedFiltersCount(modifiedFilterValues.filterCount)
+    closeFilterModal();
+    const updatedFilters = {
+      ...filterValues,
+      search: searchQuery || "", // include active search in filter logic
+    };
+
+    const result = getFilteredData(allEventsData, updatedFilters);
+    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
+
+    setRowData(rowResult);
+    setEventsData(result.data);
+    setFilterValues(updatedFilters);
+    setAppliedFiltersCount(result.filterCount);
+    setCurrentPage(1);
   }
 
   const statusColor = {
@@ -204,7 +211,6 @@ function EventsListpage() {
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
-    console.log("first", paginated)
     setRowData(paginated);
   }, [currentPage, itemsPerPage]);
 
@@ -221,9 +227,9 @@ function EventsListpage() {
         {sortByKey === sortKey && (
           <div>
             {sortOrder === "asc" ? (
-              <ArrowDownIcon className="h-4 w-4" />
-            ) : (
               <ArrowUpIcon className="h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="h-4 w-4" />
             )}
           </div>
         )}
@@ -277,9 +283,9 @@ function EventsListpage() {
           {/* Add Event Button */}
           <button
             onClick={navToCreateEventPage}
-            className="md:w-40 w-auto flex items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            className="md:w-40 w-auto flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
-            <PlusIcon className="w-6 h-6 font-bold" />
+            <PlusIcon className="w-5 h-5 font-bold" />
             <p className="hidden md:block">Add Event</p>
           </button>
         </div>
