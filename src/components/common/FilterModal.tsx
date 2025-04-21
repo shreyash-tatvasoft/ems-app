@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import moment from "moment";
 
-// types suppor
+// types support
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
 
 // constanst imports
@@ -39,7 +39,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       },
       priceRange : {
         max : 100,
-        min : 0
+        min : -1
       }
   }
 
@@ -59,7 +59,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
  
     const range = useRef<HTMLDivElement>(null)
-    const [minVal, setMinVal] = useState(0)
+    const [minVal, setMinVal] = useState<string | number>("0")
     const [maxVal, setMaxVal] = useState(100)
   
     useEffect(() => {
@@ -73,7 +73,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   
     useEffect(() => {
       if (range.current) {
-        const minPercent = getPercent(minVal)
+        const minimumVal = minVal === "0" ? 0 : minVal as number
+        const minPercent = getPercent(minimumVal)
         const maxPercent = getPercent(maxVal)
         range.current.style.left = `${minPercent}%`
         range.current.style.width = `${maxPercent - minPercent}%`
@@ -114,7 +115,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     }
 
     setMaxVal(maxTicketPrice)
-    setMinVal(0)
+    setMinVal("0")
     setDate(emptyDate)
     setSelectedStatus("")
     setSelectedTicket("")
@@ -131,7 +132,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
     const priceObj = {
       max : maxVal,
-      min : minVal,
+      min : minVal === "0" ? -1 : minVal as number,
     }
 
     const filterValues: IApplyFiltersKey = {
@@ -143,6 +144,37 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       priceRange : priceObj
     };
     applyFilters(filterValues);
+  };
+
+  const ticketColorClasses = {
+    green: {
+      border: "border-green-500",
+      text: "text-green-500",
+      bg: "bg-green-600",
+      hoverBg: "hover:bg-green-700",
+      hoverLightBg: "hover:bg-green-100",
+    },
+    yellow: {
+      border: "border-yellow-500",
+      text: "text-yellow-500",
+      bg: "bg-yellow-600",
+      hoverBg: "hover:bg-yellow-700",
+      hoverLightBg: "hover:bg-yellow-100",
+    },
+    red: {
+      border: "border-red-500",
+      text: "text-red-500",
+      bg: "bg-red-600",
+      hoverBg: "hover:bg-red-700",
+      hoverLightBg: "hover:bg-red-100",
+    },
+    gray: {
+      border: "border-gray-500",
+      text: "text-gray-500",
+      bg: "bg-gray-600",
+      hoverBg: "hover:bg-gray-700",
+      hoverLightBg: "hover:bg-gray-100",
+    },
   };
   
   if (!isOpen) return null;
@@ -205,9 +237,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   min={MIN}
                   max={MAX}
                   value={maxVal}
-                  onChange={(e) =>
-                    setMaxVal(Math.max(Number(e.target.value), minVal + 1))
-                  }
+                  onChange={(e) =>{
+                    const minValue = minVal === "0" ? 0 : minVal
+                    setMinVal(minValue)
+                    setMaxVal(Math.max(Number(e.target.value), minVal as number + 1))
+                  }}
                   className="absolute z-10 w-full appearance-none pointer-events-none bg-transparent h-2 
           [&::-webkit-slider-thumb]:appearance-none 
           [&::-webkit-slider-thumb]:h-5 
@@ -373,21 +407,21 @@ const FilterModal: React.FC<IFilterModalProps> = ({
           <div className="my-5">
             <p className="font-semibold text-lg mb-4">Tickets Availability</p>
 
-            <div className="flex w-full gap-3">
+            <div className="grid w-full gap-3 grid-cols-2 md:grid-cols-4">
               {TICKETS_OPTIONS.map((item, index) => {
+                const classes =ticketColorClasses[item.colorKey as keyof typeof ticketColorClasses];
+                const isSelected = selectedTicket === item.value;
                 return (
                   <button
                     key={index}
                     onClick={() => setSelectedTicket(item.value)}
-                    className={`flex-1 border-[1px] border-${
-                      item.colorKey
-                    }-500 font-semibold p-2 rounded-md  transition cursor-pointer
-                  ${
-                    selectedTicket === item.value
-                      ? `bg-${item.colorKey}-600 text-white hover:bg-${item.colorKey}-700`
-                      : `text-${item.colorKey}-500 hover:bg-${item.colorKey}-100`
-                  }
-                  `}
+                    className={`flex-1 font-semibold p-2 rounded-md transition cursor-pointer
+                      ${classes.border} border-[1px]
+                      ${isSelected
+                        ? `${classes.bg} text-white ${classes.hoverBg}`
+                        : `${classes.text} ${classes.hoverLightBg}`
+                      }
+                    `}
                   >
                     {item.label}
                   </button>

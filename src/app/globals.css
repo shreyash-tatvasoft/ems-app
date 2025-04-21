@@ -139,3 +139,7 @@
 .selectDateClass .aria-selected\:text-primary-foreground[aria-selected="true"] {
   color : white !important
 }
+
+.custom-quill .ql-editor {
+  height : 200px;
+}

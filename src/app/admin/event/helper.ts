@@ -319,7 +319,7 @@ export const getFilteredData = (events: EventsDataTypes[], filterValues : IApply
         activeFiltersKey = activeFiltersKey + 1
     }
 
-    if(priceRange && priceRange.max && priceRange.min ) {
+    if(priceRange && priceRange.max && priceRange.min > -1) {
         data = filterByPriceRange(data, priceRange)
         activeFiltersKey = activeFiltersKey + 1
     }
