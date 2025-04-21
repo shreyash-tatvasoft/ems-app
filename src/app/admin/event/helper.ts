@@ -291,7 +291,7 @@ export const getFilteredData = (events: EventsDataTypes[], filterValues : IApply
 
     const { catogories, durations, status, ticketsTypes, eventsDates, priceRange, search } = filterValues
 
-    if(search) {
+    if(search && search.trim() !== "") {
         data = filterBySearch(data, search)
     }
 
