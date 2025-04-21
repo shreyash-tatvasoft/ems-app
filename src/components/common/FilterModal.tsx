@@ -39,7 +39,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       },
       priceRange : {
         max : 100,
-        min : 0
+        min : -1
       }
   }
 
@@ -59,7 +59,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
  
     const range = useRef<HTMLDivElement>(null)
-    const [minVal, setMinVal] = useState<number>(0)
+    const [minVal, setMinVal] = useState<string | number>("0")
     const [maxVal, setMaxVal] = useState(100)
   
     useEffect(() => {
@@ -73,7 +73,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   
     useEffect(() => {
       if (range.current) {
-        const minPercent = getPercent(minVal)
+        const minimumVal = minVal === "0" ? 0 : minVal as number
+        const minPercent = getPercent(minimumVal)
         const maxPercent = getPercent(maxVal)
         range.current.style.left = `${minPercent}%`
         range.current.style.width = `${maxPercent - minPercent}%`
@@ -114,7 +115,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     }
 
     setMaxVal(maxTicketPrice)
-    setMinVal(0)
+    setMinVal("0")
     setDate(emptyDate)
     setSelectedStatus("")
     setSelectedTicket("")
@@ -131,7 +132,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
     const priceObj = {
       max : maxVal,
-      min : minVal,
+      min : minVal === "0" ? -1 : minVal as number,
     }
 
     const filterValues: IApplyFiltersKey = {
@@ -236,9 +237,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   min={MIN}
                   max={MAX}
                   value={maxVal}
-                  onChange={(e) =>
-                    setMaxVal(Math.max(Number(e.target.value), minVal + 1))
-                  }
+                  onChange={(e) =>{
+                    const minValue = minVal === "0" ? 0 : minVal
+                    setMinVal(minValue)
+                    setMaxVal(Math.max(Number(e.target.value), minVal as number + 1))
+                  }}
                   className="absolute z-10 w-full appearance-none pointer-events-none bg-transparent h-2 
           [&::-webkit-slider-thumb]:appearance-none 
           [&::-webkit-slider-thumb]:h-5 
@@ -404,7 +407,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
           <div className="my-5">
             <p className="font-semibold text-lg mb-4">Tickets Availability</p>
 
-            <div className="flex w-full gap-3">
+            <div className="grid w-full gap-3 grid-cols-2 md:grid-cols-4">
               {TICKETS_OPTIONS.map((item, index) => {
                 const classes =ticketColorClasses[item.colorKey as keyof typeof ticketColorClasses];
                 const isSelected = selectedTicket === item.value;

@@ -263,12 +263,12 @@ function EventsListpage() {
             </div>
 
             {/* Filters Button */}
-            <div className="relative inline-block">
+            <div className="relative md:inline-block hidden">
               <button
                 onClick={openFilterModal}
                 className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
               >
-                <FunnelIcon className="w-6 h-6 font-bold mr-2" />
+                <FunnelIcon className="w-5 h-5 font-bold mr-2" />
                 Filters
               </button>
 
@@ -283,7 +283,38 @@ function EventsListpage() {
           {/* Add Event Button */}
           <button
             onClick={navToCreateEventPage}
-            className="md:w-40 w-auto flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            className="md:w-40 hidden w-auto md:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
+            <PlusIcon className="w-5 h-5 font-bold" />
+            <p className="hidden md:block">Add Event</p>
+          </button>
+        </div>
+
+        {/* Mobile view */}
+
+        <div className="flex gap-4 justify-between items-start sm:items-center my-5">
+
+          {/* Filters Button */}
+          <div className="relative inline-block sm:block  md:hidden">
+            <button
+              onClick={openFilterModal}
+              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+            >
+              <FunnelIcon className="w-5 h-5 font-bold mr-2" />
+              Filters
+            </button>
+
+            {appliedFiltersCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                {appliedFiltersCount}
+              </span>
+            )}
+          </div>
+
+          {/* Add Event Button */}
+          <button
+            onClick={navToCreateEventPage}
+            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
             <PlusIcon className="w-5 h-5 font-bold" />
             <p className="hidden md:block">Add Event</p>
@@ -390,7 +421,7 @@ function EventsListpage() {
               ) : (
                 <tr>
                   <td colSpan={10} className="text-center">
-                    <p className="my-3 font-bold">No data available</p>
+                    <p className="my-3 font-bold">No events found</p>
                   </td>
                 </tr>
               )}
@@ -439,7 +470,7 @@ function EventsListpage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm whitespace-nowrap">
+              <span className="text-sm whitespace-nowrap hidden md:block">
                 Show items on one page:
               </span>
               <Select
