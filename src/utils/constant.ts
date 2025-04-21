@@ -45,6 +45,9 @@ export const CATOGORIES_ITEMS = [
     { id: 9, label: "Business", value: "Business", icon: "💼" },
 ]
 
+export const SIGN_UP_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?semt=ais_hybrid&w=740"
+export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+
 export enum ROLE {
     Admin = "admin",
     User = "user",
