@@ -16,7 +16,7 @@ import moment from "moment";
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
 
 // constanst imports
-import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS,  } from "@/utils/constant";
+import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS  } from "@/utils/constant";
 
 const FilterModal: React.FC<IFilterModalProps> = ({
   isOpen,

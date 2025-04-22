@@ -1,5 +1,7 @@
 import { EventData, Ticket } from "@/types/events";
-import { EventDataObjResponse, EventResponse } from "@/utils/types";
+import { EventDataObjResponse, EventResponse, IApplyFiltersKey } from "@/utils/types";
+import { LabelValue } from "./types";
+import { durationOptions, STATUS_OPTIONS, TICKETS_OPTIONS } from "@/utils/constant";
 
 export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 'upcoming' | 'ended' {
     const now = new Date();
@@ -88,3 +90,96 @@ export const getTicketStatus = (ticket: Ticket): {
 export const convertToSubCurrency=(amount:number,factor:100)=>{
   return Math.round(amount * factor)
 }
+
+export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] => {
+  const result: LabelValue[] = [];
+
+  const { catogories, durations, status, ticketsTypes, eventsDates, priceRange  } = filters
+
+  if (catogories && catogories.length) {
+    catogories.forEach((cat) =>
+      result.push({ label: cat, value: cat, rowKey: "catogories" })
+    );
+  }
+
+  if (durations && durations.length) {
+    durations.forEach((duration) => {
+      const durationLable = durationOptions.filter(item => item.value === duration).map(item => item.label)
+      return result.push({ label: durationLable.toString(), value: duration, rowKey: "durations" })
+    }
+    );
+  }
+
+  if (status) {
+    const statusLabel = STATUS_OPTIONS.filter(item => item.value === status).map(item => item.label)
+    result.push({ label: statusLabel.toString(), value: status, rowKey: "status" });
+  }
+
+  if (ticketsTypes) {
+    const ticketLablel = TICKETS_OPTIONS.filter(item => item.value === ticketsTypes).map(item => item.label)
+    result.push({ label: ticketLablel.toString(), value: ticketsTypes, rowKey : "ticketsTypes" });
+  }
+
+  // if (eventsDates) {
+  //   result.push({
+  //     label: "Event Date",
+  //     value: `${eventsDates.startDate} to ${eventsDates.endDate}`,
+  //   });
+  // }
+
+  // if (priceRange) {
+  //   result.push({
+  //     label: "Price",
+  //     value: `${priceRange.min} - ${priceRange.max}`,
+  //   });
+  // }
+
+  return result;
+};
+
+export const removeFilterFromObject = (
+  key: keyof IApplyFiltersKey,
+  valueToRemove: string,
+  currentFilters: IApplyFiltersKey
+): IApplyFiltersKey => {
+  const updatedFilters: IApplyFiltersKey = { ...currentFilters };
+
+  const currentValue = updatedFilters[key];
+
+  // Handle array values (e.g., catogories, durations)
+  if (Array.isArray(currentValue)) {
+    const filteredArray = currentValue.filter(item => item !== valueToRemove);
+    if (filteredArray.length > 0) {
+      updatedFilters[key] = filteredArray as any;
+    } else {
+      delete updatedFilters[key];
+    }
+  }
+
+  // Handle primitive string values
+  else if (typeof currentValue === 'string') {
+    if (currentValue === valueToRemove) {
+      delete updatedFilters[key];
+    }
+  }
+
+  // Handle object values (optional: extend this logic as needed)
+  // else if (typeof currentValue === 'object' && currentValue !== null) {
+  //   // Example: remove eventsDates if both fields are empty
+  //   if (key === 'eventsDates') {
+  //     const { from, to } = currentValue as IEventRangeDate;
+  //     if (from === valueToRemove || to === valueToRemove) {
+  //       delete updatedFilters[key];
+  //     }
+  //   }
+
+  //   if (key === 'priceRange') {
+  //     const { min, max } = currentValue as IEventPrice;
+  //     if (`${min}` === valueToRemove || `${max}` === valueToRemove) {
+  //       delete updatedFilters[key];
+  //     }
+  //   }
+  // }
+
+  return updatedFilters;
+};
