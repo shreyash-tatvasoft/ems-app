@@ -79,6 +79,7 @@ export type EventDataObjResponse = {
   createdAt: string;
   updatedAt: string;
   __v?: number;
+  isLiked:boolean;
 };
 
 export type EventResponse = EventDataObjResponse[];
