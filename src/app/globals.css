@@ -131,3 +131,15 @@
   font-size: 1rem;
   background-color: white;
 }
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.selectDateClass .aria-selected\:text-primary-foreground[aria-selected="true"] {
+  color : white !important
+}
+
+.custom-quill .ql-editor {
+  height : 200px;
+}

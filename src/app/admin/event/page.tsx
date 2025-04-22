@@ -8,7 +8,7 @@ import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 
 // types import
-import { EventResponse, EventsDataTypes } from '@/utils/types';
+import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
 
 // library support 
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,7 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents } from './helper';
+import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice, getPaginatedData } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
@@ -37,17 +37,21 @@ function EventsListpage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [eventsData, setEventsData] = useState<EventsDataTypes[]>([])
-  const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([])
+  const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
+  const [eventsData, setEventsData] = useState<EventsDataTypes[]>([]) // filtered
+  const [rowData, setRowData] = useState<EventsDataTypes[]>([]) // tableRow 
   const [loading, setLoading] = useState<boolean>(true)
   const [deletableEventId, setDeletableId] = useState<string>("")
 
   const [filterModal, setFilterModal] = useState(false)
+  const [filterValues, setFilterValues] = useState<IApplyFiltersKey>({})
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
   const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
 
-  const totalItems = allEventsData.length;
+
+  const totalItems = eventsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handlePrev = () => {
@@ -80,30 +84,51 @@ function EventsListpage() {
     setFilterModal(false)
   }
 
-  const sortEventsByKey = (key : keyof Omit<EventsDataTypes, "img"> | "status") => {
-    const sortingOrder = key === sortByKey ? sortOrder : "asc";
-    const result = sortEvents(allEventsData, key, sortingOrder);
-    const order = sortOrder === "asc" ? "desc" : "asc";
-    setAllEventsData(result);
-    setSortOrder(order);
+  const sortEventsByKey = (key: keyof Omit<EventsDataTypes, "img"> | "status") => {
+
+    let newOrder: "asc" | "desc" = "asc";
+
+    if (key === sortByKey) {
+      newOrder = sortOrder === "asc" ? "desc" : "asc";
+    }
+    const result = sortEvents(rowData, key, newOrder);
+    setRowData(result);
+    setSortOrder(newOrder);
     setSortByKey(key);
   };
 
   const searchEvents = (keyword: string) => {
-    const lowerKeyword = keyword.toString().toLowerCase();
-    const searchResult = allEventsData.filter(event =>
-      event.title.toLowerCase().includes(lowerKeyword) ||
-      event.category.toLowerCase().includes(lowerKeyword) ||
-      event.startTime.toLowerCase().includes(lowerKeyword) ||
-      event.location.toLowerCase().includes(lowerKeyword) ||
-      event.price.toString().toLowerCase().includes(lowerKeyword) ||
-      event.ticketsAvailable.toString().toLowerCase().includes(lowerKeyword)
-    );
-
-    setSearchQuery(keyword)
-    setEventsData(searchResult)
-    setCurrentPage(1)
+    const updatedFilters = {
+      ...filterValues,
+      search: keyword,
+    };
+  
+    const result = getFilteredData(allEventsData, updatedFilters);
+    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
+  
+    setRowData(rowResult);
+    setEventsData(result.data);
+    setSearchQuery(keyword);
+    setFilterValues(updatedFilters);
+    setCurrentPage(1);
   };
+
+  const submitFilters = (filterValues: IApplyFiltersKey) => {
+    closeFilterModal();
+    const updatedFilters = {
+      ...filterValues,
+      search: searchQuery || "", // include active search in filter logic
+    };
+
+    const result = getFilteredData(allEventsData, updatedFilters);
+    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
+
+    setRowData(rowResult);
+    setEventsData(result.data);
+    setFilterValues(updatedFilters);
+    setAppliedFiltersCount(result.filterCount);
+    setCurrentPage(1);
+  }
 
   const statusColor = {
     Upcoming: "bg-blue-100 text-blue-700",
@@ -140,10 +165,19 @@ function EventsListpage() {
             (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
             0
           ),
+          totalTickets: item.tickets.reduce(
+            (sum, ticket) => sum + ticket.totalSeats,
+            0
+          ),
+          ticketsArray: item.tickets
         }
       })
 
+      const tableRowData = getPaginatedData(modifiedArray, currentPage, itemsPerPage)
+
       setAllEventsData(modifiedArray)
+      setEventsData(modifiedArray)
+      setRowData(tableRowData)
       setLoading(false)
     } else {
       setAllEventsData([])
@@ -173,12 +207,12 @@ function EventsListpage() {
   }, [])
 
   useEffect(() => {
-    const paginated = allEventsData.slice(
+    const paginated = eventsData.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
-    setEventsData(paginated);
-  }, [allEventsData, currentPage, itemsPerPage]);
+    setRowData(paginated);
+  }, [currentPage, itemsPerPage]);
 
   const renderSortableRow = (
     title: string,
@@ -193,9 +227,9 @@ function EventsListpage() {
         {sortByKey === sortKey && (
           <div>
             {sortOrder === "asc" ? (
-              <ArrowDownIcon className="h-4 w-4" />
-            ) : (
               <ArrowUpIcon className="h-4 w-4" />
+            ) : (
+              <ArrowDownIcon className="h-4 w-4" />
             )}
           </div>
         )}
@@ -229,21 +263,60 @@ function EventsListpage() {
             </div>
 
             {/* Filters Button */}
-            <button
-              onClick={openFilterModal}
-              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
-            >
-              <FunnelIcon className="w-6 h-6 font-bold mr-2" />
-              Filters
-            </button>
+            <div className="relative md:inline-block hidden">
+              <button
+                onClick={openFilterModal}
+                className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+              >
+                <FunnelIcon className="w-5 h-5 font-bold mr-2" />
+                Filters
+              </button>
+
+              {appliedFiltersCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                  {appliedFiltersCount}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Add Event Button */}
           <button
             onClick={navToCreateEventPage}
-            className="md:w-40 w-auto flex items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            className="md:w-40 hidden w-auto md:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
-            <PlusIcon className="w-6 h-6 font-bold" />
+            <PlusIcon className="w-5 h-5 font-bold" />
+            <p className="hidden md:block">Add Event</p>
+          </button>
+        </div>
+
+        {/* Mobile view */}
+
+        <div className="flex gap-4 justify-between items-start sm:items-center my-5">
+
+          {/* Filters Button */}
+          <div className="relative inline-block sm:block  md:hidden">
+            <button
+              onClick={openFilterModal}
+              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+            >
+              <FunnelIcon className="w-5 h-5 font-bold mr-2" />
+              Filters
+            </button>
+
+            {appliedFiltersCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                {appliedFiltersCount}
+              </span>
+            )}
+          </div>
+
+          {/* Add Event Button */}
+          <button
+            onClick={navToCreateEventPage}
+            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+          >
+            <PlusIcon className="w-5 h-5 font-bold" />
             <p className="hidden md:block">Add Event</p>
           </button>
         </div>
@@ -255,9 +328,7 @@ function EventsListpage() {
             <thead className="bg-gray-100 text-xs uppercase">
               <tr>
                 <th className="p-3">Image</th>
-                <th className="p-3">
-                  {renderSortableRow("Title", "title")}
-                </th>
+                <th className="p-3">{renderSortableRow("Title", "title")}</th>
                 <th className="p-3">
                   {renderSortableRow("Category", "category")}
                 </th>
@@ -271,20 +342,18 @@ function EventsListpage() {
                   {renderSortableRow("Location", "location")}
                 </th>
                 <th className="p-3">
-                  {renderSortableRow("Ticket Price","price")}
+                  {renderSortableRow("Ticket Price", "price")}
                 </th>
                 <th className="p-3">
                   {renderSortableRow("Tickets Available", "ticketsAvailable")}
                 </th>
-                <th className="p-3">
-                  {renderSortableRow("Status", "status")}
-                </th>
+                <th className="p-3">{renderSortableRow("Status", "status")}</th>
                 <th className="p-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {eventsData.length > 0 ? (
-                eventsData.map((event, idx) => {
+              {rowData.length > 0 ? (
+                rowData.map((event, idx) => {
                   const status = getStatus(
                     event.startTime,
                     event.endTime,
@@ -352,7 +421,7 @@ function EventsListpage() {
               ) : (
                 <tr>
                   <td colSpan={10} className="text-center">
-                    <p className="my-3 font-bold">No data available</p>
+                    <p className="my-3 font-bold">No events found</p>
                   </td>
                 </tr>
               )}
@@ -381,11 +450,10 @@ function EventsListpage() {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 text-sm rounded border ${
-                      currentPage === page
-                        ? "bg-black text-white"
-                        : "bg-white text-black"
-                    }`}
+                    className={`w-8 h-8 text-sm rounded border ${currentPage === page
+                      ? "bg-black text-white"
+                      : "bg-white text-black"
+                      }`}
                   >
                     {page}
                   </button>
@@ -402,7 +470,7 @@ function EventsListpage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm whitespace-nowrap">
+              <span className="text-sm whitespace-nowrap hidden md:block">
                 Show items on one page:
               </span>
               <Select
@@ -461,7 +529,8 @@ function EventsListpage() {
       <FilterModal
         isOpen={filterModal}
         onClose={closeFilterModal}
-        applyFilters={closeFilterModal}
+        applyFilters={submitFilters}
+        maxTicketPrice={getMaxTicketPrice(allEventsData)}
       />
     </div>
   );
