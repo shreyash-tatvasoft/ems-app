@@ -10,28 +10,69 @@ import {
 } from 'chart.js';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { LIGHT_COLORS } from '@/utils/constant';
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-type PieChartProps = {
-    backgroundColors?: string[];
-};
+const mockResp = {
+    "status": 200,
+    "data": [
+        {
+            "_id": "67fded1a6602653b3f5b9d53",
+            "title": "Sports Events",
+            "category": "Sports",
+            "likesCount": 2
+        },
+        {
+            "_id": "67fe03d8dcc9697ee1f30850",
+            "title": "Gaming event",
+            "category": "Gaming",
+            "likesCount": 1
+        },
+        {
+            "_id": "67fe3923bc0b4c7a774584f0",
+            "title": "Jazz in the Park",
+            "category": "Music",
+            "likesCount": 1
+        },
+        {
+            "_id": "67fe05f0dcc9697ee1f308ad",
+            "title": "Film Festival",
+            "category": "Film & Media",
+            "likesCount": 0
+        },
+        {
+            "_id": "67fe4347bc0b4c7a7745886e",
+            "title": "Test Event",
+            "category": "Wellness",
+            "likesCount": 0
+        }
+    ],
+    "success": true,
+    "message": "OK"
+}
 
-const PieChart: React.FC<PieChartProps> = ({
-    backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#F67019', '#00A86B'],
-}) => {
+const PieChart: React.FC = () => {
     const [labels, setLabels] = useState<string[]>([]);
     const [data, setData] = useState<number[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        // Example API call (replace with your actual API endpoint)
         const fetchData = async () => {
             try {
-                const labelsss = ['Cats hdsahdkajsdhasjkd aidjakshdksajkdjashdkjashdkjas dajdashdkjashdkjadshk', 'Dogs', 'Birds', "Cow", "Lion", 'Birds', "Cow", "Lion"];
-                const dataaaa = [5, 20, 10, 5, 20, 15, 2, 5];
+                // const endPoint = `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}?limit=${5}`
+                // const response = await apiCall({
+                //     endPoint,
+                //     method: "GET",
+                // });
+                // console.log("response", response)
 
-                setLabels(labelsss);
-                setData(dataaaa);
+                const topEvents = mockResp.data
+                const dynamicLabels = topEvents.map((event) => event.title);
+                const dynamicData = topEvents.map((event) => event.likesCount);
+
+                setLabels(dynamicLabels);
+                setData(dynamicData);
             } catch (error) {
                 console.error('Error fetching pie chart data:', error);
             } finally {
@@ -48,7 +89,7 @@ const PieChart: React.FC<PieChartProps> = ({
             {
                 label: 'Data',
                 data,
-                backgroundColor: backgroundColors.slice(0, labels.length),
+                backgroundColor: LIGHT_COLORS.slice(0, labels.length),
                 borderWidth: 1,
             },
         ],
@@ -59,33 +100,15 @@ const PieChart: React.FC<PieChartProps> = ({
         plugins: {
             legend: {
                 position: 'bottom' as const,
-                labels: {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    generateLabels: (chart: any) => {
-                        const data = chart.data;
-                        if (data.labels && data.datasets.length) {
-                            return data.labels.map((label: string, i: number) => {
-                                const dataset = data.datasets[0];
-                                return {
-                                    text: label.length > 20 ? `${label.slice(0, 20)}...` : label, // truncate
-                                    fillStyle: dataset.backgroundColor[i],
-                                    strokeStyle: dataset.borderColor ? dataset.borderColor[i] : '',
-                                    index: i,
-                                };
-                            });
-                        }
-                        return [];
-                    },
-                    usePointStyle: true,
-                    boxWidth: 12,
-                    padding: 10,
-                },
             },
             tooltip: {
                 callbacks: {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     label: function (context: any) {
-                        return `${context.label}: ${context.formattedValue}`;
+                        const label = context.label || '';
+                        const value = context.formattedValue || 0;
+                        const likesText = value === '1' ? 'Like' : 'Likes';
+                        return `${label}: ${value} ${likesText}`;
                     },
                 },
             },
@@ -95,13 +118,15 @@ const PieChart: React.FC<PieChartProps> = ({
 
     if (loading) {
         return (
-            <div className="p-6 w-full flex justify-center items-center">
-                <Skeleton className="h-[300px] w-full max-w-[400px] rounded-md" />
+            <div className="w-full flex justify-center items-center">
+                <Skeleton className="h-70 w-70 rounded-full" />
             </div>
         );
     }
 
-    return <Pie data={chartData} options={options} />;
+    return <div className="max-h-[350px] w-full flex justify-center">
+        <Pie data={chartData} options={options} />
+    </div>;
 };
 
 export default PieChart;

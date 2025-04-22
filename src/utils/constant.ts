@@ -9,7 +9,7 @@ export const ROUTES = {
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
     },
-    RESET_PASSWORD:"/reset-password"
+    RESET_PASSWORD: "/reset-password"
 }
 
 export const API_ROUTES = {
@@ -18,15 +18,55 @@ export const API_ROUTES = {
         GET_EVENTS: `/events`,
         DELETE_EVENT: (id: string) => `/events/${id}`,
         SHOW_EVENT: (id: string) => `/events/${id}`,
-        UPDATE_EVENT: (id: string) => `/events/${id}`
+        UPDATE_EVENT: (id: string) => `/events/${id}`,
+        // DASHBOARD
+        TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
+        BOOKING_BY_TICKET_TYPE: 'dashboard/analytics/bookings-by-ticket-type',
     },
     AUTH: {
         LOGIN: `/login`,
         SIGNUP: `/signup`,
         FORGOT_PASSWORD: `/forgot_password`,
-        RESET_PASSWORD:`/reset_password`
+        RESET_PASSWORD: `/reset_password`
     }
 }
+export const LIGHT_COLORS = [
+    '#FFB3BA', // Light Red
+    '#D5F4E6', // Mint
+    '#FFFACD', // Lemon Chiffon
+    '#FADADD', // Light Pink
+    '#C1F0F6', // Pale Cyan
+    '#FFDFBA', // Light Orange
+    '#FFFFBA', // Light Yellow
+    '#BAFFC9', // Light Green
+    '#BAE1FF', // Light Blue
+    '#E0BBE4', // Light Purple
+];
+
+export const DARK_COLORS = [
+    '#4B0082', // Indigo
+    '#2F4F4F', // Dark Slate Gray
+    '#800000', // Maroon
+    '#003366', // Dark Blue
+    '#5C4033', // Dark Brown
+    '#1C1C1C', // Almost Black
+    '#4B5320', // Army Green
+    '#2C2C54', // Dark Purple
+    '#3B3B98', // Space Blue
+    '#0B3D91', // Navy Blue
+];
+export const BALANCED_COLORS = [
+    '#90B4ED', // Sky Blue
+    '#FF8C94', // Soft Coral
+    '#FDCB82', // Warm Peach
+    '#A3DE83', // Fresh Green
+    '#F48FB1', // Rosy Pink
+    '#85D2D0', // Cool Aqua
+    '#FFD972', // Soft Amber
+    '#B39CD0', // Soft Purple
+    '#FFAB91', // Melon
+    '#D1C4E9', // Lavender Gray
+];
 
 export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },

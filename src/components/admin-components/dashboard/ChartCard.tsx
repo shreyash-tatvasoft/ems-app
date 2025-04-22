@@ -1,0 +1,24 @@
+// components/admin-components/dashboard/ChartCard.tsx
+
+'use client';
+
+import React from 'react';
+
+interface ChartCardProps {
+    title?: string;
+    children: React.ReactNode;
+}
+
+const ChartCard: React.FC<ChartCardProps> = ({ title, children }) => {
+    return (
+        <div className="flex flex-col  bg-white p-6 border-2 border-gray-200 rounded-lg w-full">
+            {title ?
+                <div className="w-full mb-6">
+                    <h2 className="text-xl text-black font-semibold">{title}</h2>
+                </div> : <></>}
+            {children}
+        </div>
+    );
+};
+
+export default ChartCard;

@@ -13,7 +13,6 @@ import {
 export default function MostBookedUsersTable() {
     return (
         <div>
-            <h2 className="text-xl font-semibold mb-4">Users Table</h2>
             <Table>
                 {/* <TableCaption>A list of dummy users.</TableCaption> */}
                 <TableHeader>
