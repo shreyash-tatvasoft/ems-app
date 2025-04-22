@@ -28,31 +28,31 @@ function DashboardPage() {
             <StatCards />
 
             <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4">
+                <div className="md:w-1/2 p-4 h-full">
                     <ChartCard title="Top 5 Liked Events">
                         <PieChart />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4">
+                <div className="md:w-1/2 p-4 h-full">
                     <ChartCard title="Bookings by Ticket Type">
                         <DoughnutChart />
                     </ChartCard>
                 </div>
             </div>
             <div className="flex flex-wrap -m-4 p-4">
-                <ChartCard title="Total Revenue Over Time">
+                <ChartCard>
                     <LineChart data={data2} />
                 </ChartCard>
             </div>
 
 
             <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4">
+                <div className="md:w-1/2 p-4 h-full">
                     <ChartCard title="Top 5 Events by Revenue">
                         <MostRevenueByEvents />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4">
+                <div className="md:w-1/2 p-4 h-full">
                     <ChartCard title="Total Revenue By Category">
                         <BarChart data={data} labels={labels} />
                     </ChartCard>

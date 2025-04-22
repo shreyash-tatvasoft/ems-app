@@ -21,22 +21,37 @@ interface FilterValue {
 
 interface Props {
     onChange: (filter: FilterValue) => void;
+    allowedTypes?: FilterType[];
+    initialType?: FilterType;
+    initialValue?: string;
 }
 
-export default function DateRangeFilter({ onChange }: Props) {
-    const [type, setType] = useState<FilterType>("yearly");
-    const [value, setValue] = useState(getInitialValue('yearly'));
+export default function DateRangeFilter({
+    onChange,
+    allowedTypes = ['overall', 'yearly', 'monthly'],
+    initialType,
+    initialValue,
+}: Props) {
+    const now = moment();
+
+    const getInitialType = () => {
+        if (initialType && allowedTypes.includes(initialType)) return initialType;
+        return allowedTypes[0];
+    };
+
+    const getInitialValue = (filterType: FilterType) => {
+        if (initialValue) return initialValue;
+        if (filterType === 'monthly') return now.format('YYYY-MM');
+        if (filterType === 'yearly') return now.format('YYYY');
+        return 'all';
+    };
+
+    const [type, setType] = useState<FilterType>(getInitialType());
+    const [value, setValue] = useState(getInitialValue(getInitialType()));
 
     useEffect(() => {
         onChange({ type, value });
     }, [onChange, type, value]);
-
-    function getInitialValue(filterType: FilterType) {
-        const now = moment();
-        if (filterType === 'monthly') return now.format('YYYY-MM');
-        if (filterType === 'yearly') return now.format('YYYY');
-        return 'all';
-    }
 
     function handlePrev() {
         const current = moment(value, type === 'monthly' ? 'YYYY-MM' : 'YYYY');
@@ -56,48 +71,70 @@ export default function DateRangeFilter({ onChange }: Props) {
         }
     }
 
-    const now = moment();
     const isPrevDisabled = type === 'overall';
     const isNextDisabled =
-        type === 'overall' || moment(value, type === 'monthly' ? 'YYYY-MM' : 'YYYY').isSameOrAfter(now, type === 'monthly' ? 'month' : 'year');
+        type === 'overall' ||
+        moment(value, type === 'monthly' ? 'YYYY-MM' : 'YYYY').isSameOrAfter(now, type === 'monthly' ? 'month' : 'year');
 
     return (
-        <div className="flex text-black gap-2 items-center">
-            <div className="min-w-[100px] text-center text-sm text-black">
-                {type === 'overall'
-                    ? 'All Time'
-                    : type === 'monthly'
-                        ? moment(value).format('MMMM YYYY')
-                        : value}
+        <>
+            <div>
+                <div>
+                    <p className="text-sm mb-1 font-bold">Filter By:
+                        <span className="ml-2 text-md text-black">
+                            {type === 'overall'
+                                ? 'All Time'
+                                : type === 'monthly'
+                                    ? moment(value).format('MMMM YYYY')
+                                    : value}
+                        </span>
+                    </p>
+                </div>
+                <div className="flex text-black gap-2 items-center">
+
+                    {allowedTypes.length > 1 && (
+                        <Select
+                            value={type}
+                            onValueChange={(val: FilterType) => {
+                                setType(val);
+                                setValue(getInitialValue(val));
+                            }}
+                        >
+                            <SelectTrigger className="w-[150px] focus:outline-none focus:ring-0 focus:ring-offset-0">
+                                <SelectValue placeholder="Select Range" />
+                                <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {allowedTypes.includes('monthly') && <SelectItem value="monthly">Monthly</SelectItem>}
+                                {allowedTypes.includes('yearly') && <SelectItem value="yearly">Yearly</SelectItem>}
+                                {allowedTypes.includes('overall') && <SelectItem value="overall">Overall</SelectItem>}
+                            </SelectContent>
+                        </Select>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            size="sm"
+                            className="bg-black text-white hover:bg-black/90 disabled:opacity-50 h-8 w-8 p-0 cursor-pointer disabled:cursor-not-allowed"
+                            onClick={handlePrev}
+                            disabled={isPrevDisabled}
+                            title="Previous"
+                        >
+                            <ChevronLeft className="h-4 w-4 text-white" />
+                        </Button>
+
+                        <Button
+                            size="sm"
+                            className="bg-black text-white hover:bg-black/90 disabled:opacity-50 h-8 w-8 p-0 cursor-pointer disabled:cursor-not-allowed"
+                            onClick={handleNext}
+                            disabled={isNextDisabled}
+                            title="Next"
+                        >
+                            <ChevronRight className="h-4 w-4 text-white" />
+                        </Button>
+                    </div>
+                </div>
             </div>
-            <Select
-                value={type}
-                onValueChange={(val: FilterType) => {
-                    setType(val);
-                    setValue(getInitialValue(val));
-                }}
-            >
-                <SelectTrigger className="w-[150px] focus:outline-none focus:ring-0 focus:ring-offset-0">
-                    <SelectValue placeholder="Select Range" />
-                    <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
-                </SelectTrigger>
-                <SelectContent>
-                    {/* <SelectItem value="overall">Overall</SelectItem> */}
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-            </Select>
-
-
-            <div className="flex items-center gap-2">
-                <Button variant="outline" className='cursor-pointer' onClick={handlePrev} disabled={isPrevDisabled}>
-                    <ChevronLeft />
-
-                </Button>
-                <Button variant="outline" className='cursor-pointer' onClick={handleNext} disabled={isNextDisabled}>
-                    <ChevronRight />
-                </Button>
-            </div>
-        </div>
+        </>
     );
 }

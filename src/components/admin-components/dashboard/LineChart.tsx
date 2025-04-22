@@ -14,6 +14,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
 import moment from 'moment';
+import { chartTitle } from './ChartCard';
 
 // Register required components
 ChartJS.register(
@@ -34,10 +35,10 @@ type LineChartProps = {
         backgroundColor?: string;
     }[];
 };
-
+const currentYear = moment().format('YYYY')
 const LineChart: React.FC<LineChartProps> = ({ data }) => {
 
-    const [filter, setFilter] = useState({ type: 'overall', value: 'all' });
+    const [filter, setFilter] = useState({ type: 'yearly', value: currentYear });
     const [chartLabels, setChartLabels] = useState<string[]>([]);
 
     useEffect(() => {
@@ -64,7 +65,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
         datasets: data.map((set) => ({
             ...set,
             fill: false,
-            tension: 0.4, // For curve/smooth lines
+            tension: 0.4,
         })),
     };
 
@@ -86,9 +87,16 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
     };
 
     return (
+
         <div>
-            <div className="flex justify-end">
-                <DateRangeFilter onChange={setFilter} />
+            <div className="flex justify-between mb-6">
+                {chartTitle("Total Revenue Over Time")}
+                <DateRangeFilter
+                    onChange={setFilter}
+                    allowedTypes={['monthly', 'yearly']}
+                    initialType="yearly"
+                    initialValue={currentYear}
+                />
             </div>
             <Line data={chartData} options={options} />
         </div>

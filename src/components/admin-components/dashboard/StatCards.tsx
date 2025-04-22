@@ -45,7 +45,7 @@ const StatCards: React.FC = () => {
         <div className="flex flex-wrap -m-4 text-center">
             {cards.map((card, idx) => (
                 <div key={idx} className="p-4 lg:w-1/4 md:w-1/2 sm:w-1/2 w-full">
-                    <div className="border-2 border-gray-200 px-4 py-6 rounded-lg bg-white">
+                    <div className="border-2 border-gray-200 px-4 py-6 rounded-lg bg-white shadow-lg">
                         <div className="flex justify-between items-center">
                             {loading ? (
                                 <Skeleton className="h-12 w-12 rounded-full" />
