@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,6 +12,8 @@ import {
     Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
+import moment from 'moment';
 
 // Register required components
 ChartJS.register(
@@ -25,7 +27,6 @@ ChartJS.register(
 );
 
 type LineChartProps = {
-    labels: string[];
     data: {
         label: string;
         data: number[];
@@ -34,21 +35,44 @@ type LineChartProps = {
     }[];
 };
 
-const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
+const LineChart: React.FC<LineChartProps> = ({ data }) => {
+
+    const [filter, setFilter] = useState({ type: 'overall', value: 'all' });
+    const [chartLabels, setChartLabels] = useState<string[]>([]);
+
+    useEffect(() => {
+        console.log("useEffect-filter", filter)
+    }, [filter]);
+
+    useEffect(() => {
+        if (filter.type === 'monthly') {
+            const daysInMonth = moment(filter.value, 'YYYY-MM').daysInMonth();
+            const month = moment(filter.value, 'YYYY-MM');
+            const newLabels = Array.from({ length: daysInMonth }, (_, i) =>
+                month.clone().date(i + 1).format('D MMM')
+            );
+            setChartLabels(newLabels);
+        } else if (filter.type === 'yearly') {
+            const newLabels = moment.months(); // ['January', 'February', ..., 'December']
+            setChartLabels(newLabels);
+        }
+    }, [filter]);
+
+
     const chartData = {
-        labels,
+        labels: chartLabels,
         datasets: data.map((set) => ({
             ...set,
             fill: false,
             tension: 0.4, // For curve/smooth lines
         })),
     };
-
+    console.log("LINE_CHART_DATA", chartData.datasets)
     const options = {
         responsive: true,
         plugins: {
             legend: {
-                position: 'top' as const,
+                position: 'bottom' as const,
             },
             title: {
                 display: false,
@@ -61,7 +85,14 @@ const LineChart: React.FC<LineChartProps> = ({ labels, data }) => {
         },
     };
 
-    return <Line data={chartData} options={options} />;
+    return (
+        <div>
+            <div className="flex justify-end">
+                <DateRangeFilter onChange={setFilter} />
+            </div>
+            <Line data={chartData} options={options} />
+        </div>
+    );
 };
 
 export default LineChart;

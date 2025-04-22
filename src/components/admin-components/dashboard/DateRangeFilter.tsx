@@ -24,8 +24,8 @@ interface Props {
 }
 
 export default function DateRangeFilter({ onChange }: Props) {
-    const [type, setType] = useState<FilterType>('overall');
-    const [value, setValue] = useState(getInitialValue('overall'));
+    const [type, setType] = useState<FilterType>("yearly");
+    const [value, setValue] = useState(getInitialValue('yearly'));
 
     useEffect(() => {
         onChange({ type, value });
