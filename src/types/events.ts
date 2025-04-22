@@ -59,6 +59,12 @@ export type EventTicket = {
   description: string;
 };
 
+export type CheckoutTicket = {
+  totalPrice:number;
+  quantity:number;
+  type:string;
+}
+
 export type EventImage = {
   _id: string;
   imageId: string;

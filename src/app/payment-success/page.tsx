@@ -1,20 +1,52 @@
-import PaymentSuccessPage from '@/components/events-components/PaymentsPage';
-import React from 'react'
+'use client'
 
-interface Props {
-    params:{
-        eventId:string;
-    }
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import PaymentSuccessPage from '@/components/events-components/PaymentsPage'
+
+interface CheckoutTicket {
+  totalPrice: number
+  quantity: number
+  type: string
 }
 
-export default function EventDetailsPage({params}:Props) {
-    const { eventId } = params;
+const PaymentSuccess = () => {
+  const [ticketDetails, setTicketDetails] = useState<CheckoutTicket | null>(null)
+  const [eventTitle, setEventTitle] = useState<string>('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const storedTickets = sessionStorage.getItem('tickets')
+    const storedEventTitle = sessionStorage.getItem('eventTitle')
+
+    if (!storedTickets || !storedEventTitle) {
+      router.push('/')
+      return
+    }
+
+    try {
+      const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
+      const parsedEventTitle: string = storedEventTitle
+
+      setTicketDetails(parsedTickets)
+      setEventTitle(parsedEventTitle)
+    } catch (err) {
+      console.error('Error parsing stored session data:', err)
+      router.push('/')
+    }
+
+    sessionStorage.removeItem('tickets')
+    sessionStorage.removeItem('eventTitle')
+  }, [router])
+
+  if (!ticketDetails) return null
+
   return (
-    <PaymentSuccessPage tickets={{
-          totalPrice: 0,
-          quantity: 0,
-          type: ''
-      }} eventTitles={''} />
+    <PaymentSuccessPage
+      tickets={ticketDetails}
+      eventTitles={eventTitle}
+    />
   )
 }
 
+export default PaymentSuccess
