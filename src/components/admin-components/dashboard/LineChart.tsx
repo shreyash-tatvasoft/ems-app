@@ -67,7 +67,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
             tension: 0.4, // For curve/smooth lines
         })),
     };
-    console.log("LINE_CHART_DATA", chartData.datasets)
+
     const options = {
         responsive: true,
         plugins: {

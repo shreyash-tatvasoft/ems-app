@@ -16,7 +16,6 @@ const generateFlippedHeatmapData = () => {
         })),
     }));
 };
-console.log("HEATMAP", generateFlippedHeatmapData())
 const MonthDateHeatmap = () => {
     const chartRef = useRef<HTMLDivElement>(null);
 

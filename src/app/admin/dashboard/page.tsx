@@ -9,6 +9,7 @@ import LineChart from '@/components/admin-components/dashboard/LineChart';
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
+import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
 
 function DashboardPage() {
     const labels = ['Cats', 'Dogs', 'Birds', "Cow", "Lion"];
@@ -48,7 +49,7 @@ function DashboardPage() {
             <div className="flex flex-wrap -m-4">
                 <div className="md:w-1/2 p-4">
                     <ChartCard title="Top 5 Events by Revenue">
-                        <BarChart data={data} labels={labels} />
+                        <MostRevenueByEvents />
                     </ChartCard>
                 </div>
                 <div className="md:w-1/2 p-4">

@@ -1,6 +1,4 @@
-'use client';
-
-import { Bar } from 'react-chartjs-2';
+import { BALANCED_COLORS } from '@/utils/constant';
 import {
     Chart as ChartJS,
     BarElement,
@@ -8,32 +6,36 @@ import {
     LinearScale,
     Tooltip,
     Legend,
+    Title
 } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
-import React from 'react';
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-type BarChartProps = {
-    labels: string[];
+type Props = {
     data: number[];
-    backgroundColors?: string[];
+    labels: string[];
 };
 
-const BarChart: React.FC<BarChartProps> = ({
-    labels,
-    data,
-    backgroundColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-}) => {
+const formatNumberShort = (value: number): string => {
+    const format = (val: number, suffix: string) =>
+        Number.isInteger(val) ? `${val} ${suffix}` : `${val.toFixed(1)} ${suffix}`;
+
+    if (value >= 1_000_000_000) return format(value / 1_000_000_000, 'B');
+    if (value >= 1_000_000) return format(value / 1_000_000, 'M');
+    if (value >= 1_000) return format(value / 1_000, 'K');
+    return value.toString();
+};
+
+export default function BarChart({ data, labels }: Props) {
     const chartData = {
         labels,
         datasets: [
             {
-                label: 'Data',
+                label: 'Revenue',
                 data,
-                backgroundColor: backgroundColors.slice(0, labels.length),
-                borderWidth: 1,
-                barThickness: 30,
+                backgroundColor: BALANCED_COLORS.slice(0, labels.length),
+                barThickness: 20,
             },
         ],
     };
@@ -47,14 +49,23 @@ const BarChart: React.FC<BarChartProps> = ({
         },
         scales: {
             y: {
+                ticks: {
+                    callback: function (value: string | number) {
+                        return formatNumberShort(Number(value));
+                    },
+                    color: '#6B7280', // optional: gray-500
+                },
                 beginAtZero: true,
+            },
+            x: {
+                categoryPercentage: 0.6,  // default is 0.8
+                barPercentage: 0.7,       // default is 0.9
+                ticks: {
+                    color: '#6B7280',
+                },
             },
         },
     };
 
-    return (
-        <Bar data={chartData} options={options} />
-    );
-};
-
-export default BarChart;
+    return <Bar data={chartData} options={options} />;
+}

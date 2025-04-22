@@ -91,7 +91,7 @@ export default function MostBookedUsersTable() {
     const loadingSkeleton = () => {
         return (
             <>
-                {Array.from({ length: 10 }).map((_, index) => (
+                {Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
                         <TableCell><Skeleton className="h-4 w-10" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
@@ -106,32 +106,34 @@ export default function MostBookedUsersTable() {
     return (
         <div>
             <Table>
-                <TableHeader>
-                    <TableRow className='hover:bg-transparent'>
-                        <TableHead className="w-[100px] font-bold">ID</TableHead>
-                        <TableHead className='font-bold'>Name</TableHead>
-                        <TableHead className='font-bold'>Email</TableHead>
-                        <TableHead className="text-center font-bold">Total No. of Bookings</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {loading ? loadingSkeleton() : users.length > 0 ? (
-                        users.map((user, index) => (
-                            <TableRow key={user.userId} className='hover:bg-transparent text-gray-800'>
-                                <TableCell>{index + 1}</TableCell>
-                                <TableCell><TruncatedCell text={user.name} /></TableCell>
-                                <TableCell><TruncatedCell text={user.email} /></TableCell>
-                                <TableCell className="text-center">{user.totalBookings}</TableCell>
+                {loading ? loadingSkeleton() :
+                    <>
+                        <TableHeader>
+                            <TableRow className='hover:bg-transparent'>
+                                <TableHead className="w-[100px] font-bold">ID</TableHead>
+                                <TableHead className='font-bold'>Name</TableHead>
+                                <TableHead className='font-bold'>Email</TableHead>
+                                <TableHead className="text-center font-bold">Total No. of Bookings</TableHead>
                             </TableRow>
-                        ))
-                    ) : (
-                        <TableRow className='hover:bg-transparent'>
-                            <TableCell colSpan={4} className="text-center py-4 text-gray-500">
-                                No data available.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                        </TableHeader>
+                        <TableBody>
+                            {users.length ? users.map((user, index) => (
+                                <TableRow key={user.userId} className='hover:bg-transparent text-gray-800'>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell><TruncatedCell text={user.name} /></TableCell>
+                                    <TableCell><TruncatedCell text={user.email} /></TableCell>
+                                    <TableCell className="text-center">{user.totalBookings}</TableCell>
+                                </TableRow>
+                            )) :
+                                <TableRow className='hover:bg-transparent'>
+                                    <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+                                        No data available.
+                                    </TableCell>
+                                </TableRow>
+                            }
+                        </TableBody>
+                    </>}
+
             </Table>
         </div>
     );
