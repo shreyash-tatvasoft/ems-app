@@ -3,17 +3,15 @@
 import React from 'react'
 import PieChart from '@/components/admin-components/dashboard/PieChart';
 import DoughnutChart from '@/components/admin-components/dashboard/DoughnutChart';
-import BarChart from '@/components/admin-components/dashboard/BarChart';
 import StatCards from '@/components/admin-components/dashboard/StatCards';
 import LineChart from '@/components/admin-components/dashboard/LineChart';
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
+import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
 
 function DashboardPage() {
-    const labels = ['Cats', 'Dogs', 'Birds', "Cow", "Lion"];
-    const data = [5, 20, 10, 5, 20];
 
     return (
         <section className="text-gray-400 p-8">
@@ -46,7 +44,7 @@ function DashboardPage() {
                 </div>
                 <div className="md:w-1/2 p-4 h-full">
                     <ChartCard title="Total Revenue By Category">
-                        <BarChart data={data} labels={labels} />
+                        <RevenueByCategory />
                     </ChartCard>
                 </div>
             </div>
