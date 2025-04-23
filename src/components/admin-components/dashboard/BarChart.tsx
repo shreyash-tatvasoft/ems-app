@@ -1,4 +1,5 @@
 import { BALANCED_COLORS } from '@/utils/constant';
+import { formatNumberShort } from '@/utils/helper';
 import {
     Chart as ChartJS,
     BarElement,
@@ -17,15 +18,7 @@ type Props = {
     labels: string[];
 };
 
-const formatNumberShort = (value: number): string => {
-    const format = (val: number, suffix: string) =>
-        Number.isInteger(val) ? `${val} ${suffix}` : `${val.toFixed(1)} ${suffix}`;
 
-    if (value >= 1_000_000_000) return format(value / 1_000_000_000, 'B');
-    if (value >= 1_000_000) return format(value / 1_000_000, 'M');
-    if (value >= 1_000) return format(value / 1_000, 'K');
-    return value.toString();
-};
 
 export default function BarChart({ data, labels }: Props) {
     const chartData = {

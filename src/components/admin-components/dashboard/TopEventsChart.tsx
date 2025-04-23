@@ -1,0 +1,110 @@
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { apiCall } from '@/utils/services/request';
+import { API_ROUTES } from '@/utils/constant';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import PieChart from '../charts/PieChart';
+import TableModal from './TableModal';
+
+interface IData {
+    _id: string;
+    title: string;
+    category: string;
+    likesCount: number;
+}
+
+const TopEventsChart = () => {
+
+    const [chartLabels, setChartLabels] = useState<string[]>([]);
+    const [chartData, setChartData] = useState<number[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [tableLoading, setTableLoading] = useState(true);
+    const [tableData, setTableData] = useState<IData[]>([]);
+    const [open, setOpen] = useState(false);
+
+    // Fetch chart data
+    const fetchChartData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}?limit=5`, method: 'GET' });
+            const result = response?.data as IData[];
+
+            const dynamicLabel = result.map(e => e.title)
+            const dynamicValue = result.map(e => e.likesCount)
+
+            setChartLabels(dynamicLabel);
+            setChartData(dynamicValue);
+        } catch (err) {
+            console.error('Error fetching chart data', err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Fetch table data
+    const fetchTableData = useCallback(async () => {
+        setTableLoading(true);
+        try {
+            const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}`, method: 'GET' });
+            const result = response?.data as IData[];
+            setTableData(result);
+        } catch (error) {
+            console.error('Error fetching detailed data:', error);
+        } finally {
+            setTableLoading(false);
+        }
+    }, []);
+
+    // Trigger table data fetch on button click
+    const handleViewDetails = () => {
+        fetchTableData();
+        setOpen(true);
+    };
+
+    useEffect(() => {
+        fetchChartData();
+    }, [fetchChartData]);
+
+    return (
+        <div>
+            {loading ? (
+                <>
+                    <div className="w-full flex justify-center items-center">
+                        <Skeleton className="h-70 w-70 rounded-full" />
+                    </div>
+                    <div className="flex justify-end">
+                        <Skeleton className="w-[100px] h-8 mt-4" />
+                    </div>
+                </>
+            ) : (
+                <>
+                    <PieChart labels={chartLabels} data={chartData} />
+                    <div className="flex justify-end mt-4">
+                        <Button
+                            variant="link"
+                            className="underline text-primary px-0 cursor-pointer"
+                            onClick={handleViewDetails}
+                        >
+                            View Details
+                        </Button>
+                    </div>
+                </>
+            )}
+            <TableModal
+                open={open}
+                onClose={() => setOpen(false)}
+                columns={[
+                    { label: 'Event Title', key: 'title' },
+                    { label: 'Category', key: 'category' },
+                    { label: 'Likes', key: 'likesCount' },
+                ]}
+                data={tableData}
+                loading={tableLoading}
+            />
+        </div>
+    );
+};
+
+export default TopEventsChart;

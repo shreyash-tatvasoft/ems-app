@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react'
-import PieChart from '@/components/admin-components/dashboard/PieChart';
+import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
 import DoughnutChart from '@/components/admin-components/dashboard/DoughnutChart';
 import StatCards from '@/components/admin-components/dashboard/StatCards';
 import LineChart from '@/components/admin-components/dashboard/LineChart';
@@ -20,7 +20,7 @@ function DashboardPage() {
             <div className="flex flex-wrap -m-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <ChartCard title="Top 5 Liked Events">
-                        <PieChart />
+                        <TopEventsChart />
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
