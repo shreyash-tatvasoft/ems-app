@@ -70,10 +70,11 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
           type: selectedType,
           quantity,
           totalPrice,
+          ticketId:selectedTicketType?._id
         },
         eventTitle,
       })
-      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice}));
+      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id}));
       sessionStorage.setItem("eventTitle",eventTitle);
       window.location.href = res.data.url
     } catch (err) {
@@ -186,7 +187,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               </span>
             </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">
-            <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:totalPrice,quantity:quantity})}/>
+            <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:totalPrice,quantity:quantity,ticketId:selectedTicketType?._id})}/>
             <input type="hidden" name="eventTitle" value={eventTitle}/>
             <button
               type="submit"
