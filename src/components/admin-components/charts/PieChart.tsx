@@ -31,8 +31,7 @@ const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
             legend: { position: 'bottom' as const },
             tooltip: {
                 callbacks: {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    label: (context: any) => {
+                    label: (context) => {
                         const label = context.label || '';
                         const value = context.formattedValue || 0;
                         const likesText = value === '1' ? 'Like' : 'Likes';

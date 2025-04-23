@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import PieChart from '../charts/PieChart';
 import TableModal from './TableModal';
+import { chartTitle } from './ChartCard';
 
 interface IData {
     _id: string;
@@ -69,27 +70,33 @@ const TopEventsChart = () => {
 
     return (
         <div>
+            <div className="flex justify-between gap-4">
+                {chartTitle('Top 5 Liked Events')}
+
+                {loading ?
+                    <div className="flex justify-end">
+                        <Skeleton className="w-[100px] h-8 mt-4" />
+                    </div>
+                    :
+                    <Button
+                        variant="link"
+                        className="underline text-primary px-0 cursor-pointer"
+                        onClick={handleViewDetails}
+                    >
+                        View Details
+                    </Button>
+                }
+            </div>
             {loading ? (
                 <>
                     <div className="w-full flex justify-center items-center">
                         <Skeleton className="h-70 w-70 rounded-full" />
                     </div>
-                    <div className="flex justify-end">
-                        <Skeleton className="w-[100px] h-8 mt-4" />
-                    </div>
+
                 </>
             ) : (
                 <>
                     <PieChart labels={chartLabels} data={chartData} />
-                    <div className="flex justify-end mt-4">
-                        <Button
-                            variant="link"
-                            className="underline text-primary px-0 cursor-pointer"
-                            onClick={handleViewDetails}
-                        >
-                            View Details
-                        </Button>
-                    </div>
                 </>
             )}
             <TableModal
@@ -102,6 +109,8 @@ const TopEventsChart = () => {
                 ]}
                 data={tableData}
                 loading={tableLoading}
+                title='All Events Likes'
+                pagesize={10}
             />
         </div>
     );

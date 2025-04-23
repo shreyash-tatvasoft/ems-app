@@ -17,9 +17,10 @@ interface TableModalProps<T = any> {
     data: T[];
     loading?: boolean;
     title?: string;
+    pagesize?: number
+
 }
 
-// Wrap the component in memo to optimize re-renders
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TableModal = <T extends Record<string, any>>({
     open,
@@ -28,6 +29,7 @@ const TableModal = <T extends Record<string, any>>({
     data,
     loading = false,
     title = 'Details',
+    pagesize = 5
 }: TableModalProps<T>) => {
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -35,7 +37,7 @@ const TableModal = <T extends Record<string, any>>({
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
-                <GenericTable columns={columns} data={data} loading={loading} />
+                <GenericTable columns={columns} data={data} loading={loading} pageSize={pagesize} />
             </DialogContent>
         </Dialog>
     );

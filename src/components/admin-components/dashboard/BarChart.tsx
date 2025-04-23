@@ -18,8 +18,6 @@ type Props = {
     labels: string[];
 };
 
-
-
 export default function BarChart({ data, labels }: Props) {
     const chartData = {
         labels,

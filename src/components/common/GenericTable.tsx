@@ -57,9 +57,9 @@ const GenericTable = <T extends Record<string, any>>({
             <div className="border rounded-md overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className='bg-gray-200'>
                             {columns.map(col => (
-                                <TableHead key={col.key}>{col.label}</TableHead>
+                                <TableHead key={col.key} className='font-bold'>{col.label}</TableHead>
                             ))}
                         </TableRow>
                     </TableHeader>
