@@ -66,12 +66,14 @@ export default function MostBookedUsersTable() {
 
     const loadingSkeleton = useMemo(() => (
         Array.from({ length: 10 }).map((_, index) => (
-            <TableRow key={index}>
-                <TableCell><Skeleton className="h-4 w-10" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
-                <TableCell className="text-center"><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-            </TableRow>
+            <TableHeader key={index}>
+                <TableRow>
+                    <TableCell><Skeleton className="h-4 w-10" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
+                    <TableCell className="text-center"><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
+                </TableRow>
+            </TableHeader>
         ))
     ), []);
 
