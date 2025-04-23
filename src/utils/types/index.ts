@@ -13,6 +13,7 @@ export interface IFilterModalProps {
     onClose: () => void;
     applyFilters: (filterValues : IApplyFiltersKey) => void;
     maxTicketPrice?: number
+    isUserRole? : boolean
 }
 
 export interface IEventRangeDate {
@@ -33,6 +34,8 @@ export interface IApplyFiltersKey {
     eventsDates?: IEventRangeDate
     priceRange?: IEventPrice
     search? : string
+    likeEvent? : string
+    locationRadius? : string
 }
 
 export interface ISidebarPageProps {

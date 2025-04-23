@@ -1,10 +1,19 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
+import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 
 interface EventCardProps {
   event: EventData
@@ -69,12 +78,31 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:event.description}}/>
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
+            <Square3Stack3DIcon className="h-4 w-4 mr-2" />
+            <span className='font-bold'>{event.category}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <MapPin className="h-4 w-4 mr-2" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="truncate max-w-60 font-bold">
+                  {event.location}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className=" text-white font-bold">
+                    {event.location}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
             <CalendarIcon className="h-4 w-4 mr-2" />
-            <span>{formattedDate}</span>
+            <span className='font-bold'>{formattedDate}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <TagIcon className="h-4 w-4 mr-2" />
-            <span>{event.priceRange}</span>
+            <span className='font-bold'>{event.priceRange}</span>
           </div>
         </div>
       </div>

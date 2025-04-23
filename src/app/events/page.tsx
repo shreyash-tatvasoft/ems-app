@@ -117,7 +117,9 @@ const EventsPage: React.FC = () => {
                 (sum, ticket) => sum + ticket.totalSeats,
                 0
               ),
-              ticketsArray: item.tickets
+              ticketsArray: item.tickets,
+              lat: item.location.lat,
+              lng : item.location.lng
             }
            }))
   
@@ -221,6 +223,7 @@ const EventsPage: React.FC = () => {
         onClose={closeFilterModal}
         applyFilters={(values) => applyFilters(values)}
         maxTicketPrice={getMaxTicketPrice(allEvents)}
+        isUserRole={true}
       />
     </div>
   )

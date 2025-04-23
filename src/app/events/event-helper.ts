@@ -5,6 +5,11 @@ import { durationOptions, STATUS_OPTIONS, TICKETS_OPTIONS } from "@/utils/consta
 
 import moment from "moment";
 
+export const setUserLatLong = (lat: number, lng : number) => {
+   localStorage.setItem("lat", `${lat}`)
+   localStorage.setItem("lng", `${lng}`)
+}
+
 export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 'upcoming' | 'ended' {
     const now = new Date();
     const start = new Date(startTime);
@@ -34,6 +39,7 @@ export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 
         (position) => {
           const userLat = position.coords.latitude;
           const userLng = position.coords.longitude;
+          setUserLatLong(userLat,userLng)
   
           const R = 6371; 
           const dLat = toRad(targetLat - userLat);
@@ -111,7 +117,7 @@ export const getMaxTicketPrice = (events: EventData[]): number => {
 export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] => {
   const result: LabelValue[] = [];
 
-  const { catogories, durations, status, ticketsTypes, eventsDates, priceRange  } = filters
+  const { catogories, durations, status, ticketsTypes, eventsDates, priceRange , locationRadius, likeEvent } = filters
 
   if (catogories && catogories.length) {
     catogories.forEach((cat) =>
@@ -150,6 +156,22 @@ export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] =
       label:  `${priceRange.min} - ${priceRange.max}`,
       value: `${priceRange.min} - ${priceRange.max}`,
       rowKey: "priceRange"
+    });
+  }
+
+  if (likeEvent) {
+    result.push({
+      label:  "Liked Events",
+      value: "true",
+      rowKey: "likeEvent"
+    });
+  }
+
+  if (locationRadius) {
+    result.push({
+      label: `Upto ${locationRadius} km`,
+      value: locationRadius,
+      rowKey: "locationRadius"
     });
   }
 
@@ -196,6 +218,37 @@ export const removeFilterFromObject = (
 
   return updatedFilters;
 };
+
+export const getDistanceInKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371; // Radius of Earth in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export const filterEventsByDistance = (events: EventData[], selectedRadius: string): EventData[] => {
+  const userLat = parseFloat(localStorage.getItem("lat") || "0");
+  const userLng = parseFloat(localStorage.getItem("lng") || "0");
+  const radiusKm = parseFloat(selectedRadius);
+
+  return events.filter((event) => {
+    if (event.lat && event.lng) {
+      const distance = getDistanceInKm(userLat, userLng, event.lat, event.lng);
+      return distance <= radiusKm;
+    }
+    return false;
+  });
+}
+
+
 
 export const filterByCatogories = (events: EventData[], catogoeriesArray : string[]) => {
   return events.filter(event => catogoeriesArray.includes(event.category))
@@ -292,6 +345,13 @@ export const filterByDateRange = (
   })
 }
 
+export const filterByLikedEvents = (events: EventData[], likeEvent : string) => {
+  if(likeEvent === "true") {
+   return events.filter(event => event.isLiked)
+  }
+  return events
+}
+
 export const filterByPriceRange = (
     events: EventData[],
     priceRange: IEventPrice
@@ -312,7 +372,7 @@ export const filterByPriceRange = (
 export const getFilteredEventsData = (events : EventData[], filterValues : IApplyFiltersKey) => {
   let data = [...events]
 
-  const { catogories, status, durations, search, eventsDates, ticketsTypes, priceRange } = filterValues
+  const { catogories, status, durations, search, eventsDates, ticketsTypes, priceRange, likeEvent, locationRadius } = filterValues
 
   if (search && search.trim() !== "") {
     data = filterBySearch(data, search)
@@ -339,6 +399,14 @@ export const getFilteredEventsData = (events : EventData[], filterValues : IAppl
 
   if (priceRange && priceRange.max && priceRange.min > -1) {
     data = filterByPriceRange(data, priceRange)
+  }
+
+  if (likeEvent && likeEvent.trim() !== "") {
+    data = filterByLikedEvents(data, likeEvent)
+  }
+
+  if(locationRadius && locationRadius.trim() !== "") {
+    data = filterEventsByDistance(events,locationRadius)
   }
 
   return data

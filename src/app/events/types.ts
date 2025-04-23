@@ -31,7 +31,10 @@ export interface EventData {
     endTime?: string;
     ticketsAvailable?: number;
     totalTickets?: number,
-    ticketsArray?: EventTicket[]
+    ticketsArray?: EventTicket[],
+    location?: string;
+    lat? : number,
+    lng?: number
 }
   export interface Category {
     id: string;
