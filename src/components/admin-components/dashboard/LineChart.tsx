@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -15,90 +15,109 @@ import { Line } from 'react-chartjs-2';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
 import moment from 'moment';
 import { chartTitle } from './ChartCard';
+import { Skeleton } from '@/components/ui/skeleton'; // Assuming you’re using a component-based skeleton
 
-// Register required components
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-type LineChartProps = {
-    data: {
-        label: string;
-        data: number[];
-        borderColor?: string;
-        backgroundColor?: string;
-    }[];
-};
-const currentYear = moment().format('YYYY')
-const LineChart: React.FC<LineChartProps> = ({ data }) => {
+type FilterType = 'overall' | 'monthly' | 'yearly';
 
-    const [filter, setFilter] = useState({ type: 'yearly', value: currentYear });
-    const [chartLabels, setChartLabels] = useState<string[]>([]);
+interface Filter {
+    type: FilterType;
+    value: string;
+}
 
-    useEffect(() => {
-        console.log("useEffect-filter", filter)
-    }, [filter]);
+interface Dataset {
+    label: string;
+    data: number[];
+    borderColor?: string;
+    backgroundColor?: string;
+}
 
-    useEffect(() => {
+const LineChart: React.FC = () => {
+    const [filter, setFilter] = useState<Filter>({
+        type: 'yearly',
+        value: moment().format('YYYY'),
+    });
+
+    const [datasets, setDatasets] = useState<Dataset[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const chartLabels = useMemo(() => {
         if (filter.type === 'monthly') {
             const daysInMonth = moment(filter.value, 'YYYY-MM').daysInMonth();
-            const month = moment(filter.value, 'YYYY-MM');
-            const newLabels = Array.from({ length: daysInMonth }, (_, i) =>
-                month.clone().date(i + 1).format('D MMM')
+            return Array.from({ length: daysInMonth }, (_, i) =>
+                moment(filter.value, 'YYYY-MM').date(i + 1).format('D MMM')
             );
-            setChartLabels(newLabels);
-        } else if (filter.type === 'yearly') {
-            const newLabels = moment.months(); // ['January', 'February', ..., 'December']
-            setChartLabels(newLabels);
         }
+        if (filter.type === 'yearly') {
+            return moment.months();
+        }
+        return [];
     }, [filter]);
 
+    useEffect(() => {
+        const fetchDatasets = async () => {
+            setLoading(true);
+            try {
+                // const res = await fetch(`/api/chart-data?type=${filter.type}&value=${filter.value}`);
+                // const { datasets } = await res.json();
 
-    const chartData = {
+                const mock = [
+                    {
+                        label: 'Revenue Number',
+                        data: [5, 20, 10, 5, 20],
+                        borderColor: '#4BC0C0',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    },
+                ];
+                setDatasets(mock);
+            } catch (err) {
+                console.error('Failed to fetch chart data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDatasets();
+    }, [filter]);
+
+    const chartData = useMemo(() => ({
         labels: chartLabels,
-        datasets: data.map((set) => ({
+        datasets: datasets.map((set) => ({
             ...set,
             fill: false,
             tension: 0.4,
         })),
-    };
+    }), [chartLabels, datasets]);
 
-    const options = {
+    const chartOptions = useMemo(() => ({
         responsive: true,
         plugins: {
-            legend: {
-                position: 'bottom' as const,
-            },
-            title: {
-                display: false,
-            },
+            legend: { position: 'bottom' as const },
+            title: { display: false },
         },
         scales: {
-            y: {
-                beginAtZero: true,
-            },
+            y: { beginAtZero: true },
         },
-    };
+    }), []);
 
     return (
-
         <div>
             <div className="flex justify-between mb-6">
-                {chartTitle("Total Revenue Over Time")}
+                {chartTitle('Total Revenue Over Time')}
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['monthly', 'yearly']}
-                    initialType="yearly"
-                    initialValue={currentYear}
+                    initialType={filter.type}
+                    initialValue={filter.value}
                 />
             </div>
-            <Line data={chartData} options={options} />
+
+            {loading ? (
+                <Skeleton className="w-full h-80 rounded-xl" />
+            ) : (
+                <Line data={chartData} options={chartOptions} />
+            )}
         </div>
     );
 };

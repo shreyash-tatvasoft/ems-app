@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -9,93 +9,68 @@ import {
     Legend,
 } from 'chart.js';
 import { Skeleton } from '@/components/ui/skeleton';
-
 import { LIGHT_COLORS } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
+import { API_ROUTES } from '@/utils/constant';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
 
-const mockResp = {
-    "status": 200,
-    "data": [
-        {
-            "_id": "67fded1a6602653b3f5b9d53",
-            "title": "Sports Events",
-            "category": "Sports",
-            "likesCount": 2
-        },
-        {
-            "_id": "67fe03d8dcc9697ee1f30850",
-            "title": "Gaming event",
-            "category": "Gaming",
-            "likesCount": 1
-        },
-        {
-            "_id": "67fe3923bc0b4c7a774584f0",
-            "title": "Jazz in the Park",
-            "category": "Music",
-            "likesCount": 1
-        },
-        {
-            "_id": "67fe05f0dcc9697ee1f308ad",
-            "title": "Film Festival",
-            "category": "Film & Media",
-            "likesCount": 0
-        },
-        {
-            "_id": "67fe4347bc0b4c7a7745886e",
-            "title": "Test Event",
-            "category": "Wellness",
-            "likesCount": 0
-        }
-    ],
-    "success": true,
-    "message": "OK"
+interface IData {
+    "_id": string,
+    "title": string,
+    "category": string,
+    "likesCount": number
 }
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart: React.FC = () => {
     const [labels, setLabels] = useState<string[]>([]);
     const [data, setData] = useState<number[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [isDataFetched, setIsDataFetched] = useState<boolean>(false); // Flag to check if data was already fetched
 
+    // Memoize fetchData to prevent unnecessary recreation
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            const endPoint = `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}?limit=5`;
+            const response = await apiCall({ endPoint, method: 'GET' });
+            const topEvents = response?.data as IData[] || [];
+
+            // Memoize labels and data transformation
+            const dynamicLabels = topEvents.map((event) => event.title);
+            const dynamicData = topEvents.map((event) => event.likesCount);
+
+            setLabels(dynamicLabels);
+            setData(dynamicData);
+            setIsDataFetched(true); // Set the flag to prevent further fetching
+        } catch (error) {
+            console.error('Error fetching pie chart data:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []); // Dependency array ensures fetchData is memoized
+
+    // Call fetchData only if data is not fetched yet
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // const endPoint = `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}?limit=${5}`
-                // const response = await apiCall({
-                //     endPoint,
-                //     method: "GET",
-                // });
-                // console.log("response", response)
+        if (!isDataFetched) {
+            fetchData();
+        }
+    }, [fetchData, isDataFetched]);
 
-                const topEvents = mockResp.data
-                const dynamicLabels = topEvents.map((event) => event.title);
-                const dynamicData = topEvents.map((event) => event.likesCount);
-
-                setLabels(dynamicLabels);
-                setData(dynamicData);
-            } catch (error) {
-                console.error('Error fetching pie chart data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const chartData = {
+    // Memoize chart data and options
+    const chartData = useMemo(() => ({
         labels,
         datasets: [
             {
-                label: 'Data',
+                label: 'Likes',
                 data,
                 backgroundColor: LIGHT_COLORS.slice(0, labels.length),
                 borderWidth: 1,
             },
         ],
-    };
+    }), [labels, data]);
 
-    const options = {
+    const options = useMemo(() => ({
         responsive: true,
         plugins: {
             legend: {
@@ -104,7 +79,7 @@ const PieChart: React.FC = () => {
             tooltip: {
                 callbacks: {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    label: function (context: any) {
+                    label: (context: any) => {
                         const label = context.label || '';
                         const value = context.formattedValue || 0;
                         const likesText = value === '1' ? 'Like' : 'Likes';
@@ -113,9 +88,9 @@ const PieChart: React.FC = () => {
                 },
             },
         },
-    };
+    }), []);
 
-
+    // Loading skeleton UI
     if (loading) {
         return (
             <div className="w-full flex justify-center items-center">
@@ -124,9 +99,12 @@ const PieChart: React.FC = () => {
         );
     }
 
-    return <div className="max-h-[350px] w-full flex justify-center">
-        <Pie data={chartData} options={options} />
-    </div>;
+    // Render the chart
+    return (
+        <div className="max-h-[350px] w-full flex justify-center">
+            <Pie data={chartData} options={options} />
+        </div>
+    );
 };
 
 export default PieChart;

@@ -23,6 +23,8 @@ export const API_ROUTES = {
         // DASHBOARD
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
         BOOKING_BY_TICKET_TYPE: 'dashboard/analytics/bookings-by-ticket-type',
+        TOP_USERS_HIGHEST_BOOKING: 'dashboard/analytics/repeat-customers',
+        BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends'
     },
     AUTH: {
         LOGIN: `/login`,
@@ -70,34 +72,34 @@ export const BALANCED_COLORS = [
 ];
 
 export const ADMIN_SIDEBAR_ITEMS = [
-  { id : 1, title : "Dashboard", route : ROUTES.ADMIN.DASHBOARD, icon : "/assets/DashboardIcon.svg"},
-  { id : 2, title : "Events", route : ROUTES.ADMIN.EVENTS, icon : "/assets/EventsIcon.svg"},
-] 
+    { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
+]
 
 export const CATOGORIES_ITEMS = [
-  { id: 1, label: "Music", value: "Music", icon: "🎵" },
-  { id: 2, label: "Art & Culture", value: "Art & Culture", icon: "🎨" },
-  { id: 3, label: "Film & Media", value: "Film & Media", icon: "🎬" },
-  { id: 4, label: "Education", value: "Education", icon: "🎓" },
-  { id: 5, label: "Sports", value: "Sports", icon: "🏅" },
-  { id: 6, label: "Food & Drink", value: "Food & Drink", icon: "🍔" },
-  { id: 7, label: "Wellness", value: "Wellness", icon: "🧘" },
-  { id: 8, label: "Gaming", value: "Gaming", icon: "🎮" },
-  { id: 9, label: "Business", value: "Business", icon: "💼" },
+    { id: 1, label: "Music", value: "Music", icon: "🎵" },
+    { id: 2, label: "Art & Culture", value: "Art & Culture", icon: "🎨" },
+    { id: 3, label: "Film & Media", value: "Film & Media", icon: "🎬" },
+    { id: 4, label: "Education", value: "Education", icon: "🎓" },
+    { id: 5, label: "Sports", value: "Sports", icon: "🏅" },
+    { id: 6, label: "Food & Drink", value: "Food & Drink", icon: "🍔" },
+    { id: 7, label: "Wellness", value: "Wellness", icon: "🧘" },
+    { id: 8, label: "Gaming", value: "Gaming", icon: "🎮" },
+    { id: 9, label: "Business", value: "Business", icon: "💼" },
 ]
 
 export const SIGN_UP_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?semt=ais_hybrid&w=740"
 export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
 
 export enum ROLE {
-  Admin = "admin",
-  User = "user",
+    Admin = "admin",
+    User = "user",
 }
 
 export const INITIAL_TICKETS_TYPES = [
-  { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
-  { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
-  { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission" },
+    { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
+    { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
+    { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission" },
 ]
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
@@ -161,7 +163,7 @@ import {
     Medal,
     Utensils,
 } from 'lucide-react';
-import { Category, EventData } from './types'
+import { Category } from './types'
 
 export const CATEGORIES: Category[] = [
     {
@@ -173,8 +175,8 @@ export const CATEGORIES: Category[] = [
         id: 'Music',
         name: 'Music',
         icon: MusicIcon,
-      },
-      {
+    },
+    {
         id: 'Art & Culture',
         name: 'Art & Culture',
         icon: PartyPopperIcon,
@@ -189,29 +191,29 @@ export const CATEGORIES: Category[] = [
         name: 'Film & Media',
         icon: FilmIcon,
     },
-      {
+    {
         id: 'Gaming',
         name: 'Gaming',
         icon: Gamepad2,
-      },
-      {
+    },
+    {
         id: 'Education',
         name: 'Education',
         icon: GraduationCap,
-      },
-      {
+    },
+    {
         id: 'Wellness',
         name: 'Wellness',
         icon: BriefcaseMedical,
-      },
-      {
+    },
+    {
         id: 'Food & Drink',
         name: 'Food & Drink',
         icon: Utensils,
-      },
-      {
+    },
+    {
         id: 'Sports',
         name: 'Sports',
         icon: Medal,
-      },
+    },
 ]

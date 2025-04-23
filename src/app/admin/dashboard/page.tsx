@@ -14,14 +14,6 @@ import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRev
 function DashboardPage() {
     const labels = ['Cats', 'Dogs', 'Birds', "Cow", "Lion"];
     const data = [5, 20, 10, 5, 20];
-    const data2 = [
-        {
-            label: 'Revenue Number',
-            data: [5, 20, 10, 5, 20],
-            borderColor: '#4BC0C0',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        },
-    ]
 
     return (
         <section className="text-gray-400 p-8">
@@ -41,7 +33,7 @@ function DashboardPage() {
             </div>
             <div className="flex flex-wrap -m-4 p-4">
                 <ChartCard>
-                    <LineChart data={data2} />
+                    <LineChart />
                 </ChartCard>
             </div>
 

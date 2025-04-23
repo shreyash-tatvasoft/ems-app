@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -9,49 +9,18 @@ import {
     Legend,
 } from 'chart.js';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BALANCED_COLORS } from '@/utils/constant';
-// import { apiCall } from '@/utils/services/request';
+import { API_ROUTES, BALANCED_COLORS } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const mockResp = {
-    "status": 200,
-    "data": [
-        {
-            "_id": "6805d07cb0efa18db895ca04",
-            "totalBookings": 10,
-            "seatsAvailable": 40,
-            "bookingPercentage": 20,
-            "ticketType": "Free",
-            "totalSeats": 50
-        },
-        {
-            "_id": "6805d07cb0efa18db895ca03",
-            "totalBookings": 3,
-            "seatsAvailable": 47,
-            "bookingPercentage": 6,
-            "ticketType": "Standard",
-            "totalSeats": 50
-        },
-        {
-            "_id": "67fe3a46bc0b4c7a774585b9",
-            "totalBookings": 2,
-            "seatsAvailable": 98,
-            "bookingPercentage": 2,
-            "ticketType": "Premium",
-            "totalSeats": 100
-        },
-        {
-            "_id": "67fe399ebc0b4c7a77458586",
-            "totalBookings": 2,
-            "seatsAvailable": 48,
-            "bookingPercentage": 4,
-            "ticketType": "Standard",
-            "totalSeats": 50
-        }
-    ],
-    "success": true,
-    "message": "OK"
+interface IData {
+    "_id": string,
+    "totalBookings": number,
+    "seatsAvailable": number,
+    "bookingPercentage": number,
+    "ticketType": string,
+    "totalSeats": number
 }
 
 const DoughnutChart: React.FC = () => {
@@ -59,40 +28,38 @@ const DoughnutChart: React.FC = () => {
     const [labels, setLabels] = useState<string[]>([]);
     const [data, setData] = useState<number[]>([]);
 
-    useEffect(() => {
+    // Memoize the fetchData function to avoid recreation on each render
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await apiCall({
+                endPoint: API_ROUTES.ADMIN.BOOKING_BY_TICKET_TYPE,
+                method: "GET",
+            });
 
-        const fetchData = async () => {
-            try {
-                // const response = await apiCall({
-                //     endPoint: API_ROUTES.ADMIN.BOOKING_BY_TICKET_TYPE,
-                //     method: "GET",
-                // });
+            const bookingMap = (response.data as IData[]).reduce((acc, item) => {
+                acc[item.ticketType] = (acc[item.ticketType] || 0) + item.totalBookings;
+                return acc;
+            }, {} as Record<string, number>);
 
-                // console.log("response", response)
+            const dynamicLabels = Object.keys(bookingMap);
+            const dynamicData = Object.values(bookingMap);
 
-                const bookingMap = mockResp.data.reduce((acc, item) => {
-                    acc[item.ticketType] = (acc[item.ticketType] || 0) + item.totalBookings;
-                    return acc;
-                }, {} as Record<string, number>);
-
-                const dynamicLabels = Object.keys(bookingMap);
-                const dynamicData = Object.values(bookingMap);
-
-
-
-
-                setLabels(dynamicLabels);
-                setData(dynamicData);
-            } catch (error) {
-                console.error('Error fetching pie chart data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+            setLabels(dynamicLabels);
+            setData(dynamicData);
+        } catch (error) {
+            console.error('Error fetching doughnut chart data:', error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
-    const chartData = {
+
+    // Call fetchData only once when the component mounts
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    // Memoize chart data to prevent unnecessary recalculations
+    const chartData = useMemo(() => ({
         labels,
         datasets: [
             {
@@ -102,9 +69,10 @@ const DoughnutChart: React.FC = () => {
                 borderWidth: 1,
             },
         ],
-    };
+    }), [labels, data]);
 
-    const options = {
+    // Memoize chart options to prevent recalculations
+    const options = useMemo(() => ({
         responsive: true,
         cutout: '60%',
         plugins: {
@@ -117,14 +85,15 @@ const DoughnutChart: React.FC = () => {
                     label: function (context: any) {
                         const label = context.label || '';
                         const value = context.formattedValue || 0;
-                        const likesText = value === '1' ? 'Booking' : 'Bookings';
-                        return `${label}: ${value} ${likesText}`;
+                        const bookingText = value === '1' ? 'Booking' : 'Bookings';
+                        return `${label}: ${value} ${bookingText}`;
                     },
                 },
             },
         },
-    };
+    }), []);
 
+    // Show skeleton loader while data is loading
     if (loading) {
         return (
             <div className="w-full flex justify-center items-center">
