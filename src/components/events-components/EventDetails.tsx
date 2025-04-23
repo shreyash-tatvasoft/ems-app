@@ -4,7 +4,7 @@ import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapPinIcon, TagIcon } from 'luc
 import ImageCarousel from '@/components/events-components/ImageCarousel';
 import EventDescription from '@/components/events-components/EventDescription';
 import SimilarEvents from '@/components/events-components/SimilarEvents';
-import { EventDataObjResponse, EventDetails } from '@/types/events';
+import { EventDataObjResponse, EventDetails } from '../../app/events/types';
 import { getTicketPriceRange } from '@/app/admin/event/helper';
 import { areAllTicketsBooked, getEventStatus, getSimilarEvents, isNearbyWithUserLocation } from "@/app/events/event-helper";
 import { apiCall } from '@/utils/services/request';

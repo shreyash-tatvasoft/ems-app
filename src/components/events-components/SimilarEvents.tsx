@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
-import { EventData, EventDataObjResponse } from '@/types/events'
+import { EventData, EventDataObjResponse } from '../../app/events/types'
 import { getTicketPriceRange } from '@/app/admin/event/helper'
 import { EventResponse } from '@/utils/types'
 interface Event {

@@ -1,16 +1,20 @@
-import EventDetails from '@/components/events-components/EventDetails'
 import React from 'react'
 
-interface Props {
-    params:{
-        eventId:string;
-    }
-}
+// Next Support 
+import { NextPage } from 'next';
 
-export default function EventDetailsPage({params}:Props) {
-    const { eventId } = params;
+// Custom components
+import EventDetails from '@/components/events-components/EventDetails'
+
+// types 
+import { IEventDetailPageProps } from '../types';
+
+const EventDetailsPage:NextPage<IEventDetailPageProps>  = async ({ params }) => {
+  const eventId = (await params).eventId;
   return (
     <EventDetails eventId={eventId}/>
   )
 }
+
+export default EventDetailsPage
 

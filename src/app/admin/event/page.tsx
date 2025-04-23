@@ -292,7 +292,7 @@ function EventsListpage() {
 
         {/* Mobile view */}
 
-        <div className="flex gap-4 justify-between items-start sm:items-center my-5">
+        <div className="flex gap-4 justify-between items-start sm:items-center">
 
           {/* Filters Button */}
           <div className="relative inline-block sm:block  md:hidden">

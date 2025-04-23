@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
-import { EventData } from '@/types/events'
+import { EventData } from '../../app/events/types'
 import { API_ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 interface FeaturedEventProps {
@@ -61,7 +61,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
               {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
             </span>
           </div>
-          <p className="text-gray-600 mb-6">{event.description}</p>
+          <div className="text-gray-600 mb-6" dangerouslySetInnerHTML={{ __html : event.description }} />
           <div className="space-y-3 mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarIcon className="h-5 w-5 mr-3" />
@@ -69,7 +69,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
             </div>
             <div className="flex items-center text-gray-600">
               <ClockIcon className="h-5 w-5 mr-3" />
-              <span>{event.time}</span>
+              <span>{formattedDate}</span>
             </div>
             <div className="flex items-center text-gray-600">
               <TagIcon className="h-5 w-5 mr-3" />

@@ -121,6 +121,13 @@ export const PAGINATION_OPTIONS = [
     { value: 20, label: '20' },
 ];
 
+export const LOCATION_OPTIONS = [
+  { value: "5", label: '0 km - 5 km' },
+  { value: "10", label: '5 km - 10 km' },
+  { value: "25", label: 'upto 25 km' },
+  { value: "50", label: 'upto 50 km' },
+];
+
 export const durationOptions = [
     { label: "Short - Less than 1 hour", value: "short" },
     { label: "Medium - 1 to 4 hours", value: "medium" },

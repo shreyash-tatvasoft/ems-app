@@ -16,13 +16,15 @@ import moment from "moment";
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
 
 // constanst imports
-import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS,  } from "@/utils/constant";
+import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS, LOCATION_OPTIONS  } from "@/utils/constant";
 
 const FilterModal: React.FC<IFilterModalProps> = ({
   isOpen,
   onClose,
   applyFilters,
   maxTicketPrice = 100,
+  isUserRole = false,
+  filterValues
 }) => {
 
   const MIN = 0;
@@ -38,9 +40,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
         to : ""
       },
       priceRange : {
-        max : 100,
+        max : isUserRole ? maxTicketPrice : 100,
         min : -1
-      }
+      },
+      likeEvent : "",
+      locationRadius: ""
   }
 
   const [selectedDurations, setSelectedDurations] = useState<string[]>([])
@@ -48,6 +52,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   const [selectedStatus, setSelectedStatus] = useState("")
   const [selectedTicket, setSelectedTicket] = useState("")
   const [showAll, setShowAll] = useState(false)
+  const [locationRadius, setLocationRadius] = useState("")
+  const [isLikedEvent, setIsLikedEvent] = useState(false)
 
   const [date, setDate] = useState<{
     from: Date | undefined
@@ -81,7 +87,25 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       }
     }, [minVal, maxVal])
 
-    
+
+    useEffect(() => {
+      if(filterValues) {
+
+        setMaxVal(filterValues.priceRange?.max ?? maxTicketPrice)
+        setMinVal(filterValues.priceRange?.min === -1 ? "0" : String(filterValues.priceRange?.min ?? 0));
+        setDate({
+          from: filterValues.eventsDates?.from ? new Date(filterValues.eventsDates.from) : undefined,
+          to: filterValues.eventsDates?.to ? new Date(filterValues.eventsDates.to) : undefined,
+        });
+        setSelectedCatogory(filterValues.catogories ?? []);
+        setSelectedStatus(filterValues.status ?? "");
+        setSelectedTicket(filterValues.ticketsTypes ?? "");
+        setSelectedDurations(filterValues.durations ?? []);
+        setIsLikedEvent(filterValues.likeEvent && filterValues.likeEvent === "true" ? true : false);
+        setLocationRadius(filterValues.locationRadius ?? "");
+      }
+
+    }, [filterValues])
 
 
   const toggleCheckbox = (value: string) => {
@@ -121,6 +145,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     setSelectedTicket("")
     setSelectedCatogory([])
     setSelectedDurations([])
+    setLocationRadius("")
+    setIsLikedEvent(false)
     applyFilters(INITIAL_FILTER_VALUES)
   }
 
@@ -141,7 +167,9 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       status: selectedStatus,
       ticketsTypes : selectedTicket,
       eventsDates : dateObj,
-      priceRange : priceObj
+      priceRange : priceObj,
+      ...(isUserRole && { likeEvent : isLikedEvent ? "true" : ""}),
+      ...(isUserRole && { locationRadius : locationRadius}),
     };
     applyFilters(filterValues);
   };
@@ -176,9 +204,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       hoverLightBg: "hover:bg-gray-100",
     },
   };
-  
-  if (!isOpen) return null;
 
+  if (!isOpen) return null;
+  
+  const isDisabled = !localStorage.getItem("lat") || !localStorage.getItem("lng");
+  
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40">
       <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
@@ -452,6 +482,57 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               ))}
             </div>
           </div>
+
+          {isUserRole &&
+            <>
+              <div className="my-5">
+                <p className="font-semibold text-lg mb-4">Liked Events</p>
+
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-md text-gray-700">Show only liked events</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isLikedEvent}
+                  onClick={() => setIsLikedEvent(!isLikedEvent)}
+                  className={`relative cursor-pointer inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${isLikedEvent ? "bg-blue-600" : "bg-gray-300"
+                    }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${isLikedEvent ? "translate-x-6" : "translate-x-1"
+                      }`}
+                  />
+                </button>
+              </div>
+
+              </div>
+
+              <div className="my-5">
+                <p className="font-semibold text-lg mb-4">Events By Location</p>
+
+                {isDisabled && <div className="text-sm text-red-500 mb-4 italic">*Please enable location to apply below filter</div>}
+
+              <div className="space-y-4">
+                {LOCATION_OPTIONS.map((option) => (
+                  <div key={option.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={option.value === locationRadius}
+                      disabled={isDisabled}
+                      onCheckedChange={() => setLocationRadius(option.value)}
+                      className="border border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white data-[state=checked]:border-blue-600 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <label
+                      htmlFor={option.label}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              </div>
+            </>
+          }
 
           {/* Content UI End*/}
         </div>
