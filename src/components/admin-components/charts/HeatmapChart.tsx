@@ -26,9 +26,9 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ series, categories }) => {
                 enableShades: true,
                 colorScale: {
                     ranges: [
-                        { from: 0, to: 2, color: '#C1F0F6', name: 'Low' },
-                        { from: 3, to: 5, color: '#FADADD', name: 'Medium' },
-                        { from: 6, to: 10, color: '#90B4ED', name: 'High' },
+                        { from: 0, to: 2, color: '#D1F8EF', name: 'Low' },
+                        { from: 3, to: 5, color: '#578FCA', name: 'Medium' },
+                        { from: 6, to: 10, color: '#003285', name: 'High' },
                     ],
                 },
             },

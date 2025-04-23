@@ -61,7 +61,7 @@ export default function BarChart({ data, labels }: Props) {
     }), []);
 
     return (
-        <div className="min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center">
+        <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
             <Bar data={chartData} options={options} />
         </div>
     );

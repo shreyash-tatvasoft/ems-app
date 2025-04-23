@@ -91,7 +91,7 @@ const TopEventsChart = () => {
             {loading ? (
                 <>
                     <div className="w-full flex justify-center items-center">
-                        <Skeleton className="h-70 w-70 rounded-full" />
+                        <Skeleton className="h-75 w-75 rounded-full" />
                     </div>
 
                 </>

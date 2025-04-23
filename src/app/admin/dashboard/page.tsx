@@ -26,8 +26,8 @@ function DashboardPage() {
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
-                        <BookingByTicketType />
+                    <ChartCard>
+                        <MostRevenueByEvents />
                     </ChartCard>
                 </div>
             </div>
@@ -40,13 +40,13 @@ function DashboardPage() {
 
             <div className="flex flex-wrap -m-4 my-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard>
-                        <MostRevenueByEvents />
+                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART2}>
+                        <RevenueByCategory />
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART2}>
-                        <RevenueByCategory />
+                    <ChartCard title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
+                        <BookingByTicketType />
                     </ChartCard>
                 </div>
             </div>
