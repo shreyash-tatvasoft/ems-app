@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import BarChart from './BarChart';
+import BarChart from '../charts/BarChart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';

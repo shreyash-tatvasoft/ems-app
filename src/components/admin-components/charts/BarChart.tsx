@@ -1,5 +1,6 @@
-import { BALANCED_COLORS } from '@/utils/constant';
-import { formatNumberShort } from '@/utils/helper';
+'use client';
+
+import { useMemo } from 'react';
 import {
     Chart as ChartJS,
     BarElement,
@@ -7,19 +8,22 @@ import {
     LinearScale,
     Tooltip,
     Legend,
-    Title
+    Title,
+    ChartOptions,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { BALANCED_COLORS } from '@/utils/constant';
+import { formatNumberShort } from '@/utils/helper';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
-type Props = {
+interface Props {
     data: number[];
     labels: string[];
-};
+}
 
 export default function BarChart({ data, labels }: Props) {
-    const chartData = {
+    const chartData = useMemo(() => ({
         labels,
         datasets: [
             {
@@ -29,9 +33,9 @@ export default function BarChart({ data, labels }: Props) {
                 barThickness: 20,
             },
         ],
-    };
+    }), [data, labels]);
 
-    const options = {
+    const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
         plugins: {
             legend: {
@@ -40,26 +44,24 @@ export default function BarChart({ data, labels }: Props) {
         },
         scales: {
             y: {
-                ticks: {
-                    callback: function (value: string | number) {
-                        return formatNumberShort(Number(value));
-                    },
-                    color: '#6B7280', // optional: gray-500
-                },
                 beginAtZero: true,
+                ticks: {
+                    callback: (value) => formatNumberShort(Number(value)),
+                    color: '#6B7280',
+                },
             },
             x: {
-                categoryPercentage: 0.6,  // default is 0.8
-                barPercentage: 0.7,       // default is 0.9
+                categoryPercentage: 0.6,
+                barPercentage: 0.7,
                 ticks: {
                     color: '#6B7280',
                 },
             },
         },
-    };
+    }), []);
 
     return (
-        <div className='min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center'>
+        <div className="min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center">
             <Bar data={chartData} options={options} />
         </div>
     );

@@ -1,15 +1,24 @@
 'use client';
 
 import React from 'react'
-import StatCards from '@/components/admin-components/dashboard/StatCards';
-import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
-import LineChart from '@/components/admin-components/dashboard/LineChart';
-import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
-import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
-import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
-import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
+import StatCards from '@/components/admin-components/dashboard/StatCards';
+
+import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
+
 import BookingByTicketType from '@/components/admin-components/dashboard/BookingByTicketType';
+
+import TotalRevenueOverTime from '@/components/admin-components/dashboard/TotalRevenueOverTime';
+
+import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
+
+import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
+
+import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
+
+import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
+import { DASHBOARD_TITLE } from './helper';
+
 
 function DashboardPage() {
 
@@ -24,33 +33,33 @@ function DashboardPage() {
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title="Bookings by Ticket Type">
+                    <ChartCard title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
                         <BookingByTicketType />
                     </ChartCard>
                 </div>
             </div>
             <div className="flex flex-wrap -m-4 p-4">
                 <ChartCard>
-                    <LineChart />
+                    <TotalRevenueOverTime />
                 </ChartCard>
             </div>
 
 
             <div className="flex flex-wrap -m-4 my-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title="Top 5 Events by Revenue">
+                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART1}>
                         <MostRevenueByEvents />
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title="Total Revenue By Category">
+                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART2}>
                         <RevenueByCategory />
                     </ChartCard>
                 </div>
             </div>
 
             <div className="flex flex-wrap mt-4">
-                <ChartCard title="Top 10 User with Multiple Bookings">
+                <ChartCard title={DASHBOARD_TITLE.TABLE}>
                     <MostBookedUsersTable />
                 </ChartCard>
             </div>

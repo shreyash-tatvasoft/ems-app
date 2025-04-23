@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import PieChart from '../charts/PieChart';
 import TableModal from './TableModal';
 import { chartTitle } from './ChartCard';
+import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
 interface IData {
     _id: string;
@@ -71,7 +72,7 @@ const TopEventsChart = () => {
     return (
         <div>
             <div className="flex justify-between gap-4">
-                {chartTitle('Top 5 Liked Events')}
+                {chartTitle(DASHBOARD_TITLE.PIE_CHART)}
 
                 {loading ?
                     <div className="flex justify-end">
