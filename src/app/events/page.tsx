@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react'
 
 // Custom components
-import { SearchBar } from '@/components/events-components/SearchBar'
-import { CategoryTabs } from '@/components/events-components/CategoryTabs'
 import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
@@ -13,11 +11,10 @@ import FilterModal from '@/components/common/FilterModal'
 // Constant support
 import { API_ROUTES } from '@/utils/constant'
 import { getTicketPriceRange } from '../admin/event/helper'
-import { getAuthToken } from "@/utils/helper";
-import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject } from './event-helper'
+import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice } from './event-helper'
 
 // Types support
-import { EventData, EventCategory, SortOption, EventResponse } from "@/types/events";
+import { EventData, EventCategory, SortOption, EventResponse } from "./types";
 import { IApplyFiltersKey } from '@/utils/types'
 import { LabelValue } from './types'
 
@@ -30,10 +27,12 @@ import moment from 'moment'
 // Icons & Images
 import { FunnelIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { SearchIcon } from 'lucide-react'
 
 
 const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>([])
+  const [allEvents, setAllEvents] = useState<EventData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<EventCategory>('all')
   const [sortOption, setSortOption] = useState<SortOption>('none')
@@ -48,30 +47,47 @@ const EventsPage: React.FC = () => {
 
   const closeFilterModal = () => setFilterModal(false)
 
+  const handleSearchQuery = (keyword : string) => {
+    const updatedFilters = {
+      ...appliedFilters,
+      search: keyword,
+    };
+
+    const result = getFilteredEventsData(allEvents, updatedFilters);
+
+    setEvents(result);
+    setSearchQuery(keyword);
+    setAppliedFilters(updatedFilters);
+  }
+
   const applyFilters = (filterValues : IApplyFiltersKey) => {
+    const updatedFilters = {
+      ...filterValues,
+      search: searchQuery || "", // include active search in filter logic
+    };
+
     const results = convertFiltersToArray(filterValues)
-    console.log("first", filterValues)
+    const filteredData = getFilteredEventsData(allEvents, updatedFilters) 
     setAppliedFilters(filterValues)
     setAppliedFiltersArray(results)
+    setEvents(filteredData)
+    closeFilterModal()
   }
 
   const removeFilterChip = (key : keyof IApplyFiltersKey, value : string) => {
     const modifiedArray = appliedFiltersArray.filter(item => item.value !== value)
     const updatedFiltersObject = removeFilterFromObject(key,value,appliedFilters)
+    const filteredData = getFilteredEventsData(allEvents, updatedFiltersObject)
     setAppliedFilters(updatedFiltersObject)
     setAppliedFiltersArray(modifiedArray)
-    console.log("first", updatedFiltersObject)
+    setEvents(filteredData)
   }
 
   const fetchEvents = async () => {
-        const response = await apiCall({
+        const result = await apiCall({
           endPoint : API_ROUTES.ADMIN.GET_EVENTS,
           method : "GET", 
-          headers:{
-            'token':getAuthToken()
-          }
         })
-        let result = await response;
         if(result && result.success && result.data.length > 0) {
            const receivedArrayObj : EventResponse = result.data
   
@@ -91,10 +107,22 @@ const EventsPage: React.FC = () => {
               status:getEventStatus(item.startDateTime,item.endDateTime),
               isFeatured:await isNearbyWithUserLocation(item.location.lat,item.location.lng),
               isLiked:item.isLiked,
+              startTime : item.startDateTime,
+              endTime : item.endDateTime,
+              ticketsAvailable: item.tickets.reduce(
+                (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
+                0
+              ),
+              totalTickets: item.tickets.reduce(
+                (sum, ticket) => sum + ticket.totalSeats,
+                0
+              ),
+              ticketsArray: item.tickets
             }
            }))
   
           setEvents(modifiedArray)
+          setAllEvents(modifiedArray)
           setLoading(false)
         } else {
            setEvents([])
@@ -132,7 +160,21 @@ const EventsPage: React.FC = () => {
        {loading && <Loader />}
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+        {/* Search Bar  */}
+        <div className="relative flex-grow w-full bg-white">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <SearchIcon className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={(e) => handleSearchQuery(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+
         <div className='flex gap-2'>
 
           <button
@@ -162,10 +204,6 @@ const EventsPage: React.FC = () => {
         })}
 
       </div>
-      {/* <CategoryTabs
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-      /> */}
 
       {featuredEvent && (
         <div className="mb-8 mt-6">
@@ -182,6 +220,7 @@ const EventsPage: React.FC = () => {
         isOpen={filterModal}
         onClose={closeFilterModal}
         applyFilters={(values) => applyFilters(values)}
+        maxTicketPrice={getMaxTicketPrice(allEvents)}
       />
     </div>
   )

@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
-import { EventData } from '@/types/events'
+import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';

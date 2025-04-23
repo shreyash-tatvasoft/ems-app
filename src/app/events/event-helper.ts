@@ -1,7 +1,9 @@
-import { EventData, Ticket } from "@/types/events";
-import { EventDataObjResponse, EventResponse, IApplyFiltersKey } from "@/utils/types";
+import { EventData, Ticket } from "./types";
+import { EventDataObjResponse, EventResponse, IApplyFiltersKey, IEventPrice, IEventRangeDate } from "@/utils/types";
 import { LabelValue } from "./types";
 import { durationOptions, STATUS_OPTIONS, TICKETS_OPTIONS } from "@/utils/constant";
+
+import moment from "moment";
 
 export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 'upcoming' | 'ended' {
     const now = new Date();
@@ -91,6 +93,21 @@ export const convertToSubCurrency=(amount:number,factor:100)=>{
   return Math.round(amount * factor)
 }
 
+export const getMaxTicketPrice = (events: EventData[]): number => {
+  let maxPrice = 0;
+
+  events.forEach(event => {
+    const data = event.ticketsArray ? event.ticketsArray : [] ;
+    data.forEach(ticket => {
+      if (ticket.price > maxPrice) {
+        maxPrice = ticket.price;
+      }
+    });
+  });
+
+  return maxPrice;
+};
+
 export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] => {
   const result: LabelValue[] = [];
 
@@ -120,19 +137,21 @@ export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] =
     result.push({ label: ticketLablel.toString(), value: ticketsTypes, rowKey : "ticketsTypes" });
   }
 
-  // if (eventsDates) {
-  //   result.push({
-  //     label: "Event Date",
-  //     value: `${eventsDates.startDate} to ${eventsDates.endDate}`,
-  //   });
-  // }
+  if (eventsDates && eventsDates.from && eventsDates.to) {
+    result.push({
+      label: `${moment(eventsDates.from).format(('DD MMM YYYY'))} - ${moment(eventsDates.to).format(('DD MMM YYYY'))}`,
+      value: `${eventsDates.from}`,
+      rowKey: "eventsDates"
+    });
+  }
 
-  // if (priceRange) {
-  //   result.push({
-  //     label: "Price",
-  //     value: `${priceRange.min} - ${priceRange.max}`,
-  //   });
-  // }
+  if (priceRange && priceRange.min > -1 && priceRange.max) {
+    result.push({
+      label:  `${priceRange.min} - ${priceRange.max}`,
+      value: `${priceRange.min} - ${priceRange.max}`,
+      rowKey: "priceRange"
+    });
+  }
 
   return result;
 };
@@ -164,22 +183,163 @@ export const removeFilterFromObject = (
   }
 
   // Handle object values (optional: extend this logic as needed)
-  // else if (typeof currentValue === 'object' && currentValue !== null) {
-  //   // Example: remove eventsDates if both fields are empty
-  //   if (key === 'eventsDates') {
-  //     const { from, to } = currentValue as IEventRangeDate;
-  //     if (from === valueToRemove || to === valueToRemove) {
-  //       delete updatedFilters[key];
-  //     }
-  //   }
+  else if (typeof currentValue === 'object' && currentValue !== null) {
+    // Example: remove eventsDates if both fields are empty
+    if (key === 'eventsDates') {
+       delete updatedFilters[key];
+    }
 
-  //   if (key === 'priceRange') {
-  //     const { min, max } = currentValue as IEventPrice;
-  //     if (`${min}` === valueToRemove || `${max}` === valueToRemove) {
-  //       delete updatedFilters[key];
-  //     }
-  //   }
-  // }
+    if (key === 'priceRange') {
+      delete updatedFilters[key];
+    }
+  }
 
   return updatedFilters;
 };
+
+export const filterByCatogories = (events: EventData[], catogoeriesArray : string[]) => {
+  return events.filter(event => catogoeriesArray.includes(event.category))
+}
+
+export const filterByDuration = (
+    events: EventData[],
+    selectedDurations: string[]
+): EventData[] => {
+
+    return events.filter(event => {
+        const start = moment(event.startTime)
+        const end = moment(event.endTime)
+        const durationInMinutes = end.diff(start, "minutes")
+
+        return selectedDurations.some(duration => {
+            switch (duration) {
+                case "short":
+                    return durationInMinutes < 60
+                case "medium":
+                    return durationInMinutes >= 60 && durationInMinutes <= 240
+                case "long":
+                    return durationInMinutes > 240 && durationInMinutes <= 720
+                case "fullDay":
+                    return durationInMinutes > 720 && durationInMinutes <= 1440
+                case "multiDay":
+                    return durationInMinutes > 1440
+                default:
+                    return false
+            }
+        })
+    })
+}
+
+export const filterByStatus = (
+    events: EventData[],
+    status: string
+): EventData[] => {
+    return events.filter(event => event.status.includes(status))
+}
+
+export const filterByTicketsAvailability = (
+    events: EventData[],
+    ticketType: string // one of: "available" | "fastFilling" | "almostFull" | "soldOut"
+): EventData[] => {
+
+    return events.filter(event => {
+      const { ticketsAvailable, totalTickets } = event
+      if (!totalTickets || totalTickets === 0) return false
+
+      if (ticketsAvailable && totalTickets) {
+        const percentageAvailable = (ticketsAvailable / totalTickets) * 100
+
+        switch (ticketType) {
+          case "available":
+            return percentageAvailable > 50
+          case "fastFilling":
+            return percentageAvailable > 20 && percentageAvailable <= 50
+          case "almostFull":
+            return percentageAvailable > 0 && percentageAvailable <= 20
+          case "soldOut":
+            return ticketsAvailable === 0
+          default:
+            return false
+        }
+
+      }
+    })
+}
+
+
+export const filterBySearch = (
+    events: EventData[],
+    keyword: string
+) => {
+    const lowerKeyword = keyword.toString().toLowerCase();
+    return events.filter(event =>
+      event.title.toLowerCase().includes(lowerKeyword)
+    );
+}
+
+export const filterByDateRange = (
+  events: EventData[],
+  eventDates: IEventRangeDate
+): EventData[] => {
+  const { from, to } = eventDates
+
+  const fromDate = moment(from).startOf("day")
+  const toDate = to ? moment(to).endOf("day") : moment().endOf("day") // if `to` missing, use today
+
+  return events.filter(event => {
+    const eventDate = moment(event.startTime)
+    return eventDate.isBetween(fromDate, toDate, undefined, "[]") // inclusive
+  })
+}
+
+export const filterByPriceRange = (
+    events: EventData[],
+    priceRange: IEventPrice
+): EventData[] => {
+    const { min, max } = priceRange;
+
+    return events.filter(event => {
+        const prices = event.ticketsArray ? event.ticketsArray.map(ticket => ticket.price) : [];
+        const minTicketPrice = Math.min(...prices);
+        const maxTicketPrice = Math.max(...prices);
+    
+        // Check if event's price range overlaps with filter range
+        const isOverlap = !(max < minTicketPrice || min > maxTicketPrice);
+        return isOverlap;
+    });
+};
+
+export const getFilteredEventsData = (events : EventData[], filterValues : IApplyFiltersKey) => {
+  let data = [...events]
+
+  const { catogories, status, durations, search, eventsDates, ticketsTypes, priceRange } = filterValues
+
+  if (search && search.trim() !== "") {
+    data = filterBySearch(data, search)
+  }
+
+  if(catogories && catogories.length > 0) {
+     data = filterByCatogories(data,catogories)
+  }
+
+  if(status && status.trim() !== "") {
+    data = filterByStatus(data, status)
+  }
+  if (durations && durations.length > 0) {
+    data = filterByDuration(data, durations)
+  }
+
+  if (eventsDates && eventsDates.from && eventsDates.to && eventsDates.from !== "") {
+    data = filterByDateRange(data, eventsDates)
+  }
+
+  if (ticketsTypes && ticketsTypes.trim() !== "") {
+    data = filterByTicketsAvailability(data, ticketsTypes)
+  }
+
+  if (priceRange && priceRange.max && priceRange.min > -1) {
+    data = filterByPriceRange(data, priceRange)
+  }
+
+  return data
+}
