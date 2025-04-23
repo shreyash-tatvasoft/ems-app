@@ -1,15 +1,16 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
 import { EventData } from '@/types/events'
 import { useRouter } from 'next/navigation'
-import { ROUTES } from '@/utils/constant'
+import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
 
 interface EventCardProps {
   event: EventData
 }
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const [isLiked, setIsLiked] = useState(event.isLiked)
+  const [isLiked, setIsLiked] = useState(false)
   const statusColors = {
     ongoing: 'bg-yellow-100 text-yellow-800',
     ended: 'bg-red-100 text-red-800',
@@ -24,6 +25,21 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const navigateToEventDetails=(eventId:string)=>{
     router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
   }
+
+  const handleLikeEvent = async () => {
+    const response = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${event.id}/like`,
+      method: "POST",
+    });
+    if (response.success) {
+      setIsLiked(!isLiked)
+    } 
+  };
+
+  useEffect(()=>{
+   setIsLiked(event.isLiked)
+  },[event])
+ 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -33,7 +49,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           className="w-full h-48 object-cover"
         />
         <button
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleLikeEvent}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm"
         >
           <HeartIcon

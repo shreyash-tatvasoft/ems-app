@@ -90,7 +90,7 @@ const EventsPage: React.FC = () => {
               isSoldOut: areAllTicketsBooked(item.tickets),
               status:getEventStatus(item.startDateTime,item.endDateTime),
               isFeatured:await isNearbyWithUserLocation(item.location.lat,item.location.lng),
-              isLiked:false,
+              isLiked:item.isLiked,
             }
            }))
   
