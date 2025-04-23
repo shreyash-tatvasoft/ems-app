@@ -76,7 +76,7 @@ const TopEventsChart = () => {
 
                 {loading ?
                     <div className="flex justify-end">
-                        <Skeleton className="w-[100px] h-8 mt-4" />
+                        <Skeleton className="w-[100px] h-8 mb-4" />
                     </div>
                     :
                     <Button
@@ -111,7 +111,7 @@ const TopEventsChart = () => {
                 data={tableData}
                 loading={tableLoading}
                 title='All Events Likes'
-                pagesize={10}
+                pagesize={5}
             />
         </div>
     );
