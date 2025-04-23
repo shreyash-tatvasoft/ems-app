@@ -91,13 +91,15 @@ const TopEventsChart = () => {
             {loading ? (
                 <>
                     <div className="w-full flex justify-center items-center">
-                        <Skeleton className="h-75 w-75 rounded-full" />
+                        <Skeleton className="w-40 sm:w-60 md:w-70 lg:w-75 aspect-square rounded-full" />
                     </div>
 
                 </>
             ) : (
                 <>
-                    <PieChart labels={chartLabels} data={chartData} />
+                    <div className='min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center'>
+                        <PieChart labels={chartLabels} data={chartData} />
+                    </div>
                 </>
             )}
             <TableModal

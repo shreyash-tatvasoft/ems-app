@@ -69,7 +69,9 @@ const TotalRevenueOverTime: React.FC = () => {
             {loading ? (
                 <Skeleton className="w-full h-100 rounded-xl" />
             ) : (
-                <LineChart data={data} labels={chartLabels} />
+                <div className="min-h-[300px] max-h-[450px] w-full flex items-center justify-center">
+                    <LineChart data={data} labels={chartLabels} />
+                </div>
             )}
         </div>
     );

@@ -31,16 +31,16 @@ function DashboardPage() {
                     </ChartCard>
                 </div>
             </div>
+
             <div className="flex flex-wrap -m-4 p-4">
                 <ChartCard>
                     <TotalRevenueOverTime />
                 </ChartCard>
             </div>
 
-
             <div className="flex flex-wrap -m-4 my-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART2}>
+                    <ChartCard>
                         <RevenueByCategory />
                     </ChartCard>
                 </div>
@@ -56,6 +56,7 @@ function DashboardPage() {
                     <MostBookedUsersTable />
                 </ChartCard>
             </div>
+
             <div className="flex flex-wrap mt-8">
                 <ChartCard>
                     <MonthDateHeatmap />
