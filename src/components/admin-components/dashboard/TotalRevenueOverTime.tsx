@@ -13,11 +13,11 @@ import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 type FilterType = 'monthly' | 'yearly' | 'overall';
 interface Filter { type: FilterType; value: string; }
 interface IData { _id: string; total: number; bookings: number; }
-
+const currentYear = moment().format('YYYY')
 const TotalRevenueOverTime: React.FC = () => {
     const [filter, setFilter] = useState<Filter>({
         type: 'yearly',
-        value: moment().format('YYYY'),
+        value: currentYear,
     });
 
     const [loading, setLoading] = useState(true);
@@ -69,7 +69,9 @@ const TotalRevenueOverTime: React.FC = () => {
             {loading ? (
                 <Skeleton className="w-full h-100 rounded-xl" />
             ) : (
-                <LineChart data={data} labels={chartLabels} />
+                <div className="min-h-[300px] max-h-[450px] w-full flex items-center justify-center">
+                    <LineChart data={data} labels={chartLabels} />
+                </div>
             )}
         </div>
     );

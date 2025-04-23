@@ -27,9 +27,9 @@ type OutputData = {
         y: number;
     }[];
 }[];
-
+const currentYear = moment().format('YYYY')
 const MonthDateHeatmap: React.FC = () => {
-    const [filter, setFilter] = useState({ type: 'yearly', value: moment().format('YYYY') });
+    const [filter, setFilter] = useState({ type: 'yearly', value: currentYear });
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<OutputData>([]);
 

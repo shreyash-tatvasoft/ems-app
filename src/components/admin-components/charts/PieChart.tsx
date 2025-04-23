@@ -43,9 +43,7 @@ const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
     }), []);
 
     return (
-        <div className='min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center'>
-            <Pie data={chartData} options={options} />
-        </div>
+        <Pie data={chartData} options={options} />
     );
 };
 
