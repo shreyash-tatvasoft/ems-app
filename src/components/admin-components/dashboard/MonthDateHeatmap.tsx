@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import moment from 'moment';
 import { chartTitle } from './ChartCard';
 import DateRangeFilter from './DateRangeFilter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
-import HeatmapChart from './HeatmapChart';
+
+const HeatmapChart = dynamic(() => import('../charts/HeatmapChart'), { ssr: false });
 
 interface IData {
     month: string;
@@ -26,7 +28,7 @@ type OutputData = {
     }[];
 }[];
 
-const MonthDateHeatmap = () => {
+const MonthDateHeatmap: React.FC = () => {
     const [filter, setFilter] = useState({ type: 'yearly', value: moment().format('YYYY') });
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<OutputData>([]);

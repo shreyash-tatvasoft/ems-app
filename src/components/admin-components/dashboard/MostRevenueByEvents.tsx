@@ -1,55 +1,102 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import BarChart from './BarChart';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import BarChart from '../charts/BarChart';
 import { Skeleton } from '@/components/ui/skeleton';
+import { API_ROUTES } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
+import { Button } from '@/components/ui/button';
+import TableModal from './TableModal';
+import { chartTitle } from './ChartCard';
+import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
-const mock = {
-    status: 200,
-    data: [
-        { totalRevenue: 2515, eventTitle: 'New Gaming' },
-        { totalRevenue: 6284, eventTitle: 'Jazz in the Park' },
-        { totalRevenue: 500, eventTitle: 'Sports Events' },
-    ],
-    success: true,
-    message: 'OK',
-};
+interface IData {
+    totalRevenue: number;
+    eventTitle: string;
+    category?: string;
+}
 
 const MostRevenueByEvents = () => {
     const [loading, setLoading] = useState(true);
-    const [chartLabels, setChartLabels] = useState<string[]>([]);
-    const [chartData, setChartData] = useState<number[]>([]);
+    const [data, setData] = useState<IData[]>([]);
+    const [open, setOpen] = useState(false);
+    const [tableLoading, setTableLoading] = useState(true);
+    const [tableData, setTableData] = useState<IData[]>([]);
+
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const endPoint = `${API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS}?limit=5`;
+            const response = await apiCall({ endPoint, method: 'GET' });
+            setData(response?.data || []);
+        } catch (error) {
+            console.error('Error fetching bar chart data:', error);
+            setData([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const fetchTableData = useCallback(async () => {
+        setTableLoading(true);
+        try {
+            const response = await apiCall({ endPoint: API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS, method: 'GET' });
+            setTableData(response?.data || []);
+        } catch (error) {
+            console.error('Error fetching detailed table data:', error);
+        } finally {
+            setTableLoading(false);
+        }
+    }, []);
+
+    const handleViewDetails = () => {
+        fetchTableData();
+        setOpen(true);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-
-                const response = mock.data;
-
-                const dynamicLabels = response.map((item) => item.eventTitle);
-                const dynamicData = response.map((item) => item.totalRevenue);
-
-                setChartLabels(dynamicLabels);
-                setChartData(dynamicData);
-            } catch (error) {
-                console.error('Error fetching bar chart data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
-    }, []);
+    }, [fetchData]);
+
+    const chartLabels = useMemo(() => data.map((item) => item.eventTitle), [data]);
+    const chartData = useMemo(() => data.map((item) => item.totalRevenue), [data]);
 
     return (
         <div className="w-full max-w-2xl mx-auto">
+            <div className="flex justify-between gap-4">
+                {chartTitle(DASHBOARD_TITLE.BAR_CHART1)}
+
+                {loading ? (
+                    <Skeleton className="w-[100px] h-8 mb-4" />
+                ) : (
+                    <Button
+                        variant="link"
+                        className="underline text-primary px-0 cursor-pointer"
+                        onClick={handleViewDetails}
+                    >
+                        View Details
+                    </Button>
+                )}
+            </div>
+
             {loading ? (
-                <div className="space-y-4">
-                    <Skeleton className="h-64 w-full rounded-md" />
-                </div>
+                <Skeleton className="h-75 w-full rounded-md" />
             ) : (
                 <BarChart data={chartData} labels={chartLabels} />
             )}
+
+            <TableModal
+                open={open}
+                onClose={() => setOpen(false)}
+                columns={[
+                    { label: 'Event Title', key: 'eventTitle' },
+                    { label: 'Total Revenue', key: 'totalRevenue' },
+                ]}
+                data={tableData}
+                loading={tableLoading}
+                title="All Events by Revenue"
+                pagesize={10}
+            />
         </div>
     );
 };

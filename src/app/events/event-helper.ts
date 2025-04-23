@@ -10,6 +10,11 @@ export const setUserLatLong = (lat: number, lng : number) => {
    localStorage.setItem("lng", `${lng}`)
 }
 
+const removeUserLatLong = () => {
+  localStorage.removeItem("lat")
+  localStorage.removeItem("lng")
+}
+
 export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 'upcoming' | 'ended' {
     const now = new Date();
     const start = new Date(startTime);
@@ -58,6 +63,7 @@ export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 
         },
         () => {
           resolve(false); 
+          removeUserLatLong()
         }
       );
     });

@@ -177,7 +177,7 @@ const EventsPage: React.FC = () => {
           />
         </div>
 
-        <div className='flex gap-2'>
+        <div className='flex gap-2 justify-between md:justify-start'>
 
           <button
             onClick={openFilterModal}

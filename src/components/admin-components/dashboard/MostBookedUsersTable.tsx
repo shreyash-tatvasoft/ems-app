@@ -52,8 +52,6 @@ export default function MostBookedUsersTable() {
         try {
             const endPoint = `${API_ROUTES.ADMIN.TOP_USERS_HIGHEST_BOOKING}?limit=10`;
             const response = await apiCall({ endPoint, method: 'GET' });
-
-            console.log('TABLEresponse', response);
             setUsers(response.data);
         } catch (error) {
             console.error('Failed to fetch users', error);
@@ -67,7 +65,7 @@ export default function MostBookedUsersTable() {
     }, [fetchUsers]);
 
     const loadingSkeleton = useMemo(() => (
-        Array.from({ length: 5 }).map((_, index) => (
+        Array.from({ length: 10 }).map((_, index) => (
             <TableRow key={index}>
                 <TableCell><Skeleton className="h-4 w-10" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>

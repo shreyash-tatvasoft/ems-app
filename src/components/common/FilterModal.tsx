@@ -206,7 +206,9 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   };
 
   if (!isOpen) return null;
-
+  
+  const isDisabled = !localStorage.getItem("lat") || !localStorage.getItem("lng");
+  
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40">
       <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
@@ -506,13 +508,16 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               </div>
 
               <div className="my-5">
-                <p className="font-semibold text-lg mb-4">Events happenig near by your location</p>
+                <p className="font-semibold text-lg mb-4">Events By Location</p>
+
+                {isDisabled && <div className="text-sm text-red-500 mb-4 italic">*Please enable location to apply below filter</div>}
 
               <div className="space-y-4">
                 {LOCATION_OPTIONS.map((option) => (
                   <div key={option.value} className="flex items-center space-x-2">
                     <Checkbox
                       checked={option.value === locationRadius}
+                      disabled={isDisabled}
                       onCheckedChange={() => setLocationRadius(option.value)}
                       className="border border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white data-[state=checked]:border-blue-600 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
