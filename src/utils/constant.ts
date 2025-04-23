@@ -24,7 +24,8 @@ export const API_ROUTES = {
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
         BOOKING_BY_TICKET_TYPE: 'dashboard/analytics/bookings-by-ticket-type',
         TOP_USERS_HIGHEST_BOOKING: 'dashboard/analytics/repeat-customers',
-        BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends'
+        BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
+        TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
     },
     AUTH: {
         LOGIN: `/login`,
