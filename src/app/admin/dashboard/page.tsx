@@ -1,63 +1,65 @@
 'use client';
 
 import React from 'react'
-import PieChart from '@/components/admin-components/dashboard/PieChart';
-import DoughnutChart from '@/components/admin-components/dashboard/DoughnutChart';
-import BarChart from '@/components/admin-components/dashboard/BarChart';
-import StatCards from '@/components/admin-components/dashboard/StatCards';
-import LineChart from '@/components/admin-components/dashboard/LineChart';
-import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
-import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
+import StatCards from '@/components/admin-components/dashboard/StatCards';
+import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
+import BookingByTicketType from '@/components/admin-components/dashboard/BookingByTicketType';
+import TotalRevenueOverTime from '@/components/admin-components/dashboard/TotalRevenueOverTime';
 import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
+import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
+import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
+import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
+import { DASHBOARD_TITLE } from './helper';
+
 
 function DashboardPage() {
-    const labels = ['Cats', 'Dogs', 'Birds', "Cow", "Lion"];
-    const data = [5, 20, 10, 5, 20];
 
     return (
         <section className="text-gray-400 p-8">
             <StatCards />
 
-            <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4 h-full">
-                    <ChartCard title="Top 5 Liked Events">
-                        <PieChart />
+            <div className="flex flex-wrap -m-4 my-4">
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <ChartCard>
+                        <TopEventsChart />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4 h-full">
-                    <ChartCard title="Bookings by Ticket Type">
-                        <DoughnutChart />
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <ChartCard>
+                        <MostRevenueByEvents />
                     </ChartCard>
                 </div>
             </div>
             <div className="flex flex-wrap -m-4 p-4">
                 <ChartCard>
-                    <LineChart />
+                    <TotalRevenueOverTime />
                 </ChartCard>
             </div>
 
 
-            <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4 h-full">
-                    <ChartCard title="Top 5 Events by Revenue">
-                        <MostRevenueByEvents />
+            <div className="flex flex-wrap -m-4 my-4">
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <ChartCard title={DASHBOARD_TITLE.BAR_CHART2}>
+                        <RevenueByCategory />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4 h-full">
-                    <ChartCard title="Total Revenue By Category">
-                        <BarChart data={data} labels={labels} />
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <ChartCard title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
+                        <BookingByTicketType />
                     </ChartCard>
                 </div>
             </div>
 
-            <div className="flex flex-wrap -m-4 p-4">
-                <ChartCard title="Top 10 User with Multiple Bookings">
+            <div className="flex flex-wrap mt-4">
+                <ChartCard title={DASHBOARD_TITLE.TABLE}>
                     <MostBookedUsersTable />
                 </ChartCard>
             </div>
-            <div className='bg-white p-8 border-2 border-gray-200 rounded-lg mt-8 '>
-                <HeatmapWrapper />
+            <div className="flex flex-wrap mt-8">
+                <ChartCard>
+                    <MonthDateHeatmap />
+                </ChartCard>
             </div>
         </section >
     )

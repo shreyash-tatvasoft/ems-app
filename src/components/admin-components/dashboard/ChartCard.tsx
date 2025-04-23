@@ -1,5 +1,3 @@
-// components/admin-components/dashboard/ChartCard.tsx
-
 'use client';
 
 import { Boxes } from 'lucide-react';
