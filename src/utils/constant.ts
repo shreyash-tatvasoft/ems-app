@@ -21,6 +21,7 @@ export const API_ROUTES = {
         SHOW_EVENT: (id: string) => `/events/${id}`,
         UPDATE_EVENT: (id: string) => `/events/${id}`,
         // DASHBOARD
+        DASHBOARD_OVERVIEW: 'dashboard/analytics/dashboard-overview',
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
         BOOKING_BY_TICKET_TYPE: 'dashboard/analytics/bookings-by-ticket-type',
         REVENUE_OVER_TIME: 'dashboard/analytics/total-revenue',
