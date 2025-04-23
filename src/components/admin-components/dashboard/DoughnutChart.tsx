@@ -103,7 +103,7 @@ const DoughnutChart: React.FC = () => {
     }
 
     return (
-        <div className="max-h-[350px] w-full flex justify-center">
+        <div className='min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center'>
             <Doughnut data={chartData} options={options} />
         </div>
     );

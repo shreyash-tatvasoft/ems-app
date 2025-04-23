@@ -18,12 +18,12 @@ function DashboardPage() {
             <StatCards />
 
             <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4 h-full">
+                <div className="lg:w-1/2 w-full p-4 h-full">
                     <ChartCard title="Top 5 Liked Events">
                         <PieChart />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4 h-full">
+                <div className="lg:w-1/2 w-full p-4 h-full">
                     <ChartCard title="Bookings by Ticket Type">
                         <DoughnutChart />
                     </ChartCard>
@@ -37,19 +37,19 @@ function DashboardPage() {
 
 
             <div className="flex flex-wrap -m-4">
-                <div className="md:w-1/2 p-4 h-full">
+                <div className="lg:w-1/2 w-full p-4 h-full">
                     <ChartCard title="Top 5 Events by Revenue">
                         <MostRevenueByEvents />
                     </ChartCard>
                 </div>
-                <div className="md:w-1/2 p-4 h-full">
+                <div className="lg:w-1/2 w-full p-4 h-full">
                     <ChartCard title="Total Revenue By Category">
                         <RevenueByCategory />
                     </ChartCard>
                 </div>
             </div>
 
-            <div className="flex flex-wrap -m-4 p-4">
+            <div className="flex flex-wrap mt-8">
                 <ChartCard title="Top 10 User with Multiple Bookings">
                     <MostBookedUsersTable />
                 </ChartCard>
