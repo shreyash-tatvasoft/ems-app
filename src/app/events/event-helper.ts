@@ -406,7 +406,7 @@ export const getFilteredEventsData = (events : EventData[], filterValues : IAppl
   }
 
   if(locationRadius && locationRadius.trim() !== "") {
-    data = filterEventsByDistance(events,locationRadius)
+    data = filterEventsByDistance(data,locationRadius)
   }
 
   return data

@@ -14,6 +14,7 @@ export interface IFilterModalProps {
     applyFilters: (filterValues : IApplyFiltersKey) => void;
     maxTicketPrice?: number
     isUserRole? : boolean
+    filterValues? : IApplyFiltersKey
 }
 
 export interface IEventRangeDate {

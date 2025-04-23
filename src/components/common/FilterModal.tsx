@@ -23,7 +23,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   onClose,
   applyFilters,
   maxTicketPrice = 100,
-  isUserRole = false
+  isUserRole = false,
+  filterValues
 }) => {
 
   const MIN = 0;
@@ -39,7 +40,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
         to : ""
       },
       priceRange : {
-        max : 100,
+        max : isUserRole ? maxTicketPrice : 100,
         min : -1
       },
       likeEvent : "",
@@ -86,7 +87,25 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       }
     }, [minVal, maxVal])
 
-    
+
+    useEffect(() => {
+      if(filterValues) {
+
+        setMaxVal(filterValues.priceRange?.max ?? maxTicketPrice)
+        setMinVal(filterValues.priceRange?.min === -1 ? "0" : String(filterValues.priceRange?.min ?? 0));
+        setDate({
+          from: filterValues.eventsDates?.from ? new Date(filterValues.eventsDates.from) : undefined,
+          to: filterValues.eventsDates?.to ? new Date(filterValues.eventsDates.to) : undefined,
+        });
+        setSelectedCatogory(filterValues.catogories ?? []);
+        setSelectedStatus(filterValues.status ?? "");
+        setSelectedTicket(filterValues.ticketsTypes ?? "");
+        setSelectedDurations(filterValues.durations ?? []);
+        setIsLikedEvent(filterValues.likeEvent && filterValues.likeEvent === "true" ? true : false);
+        setLocationRadius(filterValues.locationRadius ?? "");
+      }
+
+    }, [filterValues])
 
 
   const toggleCheckbox = (value: string) => {
@@ -149,7 +168,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       ticketsTypes : selectedTicket,
       eventsDates : dateObj,
       priceRange : priceObj,
-      ...(isUserRole && { likeEvent : isLikedEvent ? "true" : "false"}),
+      ...(isUserRole && { likeEvent : isLikedEvent ? "true" : ""}),
       ...(isUserRole && { locationRadius : locationRadius}),
     };
     applyFilters(filterValues);
@@ -185,7 +204,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       hoverLightBg: "hover:bg-gray-100",
     },
   };
-  
+
   if (!isOpen) return null;
 
   return (

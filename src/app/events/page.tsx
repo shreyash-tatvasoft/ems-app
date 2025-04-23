@@ -224,6 +224,7 @@ const EventsPage: React.FC = () => {
         applyFilters={(values) => applyFilters(values)}
         maxTicketPrice={getMaxTicketPrice(allEvents)}
         isUserRole={true}
+        filterValues={appliedFilters}
       />
     </div>
   )
