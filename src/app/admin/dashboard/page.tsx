@@ -3,20 +3,13 @@
 import React from 'react'
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import StatCards from '@/components/admin-components/dashboard/StatCards';
-
 import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
-
 import BookingByTicketType from '@/components/admin-components/dashboard/BookingByTicketType';
-
 import TotalRevenueOverTime from '@/components/admin-components/dashboard/TotalRevenueOverTime';
-
-import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
-
-import HeatmapWrapper from '@/components/admin-components/dashboard/HeatMapWrapper';
-
 import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRevenueByEvents';
-
 import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
+import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
+import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
 import { DASHBOARD_TITLE } from './helper';
 
 
@@ -65,7 +58,7 @@ function DashboardPage() {
             </div>
             <div className="flex flex-wrap mt-8">
                 <ChartCard>
-                    <HeatmapWrapper />
+                    <MonthDateHeatmap />
                 </ChartCard>
             </div>
         </section >
