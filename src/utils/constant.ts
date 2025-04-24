@@ -35,6 +35,9 @@ export const API_ROUTES = {
         SIGNUP: `/signup`,
         FORGOT_PASSWORD: `/forgot_password`,
         RESET_PASSWORD:`/reset_password`
+    },
+    EVENT:{
+      PAYMENT:`/ticket/book`
     }
 }
 export const LIGHT_COLORS = [
