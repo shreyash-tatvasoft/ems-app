@@ -1,25 +1,70 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CheckCircleIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { apiCall } from '@/utils/services/request'
+import { API_ROUTES } from '@/utils/constant'
+import { CheckoutTicket } from '@/types/events'
 
-const PaymentSuccessPage = ({
-  tickets,
-  eventTitles,
-}: {
-  tickets: { totalPrice: number; quantity: number; type: string }
-  eventTitles: string
-}) => {
+const PaymentSuccessPage = () => {
   const router = useRouter()
 
-  useEffect(() => {
-    if (!tickets) {
-      router.push('/')
-    }
-  }, [tickets, router])
-
-  if (!tickets) return null
+  const [ticketDetails, setTicketDetails] = useState<CheckoutTicket | null>(null)
+    const [eventTitle, setEventTitle] = useState<string>('')
+    const [hasSubmitted, setHasSubmitted] = useState(false)
+   const searchParams = useSearchParams();
+    useEffect(() => {
+      const storedTickets = sessionStorage.getItem('tickets')
+      const storedEventTitle = sessionStorage.getItem('eventTitle')
+      const storedEventId = sessionStorage.getItem('eventId')
+  
+      const paymentId = searchParams.get('session_id')
+  
+      if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
+        router.push('/events')
+        return
+      }
+  
+      try {
+        const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
+        setTicketDetails(parsedTickets)
+        setEventTitle(storedEventTitle)
+  
+        const creationDate = new Date().toString().split(' (')[0]
+  
+        if (!hasSubmitted) {
+          const formData = new FormData()
+          formData.append('eventId', storedEventId)
+          formData.append('ticketId', parsedTickets.ticketId)
+          formData.append('seats', parsedTickets.quantity.toString())
+          formData.append('totalAmount', parsedTickets.totalPrice.toString())
+          formData.append('paymentId', paymentId)
+          formData.append('bookingDate', creationDate)
+  
+          apiCall({
+            endPoint: API_ROUTES.EVENT.PAYMENT,
+            method: 'POST',
+            body: formData,
+            isFormData: true,
+            headers: {
+              'Content-Type':'application/json'
+            },
+          }).then(() => {
+            setHasSubmitted(true)
+          })
+        }
+  
+        sessionStorage.removeItem('tickets')
+        sessionStorage.removeItem('eventTitle')
+        sessionStorage.removeItem('eventId')
+      } catch (err) {
+        console.error('Error parsing session data:', err)
+        router.push('/')
+      }
+    }, [router, searchParams, hasSubmitted])
+  
+  if (!ticketDetails) return null
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -40,22 +85,22 @@ const PaymentSuccessPage = ({
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">Event</span>
-              <span className="font-medium text-gray-900">{eventTitles}</span>
+              <span className="font-medium text-gray-900">{eventTitle}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Ticket Type</span>
-              <span className="font-medium text-gray-900">{tickets.type}</span>
+              <span className="font-medium text-gray-900">{ticketDetails.type}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Quantity</span>
               <span className="font-medium text-gray-900">
-                {tickets.quantity}
+                {ticketDetails.quantity}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Total Amount</span>
               <span className="font-medium text-gray-900">
-                ${tickets.totalPrice.toFixed(2)}
+                ${ticketDetails.totalPrice.toFixed(2)}
               </span>
             </div>
           </div>

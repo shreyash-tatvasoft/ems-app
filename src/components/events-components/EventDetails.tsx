@@ -1,17 +1,29 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapPinIcon, TagIcon } from 'lucide-react';
-import ImageCarousel from '@/components/events-components/ImageCarousel';
-import EventDescription from '@/components/events-components/EventDescription';
-import SimilarEvents from '@/components/events-components/SimilarEvents';
-import { EventDataObjResponse, EventDetails } from '../../app/events/types';
-import { getTicketPriceRange } from '@/app/admin/event/helper';
-import { areAllTicketsBooked, getEventStatus, getSimilarEvents, isNearbyWithUserLocation } from "@/app/events/event-helper";
-import { apiCall } from '@/utils/services/request';
-import { API_ROUTES } from '@/utils/constant';
-import { useRouter } from 'next/navigation';
-import Loader from '../common/Loader';
-import BookingButton from './BookingButton';
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon,
+  TagIcon,
+} from 'lucide-react'
+import ImageCarousel from '@/components/events-components/ImageCarousel'
+import EventDescription from '@/components/events-components/EventDescription'
+import SimilarEvents from '@/components/events-components/SimilarEvents'
+import { EventDataObjResponse, EventDetails } from '@/types/events'
+import { getTicketPriceRange } from '@/app/admin/event/helper'
+import {
+  areAllTicketsBooked,
+  getEventStatus,
+  getSimilarEvents,
+  isNearbyWithUserLocation,
+} from '@/app/events/event-helper'
+import { apiCall } from '@/utils/services/request'
+import { API_ROUTES } from '@/utils/constant'
+import { useRouter } from 'next/navigation'
+import Loader from '../common/Loader'
+import BookingButton from './BookingButton'
+import GoogleMap from './GoogleMap'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -182,6 +194,10 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Location
           </h2>
+          <GoogleMap
+            location={{lat:event.location.lat,lng:event.location.lng}}
+            locationName={event.location.address}
+          />
         </div>
         <SimilarEvents events={similarEvents} />
       </main>
