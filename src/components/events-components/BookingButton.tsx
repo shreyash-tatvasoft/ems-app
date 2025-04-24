@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import TicketBookingModal from './TicketBookingModal'
 import { areAllTicketsBooked } from '@/app/events/event-helper';
-import { EventTicket } from '@/types/events';
+import { EventTicket } from '@/app/events/types';
 interface BookingButtonProps {
   tickets:EventTicket[];
   eventTitle: string;
