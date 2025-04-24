@@ -16,6 +16,7 @@ import {
   areAllTicketsBooked,
   getEventStatus,
   getSimilarEvents,
+  hasEventEnded,
   isNearbyWithUserLocation,
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
@@ -191,6 +192,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <BookingButton
                 tickets={event.tickets}
                 eventTitle={event.title}
+                status={hasEventEnded(event.endDateTime)}
               />
             </div>
           </div>
