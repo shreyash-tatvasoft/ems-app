@@ -10,12 +10,13 @@ import {
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails } from '@/types/events'
+import { EventDataObjResponse, EventDetails } from '@/app/events/types'
 import { getTicketPriceRange } from '@/app/admin/event/helper'
 import {
   areAllTicketsBooked,
   getEventStatus,
   getSimilarEvents,
+  hasEventEnded,
   isNearbyWithUserLocation,
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
@@ -140,18 +141,26 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                         month: 'long',
                         day: 'numeric',
                       }
-                    )}
+                    )} - {new Date(event.endDateTime).toLocaleDateString(
+                      'en-US',
+                      {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      }
+                    )} 
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <ClockIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>
-                    {event.endDateTime} ({event.duration})
+                    Duration - ({event.duration})
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <MapPinIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  <span>{event.location.address}</span>
+                  <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
+                  <span >{event.location.address}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
@@ -183,6 +192,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <BookingButton
                 tickets={event.tickets}
                 eventTitle={event.title}
+                status={hasEventEnded(event.endDateTime)}
               />
             </div>
           </div>
@@ -199,7 +209,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             locationName={event.location.address}
           />
         </div>
-        <SimilarEvents events={similarEvents} />
+        { similarEvents?.length!==0 && <SimilarEvents events={similarEvents} />}
       </main>
     </div>
   )
