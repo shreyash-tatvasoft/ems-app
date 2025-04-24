@@ -1,29 +1,17 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
-import {
-  ArrowLeftIcon,
-  CalendarIcon,
-  ClockIcon,
-  MapPinIcon,
-  TagIcon,
-} from 'lucide-react'
-import ImageCarousel from '@/components/events-components/ImageCarousel'
-import EventDescription from '@/components/events-components/EventDescription'
-import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails } from '@/types/events'
-import { getTicketPriceRange } from '@/app/admin/event/helper'
-import {
-  areAllTicketsBooked,
-  getEventStatus,
-  getSimilarEvents,
-  isNearbyWithUserLocation,
-} from '@/app/events/event-helper'
-import { apiCall } from '@/utils/services/request'
-import { API_ROUTES } from '@/utils/constant'
-import { useRouter } from 'next/navigation'
-import Loader from '../common/Loader'
-import BookingButton from './BookingButton'
+import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapPinIcon, TagIcon } from 'lucide-react';
+import ImageCarousel from '@/components/events-components/ImageCarousel';
+import EventDescription from '@/components/events-components/EventDescription';
+import SimilarEvents from '@/components/events-components/SimilarEvents';
+import { EventDataObjResponse, EventDetails } from '../../app/events/types';
+import { getTicketPriceRange } from '@/app/admin/event/helper';
+import { areAllTicketsBooked, getEventStatus, getSimilarEvents, isNearbyWithUserLocation } from "@/app/events/event-helper";
+import { apiCall } from '@/utils/services/request';
+import { API_ROUTES } from '@/utils/constant';
+import { useRouter } from 'next/navigation';
+import Loader from '../common/Loader';
+import BookingButton from './BookingButton';
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -31,7 +19,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
 
-  // ✅ Store eventId in sessionStorage on the client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('eventId', eventId)
