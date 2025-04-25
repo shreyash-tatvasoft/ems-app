@@ -1,0 +1,51 @@
+"use client";
+
+import { ITextFieldProps } from "@/app/admin/event/types";
+import React from "react";
+
+const CustomTextField: React.FC<ITextFieldProps> = ({
+  label,
+  name,
+  placeholder,
+  value,
+  errorMsg,
+  onChange,
+  onBlur,
+  required = false,
+  errorKey,
+  type = "text",
+  readOnly = false,
+  disabled = false,
+  multiple = false
+}) => {
+  return (
+    <div className="mb-4">
+      <label htmlFor={name} className="block text-sm font-bold text-gray-700 mb-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        readOnly={readOnly}
+        disabled={disabled}
+        multiple={multiple}
+        className={`
+          block w-full rounded-md px-4 py-2 text-md h-12
+          placeholder-gray-400 border transition-all
+          ${errorKey
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"}
+          focus:outline-none focus:ring-1
+        `}
+      />
+      {errorKey && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
+    </div>
+  );
+};
+
+export default CustomTextField;
