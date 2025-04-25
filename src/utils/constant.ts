@@ -165,6 +165,12 @@ export const TICKETS_OPTIONS = [
     { label: "Sold Out", value: "soldOut", colorKey: "gray" }
 ]
 
+export const PROFILE_TAB_OPTIONS = [
+    { id: 1, value: "personal", label: "Personal Information" },
+    { id: 2, value: "email", label: "Update Email Address" },
+    { id: 3, value: "password", label: "Change Password" },
+]
+
 import {
     MusicIcon,
     PartyPopperIcon,
