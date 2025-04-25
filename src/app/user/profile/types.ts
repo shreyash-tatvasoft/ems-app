@@ -3,3 +3,17 @@ export interface IChangePasswordFormValues {
     newPassword: string,
     confirmPassword: string,
 };
+
+export interface IChangeNewEmailValues {
+    email : string
+};
+
+export interface IOtpValues {
+    otp : string
+};
+
+export interface IProfileInfoValues {
+    userName: string,
+    address: string,
+    profileImage: File | null,
+};
