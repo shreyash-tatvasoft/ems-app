@@ -94,7 +94,7 @@ const UserProfilePage = () => {
 
     return (
       <div className="mx-auto p-10">
-        <div className="rounded-[12px] bg-white p-5">
+        <div className="rounded-[12px] bg-white p-5 shadow-lg border-2 border-gray-200">
           <div className="w-full mx-auto">
             {/* Tabs Start  */}
             <div className="flex flex-col sm:flex-row sm:border-b  border-b-0 overflow-auto">
