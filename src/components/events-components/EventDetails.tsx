@@ -101,7 +101,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     <div className="min-h-screen bg-gray-50">
       {loading && <Loader />}
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
+        <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
             onClick={() => navigateToHome()}
             className="mr-4 p-1 rounded-full hover:bg-gray-100"
@@ -114,7 +114,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           </h1>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:col-span-2 mb-6 lg:mb-0">
             <div
