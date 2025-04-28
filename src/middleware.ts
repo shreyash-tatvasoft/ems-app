@@ -5,7 +5,7 @@ import { ROLE, ROUTES } from "./utils/constant";
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
 
-const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP, ROUTES.HOME];
+const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
 const adminRoutes = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.EVENTS];
 const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS,ROUTES.USER_EVENTS_DETAILS];
 
@@ -61,7 +61,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        "/",
         "/login",
         "/sign-up",
         "/events",
