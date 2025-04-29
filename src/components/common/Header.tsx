@@ -203,29 +203,37 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
           <div className="flex gap-4 items-center">
             {authToken !== "" ? (
-              <div className="flex gap-4 items-center" ref={menuRef}>
-                <Image
-                  src={"/assets/ProfileIcon.svg"}
-                  width={40}
-                  height={40}
-                  alt="Logo"
-                  className="cursor-pointer relative"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                />
-
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="absolute right-10 mt-2 top-15 bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50">
-                    <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
-                      <UserCircle className="w-5 h-5 mr-3" />
-                      Profile
-                    </button>
-                    <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
-                      <TicketsIcon className="w-5 h-5 mr-3" />
-                      My Events
-                    </button>
+              <div className="flex gap-4 items-center">
+                {isAdmiRole ?
+                  <div className='hover:underline cursor-pointer text-gray-500 font-semibold'>
+                     admin@evently.com
                   </div>
-                )}
+                 : 
+                  <div ref={menuRef}>
+                    <Image
+                      src={"/assets/ProfileIcon.svg"}
+                      width={40}
+                      height={40}
+                      alt="Logo"
+                      className="cursor-pointer relative"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    />
+
+                    {/* Dropdown Menu */}
+                    {isDropdownOpen && (
+                      <div className="absolute right-10 mt-2 top-15 bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50">
+                        <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                          <UserCircle className="w-5 h-5 mr-3" />
+                          Profile
+                        </button>
+                        <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                          <TicketsIcon className="w-5 h-5 mr-3" />
+                          My Events
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                }
 
                 <Button
                   variant="link"
