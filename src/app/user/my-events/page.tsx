@@ -68,12 +68,12 @@ const MyEventsPage = () => {
             <div>
                 <div className='flex gap-3 items-center'>
                     <button
-                        className='px-4 py-2 mr-3 bg-blue-900 hover:bg-blue-950 text-white rounded-[8px]'
+                        className='px-4 py-2 mr-0 sm:mr-3 bg-blue-900 hover:bg-blue-950 text-white rounded-[8px]'
                     >
                         UPCOMING
                     </button>
-                    <div className='pl-5 text-xl text-gray-800 border-l border-l-gray-400'>
-                         Get ready for your upcoming event. Click to <span className='text-blue-500 cursor-pointer hover:underline'>Cancel</span> here.
+                    <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
+                         Get ready for your upcoming event. Click here to <span className='text-blue-500 cursor-pointer hover:underline'>Cancel.</span>
                     </div>
                 </div>
             </div>
@@ -85,12 +85,12 @@ const MyEventsPage = () => {
             <div>
                 <div className='flex gap-3 items-center'>
                     <button
-                        className='px-4 py-2 mr-3 bg-red-900 hover:bg-red-950 text-white rounded-[8px]'
+                        className='px-4 py-2 mr-0 sm:mr-3 bg-red-900 hover:bg-red-950 text-white rounded-[8px]'
                     >
                         FINISHED
                     </button>
-                    <div className='pl-5 text-xl text-gray-800 border-l border-l-gray-400'>
-                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline'>feedback</span> here.
+                    <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
+                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline'>Feedback</span> here.
                     </div>
                 </div>
             </div>
@@ -102,11 +102,11 @@ const MyEventsPage = () => {
             <div>
                 <div className='flex gap-3 items-center'>
                     <button
-                        className='px-4 py-2 mr-3 bg-yellow-700 hover:bg-yellow-800 text-white rounded-[8px]'
+                        className='px-4 py-2 mr-0 sm:mr-3 bg-yellow-700 hover:bg-yellow-800 text-white rounded-[8px]'
                     >
                         ONGOING
                     </button>
-                    <div className='pl-5 text-xl text-gray-800 border-l border-l-gray-400'>
+                    <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
                         You're currently attending this event. 
                     </div>
                 </div>
@@ -164,11 +164,11 @@ const MyEventsPage = () => {
                     {myEvents.length > 0 && myEvents.map(item =>
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
                             <p className='text-lg pb-2 border-b border-b-gray-200'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
-                            <div className='flex gap-5 my-5 pb-6 border-b border-b-gray-200'>
+                            <div className='flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200'>
                                 
                                 <img
                                     src={item.eventImage}
-                                    className='rounded-lg h-60 w-[33%] object-cover'
+                                    className='rounded-lg  h-60 w-full md:w-[50%] lg:w-[40%] object-cover'
                                 />
 
                                 <div>
@@ -188,7 +188,7 @@ const MyEventsPage = () => {
                                     <div className='flex gap-3 items-center my-2'>
                                         <MapPin className='h-5 w-5' />
                                         <TooltipWrapper tooltip={item.eventLocation}>
-                                            <p className='text-gray-800 text-md truncate max-w-96'>{item.eventLocation}</p>
+                                            <p className='text-gray-800 text-md truncate  max-w-[250px] sm:max-w-[250px]'>{item.eventLocation}</p>
                                         </TooltipWrapper>
                                     </div>
 
