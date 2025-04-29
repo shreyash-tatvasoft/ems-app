@@ -8,6 +8,7 @@ export const ROUTES = {
     USER_EVENTS: "/events",
     USER_EVENTS_DETAILS: "/events/*",
     USER_PROFILE: "/user/profile",
+    USER_MY_EVENTS  :"/user/my-events",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",

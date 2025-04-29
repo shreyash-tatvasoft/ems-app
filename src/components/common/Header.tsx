@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Next js library support
 import Link from 'next/link';
@@ -16,6 +16,7 @@ import { getAuthToken } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
+import { TicketsIcon, UserCircle } from 'lucide-react';
 
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
@@ -30,6 +31,8 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
   const [authToken, setAuthToken] = useState("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
 
   const navToLogIn = () => {
@@ -48,7 +51,13 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   }
 
   const navToProfile = () => {
+    setIsDropdownOpen(false)
     router.push(ROUTES.USER_PROFILE)
+  }
+
+  const navToMyEvents = () => {
+    setIsDropdownOpen(false)
+    router.push(ROUTES.USER_MY_EVENTS)
   }
 
   useEffect(() => {
@@ -58,6 +67,18 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
     }
   }, [authToken])
+
+  // Close when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div>
@@ -182,15 +203,29 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
           <div className="flex gap-4 items-center">
             {authToken !== "" ? (
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-4 items-center" ref={menuRef}>
                 <Image
                   src={"/assets/ProfileIcon.svg"}
                   width={40}
                   height={40}
                   alt="Logo"
-                  className="cursor-pointer"
-                  onClick={navToProfile}
+                  className="cursor-pointer relative"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 />
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute right-10 mt-2 top-15 bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50">
+                    <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                      <UserCircle className="w-5 h-5 mr-3" />
+                      Profile
+                    </button>
+                    <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                      <TicketsIcon className="w-5 h-5 mr-3" />
+                      My Events
+                    </button>
+                  </div>
+                )}
 
                 <Button
                   variant="link"
