@@ -9,8 +9,9 @@ import {
   ArrowBigRightIcon,
 } from 'lucide-react'
 import { EventData } from '../../app/events/types'
-import { API_ROUTES } from '@/utils/constant'
+import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
+import { useRouter } from 'next/navigation'
 
 interface FeaturedEventProps {
   event: EventData[]
@@ -20,7 +21,8 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
   const [likedEvents, setLikedEvents] = useState<{ [key: string]: boolean }>({})
   const [currentSlide, setCurrentSlide] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
+  const router = useRouter();
+   
   useEffect(() => {
     const initialLikes = Object.fromEntries(event.map(e => [e.id, e.isLiked]))
     setLikedEvents(initialLikes)
@@ -64,7 +66,9 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
   const prevSlide = () => {
     setCurrentSlide(prev => (prev - 1 + event.length) % event.length)
   }
-
+  const navigateToEventDetails=(eventId:string)=>{
+      router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
+  }
   return (
     <div className="relative w-full max-w-5xl mx-auto overflow-hidden">
       <div
@@ -139,6 +143,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                     <div className="mt-auto">
                       <button
                         disabled={ev.isSoldOut}
+                        onClick={()=>navigateToEventDetails(ev.id)}
                         className={`py-3 px-6 rounded-md font-medium ${
                           ev.isSoldOut
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
