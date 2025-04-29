@@ -17,3 +17,13 @@ export const getTicketTypes = (array : ITicket[], ticketId : string) => {
 
     return ticketTypes
 }
+
+export const getEventStatus = (startTime: string, endTime: string): "upcoming" | "ongoing" | "ended" => {
+    const now = new Date();
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+  
+    if (now < start) return "upcoming";
+    if (now >= start && now <= end) return "ongoing";
+    return "ended";
+  };
