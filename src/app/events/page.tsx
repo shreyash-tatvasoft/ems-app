@@ -154,7 +154,8 @@ const EventsPage: React.FC = () => {
     return 0
   })
 
-  const featuredEvent = filteredEvents.find(event => event.isFeatured)
+  const featuredEvent = filteredEvents.filter(event => event.isFeatured)
+  console.log("All Featured Event",featuredEvent,filteredEvents);
   const regularEvents = filteredEvents.filter(event => !event.isFeatured)
   return (
     
