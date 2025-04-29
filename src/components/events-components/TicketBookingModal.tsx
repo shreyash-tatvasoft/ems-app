@@ -84,7 +84,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto no-scrollbar">
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-999 overflow-y-auto no-scrollbar">
   <div className="bg-white rounded-lg w-full max-w-lg max-h-full overflow-y-auto no-scrollbar">
     <div className="flex justify-between items-center p-6 border-b">
       <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
