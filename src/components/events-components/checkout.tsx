@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
               name: `${eventTitle} - ${ticket.type}`,
               description: ticket.description,
             },
-            unit_amount: ticket.price * 100,
+            unit_amount: ticket.totalPrice * 1000000,
           },
           quantity,
         },

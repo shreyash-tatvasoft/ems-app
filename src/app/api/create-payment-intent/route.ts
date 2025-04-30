@@ -17,7 +17,7 @@ export async function POST(req: Request) {
             product_data: {
               name: `${eventTitle} - ${tickets.type}`,
             },
-            unit_amount: Math.round(tickets.totalPrice),
+            unit_amount: Math.round(tickets.totalPrice*100),
           },
           quantity: tickets.quantity,
         },
