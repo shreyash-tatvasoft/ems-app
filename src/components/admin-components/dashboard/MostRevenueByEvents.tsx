@@ -8,27 +8,25 @@ import { apiCall } from '@/utils/services/request';
 import { Button } from '@/components/ui/button';
 import TableModal from './TableModal';
 import { chartTitle } from './ChartCard';
-import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
-
-interface IData {
-    totalRevenue: number;
-    eventTitle: string;
-    category?: string;
-}
+import { DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
+import { IMostRevenueByEventsData } from '@/app/admin/dashboard/types';
 
 const MostRevenueByEvents = () => {
+
     const [loading, setLoading] = useState(true);
-    const [data, setData] = useState<IData[]>([]);
+    const [data, setData] = useState<IMostRevenueByEventsData[]>([]);
     const [open, setOpen] = useState(false);
     const [tableLoading, setTableLoading] = useState(true);
-    const [tableData, setTableData] = useState<IData[]>([]);
+    const [tableData, setTableData] = useState<IMostRevenueByEventsData[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const endPoint = `${API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS}?limit=5`;
+            const endPoint = `${API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS}?limit=${5}`;
             const response = await apiCall({ endPoint, method: 'GET' });
-            setData(response?.data || []);
+
+            const resultData = response?.data as IMostRevenueByEventsData[] || []
+            setData(resultData);
         } catch (error) {
             console.error('Error fetching bar chart data:', error);
             setData([]);
@@ -41,9 +39,11 @@ const MostRevenueByEvents = () => {
         setTableLoading(true);
         try {
             const response = await apiCall({ endPoint: API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS, method: 'GET' });
-            setTableData(response?.data || []);
+            const resultData = response?.data as IMostRevenueByEventsData[] || []
+            setTableData(resultData);
         } catch (error) {
             console.error('Error fetching detailed table data:', error);
+            setTableData([]);
         } finally {
             setTableLoading(false);
         }
@@ -90,13 +90,10 @@ const MostRevenueByEvents = () => {
             <TableModal
                 open={open}
                 onClose={() => setOpen(false)}
-                columns={[
-                    { label: 'Event Title', key: 'eventTitle' },
-                    { label: 'Total Revenue', key: 'totalRevenue' },
-                ]}
+                columns={RevenueTableColumns}
                 data={tableData}
                 loading={tableLoading}
-                title="All Events by Revenue"
+                title={DASHBOARD_TITLE.REVENUE_MODAL_TITLE}
                 pagesize={10}
             />
         </div>

@@ -14,15 +14,11 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { BALANCED_COLORS } from '@/utils/constant';
 import { formatNumberShort } from '@/utils/helper';
+import { IBarChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
-interface Props {
-    data: number[];
-    labels: string[];
-}
-
-export default function BarChart({ data, labels }: Props) {
+export default function BarChart({ data, labels }: IBarChartProps) {
     const chartData = useMemo(() => ({
         labels,
         datasets: [

@@ -13,15 +13,11 @@ import {
     ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { ILineChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-type LineChartProps = {
-    data: number[];
-    labels: string[];
-};
-
-const LineChart: React.FC<LineChartProps> = ({ data, labels }) => {
+const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
     const chartData = {
         labels,
         datasets: [

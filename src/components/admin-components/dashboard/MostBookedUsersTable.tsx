@@ -44,6 +44,7 @@ function TruncatedCell({ text }: { text: string }) {
 }
 
 export default function MostBookedUsersTable() {
+
     const [users, setUsers] = useState<IUser[]>([]);
     const [loading, setLoading] = useState(true);
 
