@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 // Custom Components
 import Loader from '@/components/common/Loader'
@@ -12,20 +13,34 @@ import { API_ROUTES } from '@/utils/constant'
 import { formatDateTime, getEventStatus, getTicketTypes } from './helper'
 
 // Types import
-import { IEventBookingResponse, IEventsState } from './types'
+import { IBooking, IEventBookingResponse, IEventsState } from './types'
 
 // Library imports
 import moment from 'moment'
 
 // Icons imports
-import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, Download } from 'lucide-react'
+import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon,  Download } from 'lucide-react'
+import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
 
 
 const MyEventsPage = () => {
+    const router = useRouter()
     const [myEvents, setMyEvents] = useState<IEventsState[]>([])
     const [allMyEvents, setAllMyEvents] = useState<IEventsState[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [loading, setLoading] = useState(true)
+    const [tickeModal, setTicketModal] = useState(false)
+    const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null)
+
+    const openDownloadTicketModal = (events: IBooking) => {
+        setTicketSuumary(events)
+        setTicketModal(true)
+    }
+
+    const closeDownloadTicketModal = () => {
+        setTicketSuumary(null)
+        setTicketModal(false)
+    }
 
     const fetchMyEvents = async () => {
         const result : IEventBookingResponse = await apiCall({
@@ -49,7 +64,8 @@ const MyEventsPage = () => {
                     eventTicketType : getTicketTypes(item.event.tickets, item.ticket),
                     eventTicketPrice: item.totalAmount,
                     eventStatus : getEventStatus(item.event.startDateTime, item.event.endDateTime),
-                    eventImage : item.event.images.length > 0 ? item.event.images[0].url  : ""
+                    eventImage : item.event.images.length > 0 ? item.event.images[0].url  : "",
+                    eventFullResponse : item,
                 }
             })
 
@@ -62,6 +78,10 @@ const MyEventsPage = () => {
     useEffect(() => {
         fetchMyEvents()
     },[])
+
+    const navToViewTicket = ()  => {
+        router.push("/tickets")
+    }
 
     const renderUpcomingSection = () => {
         return (
@@ -163,13 +183,13 @@ const MyEventsPage = () => {
                 <div className='grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5'>
                     {myEvents.length > 0 && myEvents.map(item =>
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
-                            <div className='pb-2 border-b border-b-gray-200 flex justify-between'>
+                            <div className='pb-2 border-b border-b-gray-200 flex justify-between items-center'>
                                 <p className='text-lg'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
-                                <TooltipWrapper tooltip='Download tickets'>
-                                    <Download className='h-5 w-5 cursor-pointer'/>
+                                <TooltipWrapper tooltip='Preview Tickets'>
+                                    <Download onClick={() => openDownloadTicketModal(item.eventFullResponse)} className='h-5 w-5 cursor-pointer' />
                                 </TooltipWrapper>
                             </div>
-                            
+
                             <div className='flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200'>
                                 
                                 <img
@@ -225,6 +245,12 @@ const MyEventsPage = () => {
                 {myEvents.length === 0 && <div className="text-center py-12">
                     <p className="text-gray-500">No bookings found.</p>
                 </div>}
+
+                <DownloadTicketModal
+                    isOpen={tickeModal}
+                    eventData={ticketSummary}
+                    onClose={closeDownloadTicketModal}
+                />
 
             </div>
         </div>
