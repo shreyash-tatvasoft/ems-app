@@ -43,6 +43,13 @@ export const API_ROUTES = {
     EVENT:{
       PAYMENT:`/ticket/book`,
       MY_EVENTS: "/ticket/book"
+    },
+    USER: {
+        PROFILE : {
+            RESET_EMAIL : "/reset_setting_email",
+            VERIFY_EMAIL : "/veset_setting_email",
+        },
+        USER_DETAILS : "/user_details"
     }
 }
 export const LIGHT_COLORS = [

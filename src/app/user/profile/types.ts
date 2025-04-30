@@ -17,3 +17,11 @@ export interface IProfileInfoValues {
     address: string,
     profileImage: File | null,
 };
+
+export interface IUserInfo {
+    _id: string;
+    name: string;
+    email: string;
+    address: string;
+    profileimage: string | null;
+}

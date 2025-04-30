@@ -18,7 +18,7 @@ import { IEventBookingResponse, IEventsState } from './types'
 import moment from 'moment'
 
 // Icons imports
-import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon } from 'lucide-react'
+import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, Download } from 'lucide-react'
 
 
 const MyEventsPage = () => {
@@ -163,7 +163,13 @@ const MyEventsPage = () => {
                 <div className='grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5'>
                     {myEvents.length > 0 && myEvents.map(item =>
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
-                            <p className='text-lg pb-2 border-b border-b-gray-200'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
+                            <div className='pb-2 border-b border-b-gray-200 flex justify-between'>
+                                <p className='text-lg'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
+                                <TooltipWrapper tooltip='Download tickets'>
+                                    <Download className='h-5 w-5 cursor-pointer'/>
+                                </TooltipWrapper>
+                            </div>
+                            
                             <div className='flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200'>
                                 
                                 <img
