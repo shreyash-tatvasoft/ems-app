@@ -4,15 +4,11 @@ import React, { useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartOptions } from 'chart.js';
 import { LIGHT_COLORS } from '@/utils/constant';
+import { IPieChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface PieChartProps {
-    labels: string[];
-    data: number[];
-}
-
-const PieChart: React.FC<PieChartProps> = ({ labels, data }) => {
+const PieChart: React.FC<IPieChartProps> = ({ labels, data }) => {
     const chartData = useMemo(() => ({
         labels,
         datasets: [

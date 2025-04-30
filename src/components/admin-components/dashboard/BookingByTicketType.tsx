@@ -5,13 +5,10 @@ import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { Skeleton } from '@/components/ui/skeleton';
 import DoughnutChart from '../charts/DoughnutChart';
-
-interface IData {
-    ticketType: string;
-    totalBookings: number;
-}
+import { IBookingByTicketTypeData } from '@/app/admin/dashboard/types';
 
 const BookingByTicketType: React.FC = () => {
+
     const [loading, setLoading] = useState(true);
     const [labels, setLabels] = useState<string[]>([]);
     const [data, setData] = useState<number[]>([]);
@@ -23,15 +20,20 @@ const BookingByTicketType: React.FC = () => {
                 method: 'GET',
             });
 
-            const bookingMap = (response.data as IData[]).reduce((acc, item) => {
+            const resultData = response?.data as IBookingByTicketTypeData[] || []
+
+            const bookingMap = resultData.reduce((acc, item) => {
                 acc[item.ticketType] = (acc[item.ticketType] || 0) + item.totalBookings;
                 return acc;
             }, {} as Record<string, number>);
 
             setLabels(Object.keys(bookingMap));
             setData(Object.values(bookingMap));
+
         } catch (err) {
             console.error('Error fetching data:', err);
+            setLabels([]);
+            setData([]);
         } finally {
             setLoading(false);
         }

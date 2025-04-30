@@ -8,16 +8,13 @@ import { chartTitle } from './ChartCard';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import LineChart from '../charts/LineChart';
-import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
+import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { IFilter, IRevenueData } from '@/app/admin/dashboard/types';
 
-type FilterType = 'monthly' | 'yearly' | 'overall';
-interface Filter { type: FilterType; value: string; }
-interface IData { _id: string; total: number; bookings: number; }
-const currentYear = moment().format('YYYY')
 const TotalRevenueOverTime: React.FC = () => {
-    const [filter, setFilter] = useState<Filter>({
+    const [filter, setFilter] = useState<IFilter>({
         type: 'yearly',
-        value: currentYear,
+        value: getCurrentYear,
     });
 
     const [loading, setLoading] = useState(true);
@@ -41,10 +38,14 @@ const TotalRevenueOverTime: React.FC = () => {
         try {
             const endPoint = `${API_ROUTES.ADMIN.REVENUE_OVER_TIME}?period=${filter.type}&reference=${filter.value}`;
             const response = await apiCall({ endPoint, method: 'GET' });
-            const result = (response?.data?.data as IData[]) || [];
-            setData(result.map(item => item.total));
+
+            const result = (response?.data?.data as IRevenueData[]) || [];
+            const dataValue = result.map(item => item.total)
+
+            setData(dataValue);
         } catch (err) {
             console.error('Fetch error:', err);
+            setData([]);
         } finally {
             setLoading(false);
         }

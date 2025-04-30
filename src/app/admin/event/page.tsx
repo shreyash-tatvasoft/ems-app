@@ -31,6 +31,7 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice, getPaginatedData } from './helper';
+import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 
 function EventsListpage() {
   const router = useRouter()
@@ -213,7 +214,7 @@ function EventsListpage() {
       currentPage * itemsPerPage
     );
     setRowData(paginated);
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, eventsData, itemsPerPage]);
 
   const renderSortableRow = (
     title: string,
@@ -239,10 +240,10 @@ function EventsListpage() {
   };
 
   return (
-    <div className="m-10">
+    <div className="p-8">
       {loading && <Loader />}
 
-      <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
+      <ChartCard>
         <p className="text-2xl font-bold">All Events</p>
 
         {/* Search Bar & Filters  */}
@@ -518,7 +519,7 @@ function EventsListpage() {
             </div>
           </div>
         )}
-      </div>
+      </ChartCard>
 
       {/* Delete Popup */}
       <DeleteDialog
