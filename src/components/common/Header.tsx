@@ -12,7 +12,7 @@ import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 import { Button } from "@/components/ui/button"
 
 // Custom helpers
-import { getAuthToken } from '@/utils/helper';
+import { getAuthToken, getUserLogo, setUserLogo } from '@/utils/helper';
 import { INITIAL_USER_INFO } from '@/app/user/profile/helper';
 
 // Other library
@@ -37,6 +37,7 @@ interface HeaderPageProps {
 const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, activeLink = "" }) => {
 
   const [authToken, setAuthToken] = useState("")
+  const [logo, setLogo] = useState("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<IUserInfo>(INITIAL_USER_INFO);
@@ -86,6 +87,8 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
       }
 
+      setUserLogo(userInfo.profileimage)
+      setLogo(userInfo.profileimage)
       setUserInfo(userInfo)
     }
   }
@@ -96,6 +99,13 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
       setAuthToken(token)
     }
   }, [authToken])
+
+  useEffect(() => {
+    const logoUrl = getUserLogo()
+    if (logoUrl !== "") {
+      setLogo(logoUrl)
+    }
+  }, [logo])
 
   useEffect(() => {
       fetchUserInfo()
@@ -243,9 +253,9 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                   </div>
                  : 
                   <div ref={menuRef}>
-                    {userInfo.profileimage !== "" && userInfo.profileimage ?
+                    {logo !== "" ?
                       <Image
-                        src={userInfo.profileimage}
+                        src={logo}
                         width={40}
                         height={40}
                         alt="Logo"
