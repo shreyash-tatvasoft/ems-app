@@ -2,113 +2,103 @@
 
 import { useState } from 'react';
 
+// Third-party Libraries
+import { Formik, Form, FormikHelpers } from "formik";
+import { toast } from 'react-toastify';
+
+// Constant & Helpers import 
+import { API_ROUTES } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
+
+// Custom components
+import FormikTextField from "@/components/common/FormikTextField";
+
+// Helper supports
+import { ContactFormSchema, InitialContactFormValues } from './helper';
+
+// Types
+import { TContactFormValues } from './types';
+
 export default function ContactUsPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
 
-  const [formStatus, setFormStatus] = useState('');
+  const handleSubmit = async (
+      values: TContactFormValues,
+      actions: FormikHelpers<TContactFormValues>
+    ) => {
+      actions.setSubmitting(true);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // here you can integrate your API to submit form data
-    setFormStatus('Thank you! Your message has been received. We will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setTimeout(() => {
-       setFormStatus("")
-    },2500)
-  };
+      const body = values
+  
+      const result = await apiCall({
+         endPoint: API_ROUTES.CONNNTACT_US,
+         method : "POST",
+         body: values,
+      })
+  
+      if(result && result.success) {
+        const msg = result?.message ?? "Form submitted successfully";
+        toast.success(msg)
+        actions.resetForm();
+      } else {
+         const msg = result?.message ?? "Someting went wrong. Try again later";
+         toast.error(msg)
+      }
+      actions.setSubmitting(false);
+    }
 
   return (
     <section className="py-16 px-8">
-      <div className="mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-4">Contact Us</h1>
         <p className="text-center text-gray-600 mb-12">
           Have questions, feedback, or partnership inquiries? We'd love to hear from you!
         </p>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg border-2 border-gray-100 p-8 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-700 font-medium mb-2" htmlFor="name">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
+        <Formik
+          initialValues={InitialContactFormValues}
+          validationSchema={ContactFormSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="space-y-5 bg-white rounded-lg shadow-lg border-2 border-gray-100 p-8">
+              <FormikTextField
                 name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                placeholder="Enter your name"
+                label="Name *"
               />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-2" htmlFor="email">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
+
+              <FormikTextField
                 name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                label="Email *"
+                placeholder="Enter email address"
               />
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="subject">
-              Subject
-            </label>
-            <input
-              type="text"
-              id="subject"
-              name="subject"
-              required
-              value={formData.subject}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
+              <FormikTextField
+                name="subject"
+                placeholder="Enter subject"
+                label="Subject *"
+              />
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-2" htmlFor="message">
-              Message
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows={5}
-              value={formData.message}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-          </div>
+              <FormikTextField
+                name="message"
+                label="Message *"
+                placeholder="Enter message"
+                type='textarea'
+                rows={5}
+              />
 
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-indigo-500 text-white font-semibold px-8 py-3 rounded-md hover:bg-indigo-600 transition-all duration-300"
-            >
-              Send Message
-            </button>
-          </div>
-
-          {formStatus && (
-            <p className="text-green-600 text-center font-medium">{formStatus}</p>
+              <div className="text-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mb-2"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </Form>
           )}
-        </form>
+        </Formik>
       </div>
     </section>
   );
