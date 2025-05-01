@@ -82,8 +82,8 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "_id": receivedObj._id,
         "name": receivedObj.name,
         "email": receivedObj.email,
-        "address": "",
-        "profileimage": receivedObj.profileimage === null ? "" : "image"
+        "address": receivedObj.address !== null ? receivedObj.address : "",
+        "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
       }
 
       setUserInfo(userInfo)
@@ -243,13 +243,13 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                   </div>
                  : 
                   <div ref={menuRef}>
-                    {userInfo.profileimage !== "" ?
+                    {userInfo.profileimage !== "" && userInfo.profileimage ?
                       <Image
-                        src={"/assets/ProfileIcon.svg"}
+                        src={userInfo.profileimage}
                         width={40}
                         height={40}
                         alt="Logo"
-                        className="cursor-pointer relative"
+                        className="cursor-pointer relative rounded-full"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                       />
                       :
