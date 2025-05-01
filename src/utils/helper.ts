@@ -4,6 +4,14 @@ export const getAuthToken = () => {
     return token
 }
 
+export const getUserLogo = () => {
+    const profileImage = localStorage.getItem("profileImage") || ""
+    return profileImage
+}
+
+export const setUserLogo = (imgUrl : string) => {
+    return localStorage.setItem("profileImage", imgUrl)
+}
 
 export const getTruthyString = (value: number | string | undefined | null): string => {
     if (value === null || value === undefined) return "";
