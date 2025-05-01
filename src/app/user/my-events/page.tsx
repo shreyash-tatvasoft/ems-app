@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 // Custom Components
 import Loader from '@/components/common/Loader'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
+import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
 
 // Contsant & Helper Imports
 import { apiCall } from '@/utils/services/request'
@@ -19,12 +19,10 @@ import { IBooking, IEventBookingResponse, IEventsState } from './types'
 import moment from 'moment'
 
 // Icons imports
-import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon,  Download } from 'lucide-react'
-import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
+import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode } from 'lucide-react'
 
 
 const MyEventsPage = () => {
-    const router = useRouter()
     const [myEvents, setMyEvents] = useState<IEventsState[]>([])
     const [allMyEvents, setAllMyEvents] = useState<IEventsState[]>([])
     const [searchQuery, setSearchQuery] = useState("")
@@ -79,9 +77,6 @@ const MyEventsPage = () => {
         fetchMyEvents()
     },[])
 
-    const navToViewTicket = ()  => {
-        router.push("/tickets")
-    }
 
     const renderUpcomingSection = () => {
         return (
@@ -185,8 +180,8 @@ const MyEventsPage = () => {
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
                             <div className='pb-2 border-b border-b-gray-200 flex justify-between items-center'>
                                 <p className='text-lg'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
-                                <TooltipWrapper tooltip='Preview Tickets'>
-                                    <Download onClick={() => openDownloadTicketModal(item.eventFullResponse)} className='h-5 w-5 cursor-pointer' />
+                                <TooltipWrapper tooltip='Get QR'>
+                                    <QrCode onClick={() => openDownloadTicketModal(item.eventFullResponse)} className='h-5 w-5 cursor-pointer' />
                                 </TooltipWrapper>
                             </div>
 

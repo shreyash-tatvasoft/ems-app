@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 
-// import { Download } from 'lucide-react'
+// library support
 import { usePDF } from "react-to-pdf";
 import { QRCodeCanvas } from "qrcode.react";
 
@@ -13,6 +13,9 @@ import "../../app/viewTicket.css"
 
 // Helpers
 import { formatDateTime } from '@/app/user/my-events/helper';
+
+// icons
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 
 interface ITicketProps {
@@ -28,16 +31,12 @@ const DownloadTicketModal : React.FC<ITicketProps> = ({ eventData, isOpen, onClo
   if(eventData === null) return null
 
     const ticketData = {
-        name: "Shreyash",
-        event: "React Conf 2025",
-        date: "12 May 2025",
-        seat: "A10",
         id: "TICKET-123456",
     };
 
     // Use the usePdf hook
     const { toPDF, targetRef } = usePDF({
-        filename: "ticket.pdf",
+        filename: `${eventData.event.title}-${new Date().getTime()}-ticket.pdf`,
     });
 
     const downoadTicket = () => {
@@ -51,8 +50,13 @@ const DownloadTicketModal : React.FC<ITicketProps> = ({ eventData, isOpen, onClo
       <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40">
         <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
 
+        <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
+          <p className="font-bold text-xl">Ticket Details</p>
+          <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
+        </div>
+
           <div className="ticket-summary-container" ref={targetRef}>
-            <h2 className="ticket-summary-title">Your Ticket Summary</h2>
+            <h2 className="ticket-summary-title">Ticket Summary</h2>
 
               <p className='event-name'>Event Name :  <span className="event-name">{eventData.event.title}</span> </p>
               <p className='event-name'>Event Start Name :  <span className="event-time-text">{formatDateTime(eventData.event.startDateTime) } </span> </p>
