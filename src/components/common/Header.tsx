@@ -8,11 +8,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 // Custom compponents
-import { ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
+import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 import { Button } from "@/components/ui/button"
 
 // Custom helpers
 import { getAuthToken } from '@/utils/helper';
+import { INITIAL_USER_INFO } from '@/app/user/profile/helper';
 
 // Other library
 import Cookie from 'js-cookie'
@@ -20,6 +21,12 @@ import { TicketsIcon, UserCircle } from 'lucide-react';
 
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
+import { apiCall } from '@/utils/services/request';
+
+// Types support
+import { IUserInfo } from '@/app/user/profile/types';
+
+
 
 interface HeaderPageProps {
   toggleSidebar?: () => void,
@@ -32,6 +39,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   const [authToken, setAuthToken] = useState("")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<IUserInfo>(INITIAL_USER_INFO);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
 
@@ -60,13 +68,38 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
     router.push(ROUTES.USER_MY_EVENTS)
   }
 
+  const fetchUserInfo = async () => {
+    const result = await apiCall({
+       method: "GET",
+       endPoint: API_ROUTES.USER.USER_DETAILS,
+       withToken: true
+    })
+
+    if(result && result.success) {
+      const receivedObj = result.data[0]
+
+      const userInfo = {
+        "_id": receivedObj._id,
+        "name": receivedObj.name,
+        "email": receivedObj.email,
+        "address": "",
+        "profileimage": receivedObj.profileimage === null ? "" : "image"
+      }
+
+      setUserInfo(userInfo)
+    }
+  }
+
   useEffect(() => {
     const token = getAuthToken()
     if (token !== "") {
       setAuthToken(token)
-
     }
   }, [authToken])
+
+  useEffect(() => {
+      fetchUserInfo()
+    }, [])
 
   // Close when clicking outside
   useEffect(() => {
@@ -210,14 +243,25 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                   </div>
                  : 
                   <div ref={menuRef}>
-                    <Image
-                      src={"/assets/ProfileIcon.svg"}
-                      width={40}
-                      height={40}
-                      alt="Logo"
-                      className="cursor-pointer relative"
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    />
+                    {userInfo.profileimage !== "" ?
+                      <Image
+                        src={"/assets/ProfileIcon.svg"}
+                        width={40}
+                        height={40}
+                        alt="Logo"
+                        className="cursor-pointer relative"
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      />
+                      :
+                      <button
+                        className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold cursor-pointer relative'
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      >
+                        {userInfo.name.charAt(0).toUpperCase()}
+                      </button>
+                    }
+                    
+                    
 
                     {/* Dropdown Menu */}
                     {isDropdownOpen && (

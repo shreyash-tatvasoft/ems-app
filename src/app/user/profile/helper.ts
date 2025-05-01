@@ -32,6 +32,14 @@ export const InitialProfileInfoValues = {
     profileImage: null as File | null,
   };
 
+export const INITIAL_USER_INFO = {
+    _id: "",
+    name: "",
+    email: "",
+    address: "",
+    profileimage: "",
+}
+
 
 export const ChangePasswordSchema = Yup.object({
     oldPassword: Yup.string()
