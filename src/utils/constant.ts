@@ -144,9 +144,10 @@ export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
 export const PAGINATION_OPTIONS = [
+    { value: 5, label: '5' },
     { value: 10, label: '10' },
-    { value: 15, label: '15' },
     { value: 20, label: '20' },
+    { value: 50, label: '50' },
 ];
 
 export const LOCATION_OPTIONS = [

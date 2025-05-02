@@ -1,14 +1,51 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
+// Custom Components
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
-
-import { MagnifyingGlassIcon, TrashIcon, EyeIcon } from "@heroicons/react/24/outline"
 import TooltipWrapper from '@/components/common/TooltipWrapper'
+import Pagination from '@/components/admin-components/Pagination'
+
+// Icons
+import { MagnifyingGlassIcon, TrashIcon, EyeIcon } from "@heroicons/react/24/outline"
+
+// Types
+import { IRequestResponse, IRequestType } from './types'
+
+// Helpers & Constant
+import { API_ROUTES } from '@/utils/constant'
+import { getPaginatedData, getSearchResults } from './helper'
+
+
+//  Services
+import { apiCall } from '@/utils/services/request'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const AdminContactUsPage = () => {
 
+    const [allRequestsData, setAllRequestData] = useState<IRequestType[]>([])
+    const [requestsData, setRequestsData] = useState<IRequestType[]>([])
+    const [tableRowData, setTableRowData] = useState<IRequestType[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+    const [loading, setLoading] = useState(true)
+    const [searchQuery, setSearchQuery] = useState("")
+
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalItems = requestsData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const handleSearch = (searchVal : string) => {
+        const result = getSearchResults(allRequestsData,searchVal)
+        const rowResult = getPaginatedData(result, 1, itemsPerPage);
+
+        setTableRowData(rowResult);
+        setRequestsData(result)
+        setCurrentPage(1);
+        setSearchQuery(searchVal)
+    }
 
     const selectParticulartRowId = (id: string) => {
         setSelectedIds((prevSelectedIds) => {
@@ -23,7 +60,7 @@ const AdminContactUsPage = () => {
     };
 
     const selectAllRowsId = () => {
-        const allIds = dummyData.map(item => item.id)
+        const allIds = allRequestsData.map(item => item._id)
         setSelectedIds(prev =>
             prev.length === allIds.length ? [] : allIds
           );
@@ -33,51 +70,108 @@ const AdminContactUsPage = () => {
         console.log("first", selectedIds)
     }
 
-    const dummyData = [
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john.doe@example.com",
-          subject: "Need Admin support",
-          message: "I want to collaborate with Admin and I want to host a big event in the upcoming month.",
-        },
-        {
-          id: "2",
-          name: "Jane Smith",
-          email: "jane.smith@example.com",
-          subject: "Event scheduling issue",
-          message: "I need assistance with rescheduling my event, as there are conflicts in the time slots.",
-        },
-        {
-          id: "3",
-          name: "Samuel Jackson",
-          email: "samuel.jackson@example.com",
-          subject: "Request for feature",
-          message: "I'd love to see a feature where I can track the event's attendees and ticket sales in real-time.",
-        },
-        {
-          id: "4",
-          name: "Lucy Brown",
-          email: "lucy.brown@example.com",
-          subject: "Urgent support needed",
-          message: "I am facing issues with the platform crashing when I try to upload event details.",
-        },
-        {
-          id: "5",
-          name: "Robert White",
-          email: "robert.white@example.com",
-          subject: "Feedback on the service",
-          message: "The platform is amazing! But I think there could be more customization options for the event page.",
-        },
-        {
-          id: "6",
-          name: "Sarah Green",
-          email: "sarah.green@example.com",
-          subject: "Ticketing issues",
-          message: "The event tickets are not showing the correct availability status. Can you help fix this?",
-        },
-      ];
-      
+    // Fecth Contact Us Data 
+    const fetchRequestData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response : IRequestResponse = await apiCall({ 
+                endPoint: API_ROUTES.CONNNTACT_US, 
+                method: 'GET' 
+            });
+
+            if(response && response.success) {
+                const receivedArray = response.data
+
+                const tableRowData = getPaginatedData(receivedArray, currentPage, itemsPerPage)
+                
+                setAllRequestData(receivedArray)
+                setRequestsData(receivedArray)
+                setTableRowData(tableRowData)
+            }
+        } catch (err) {
+            console.error('Error fetching chart data', err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchRequestData()
+    },[fetchRequestData])
+
+    useEffect(() => {
+        const paginated = requestsData.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage
+        );
+        setTableRowData(paginated);
+      }, [currentPage, requestsData, itemsPerPage]);
+
+    const renderTableRows = () => {
+        return tableRowData.map(item =>
+            <tr key={item._id} className="even:bg-blue-50">
+                <td className="pl-4 w-8">
+                    <input
+                        type="checkbox"
+                        className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
+                        checked={selectedIds.includes(item._id)}
+                        onChange={() => selectParticulartRowId(item._id)}
+                    />
+                </td>
+                <td className="p-4 text-slate-900 font-medium">{item.name}</td>
+                <td className="p-4 text-slate-600 font-medium">{item.email}</td>
+                <td className="p-4 text-slate-600 font-medium">{item.subject}</td>
+                <td className="p-4 text-slate-600 font-medium">
+                    <TooltipWrapper tooltip={`${item.message}`}>
+                        <p className='max-w-60 truncate'>{item.message}</p>
+                    </TooltipWrapper>
+                </td>
+                <td className="p-4">
+                    <button
+                        className="text-blue-500 hover:text-blue-700 cursor-pointer ml-4"
+                    >
+                        <EyeIcon className="h-5 w-5" />
+                    </button>
+                </td>
+            </tr>
+        )
+    }
+
+    const renderSlkeleton = () => {
+        return Array.from({ length: itemsPerPage }).map((_, i) => (
+            <tr key={i} className="even:bg-blue-50">
+                <td className="pl-4 w-8">
+                    <Skeleton className="h-5 w-5 rounded-sm" />
+                </td>
+                <td className="p-4">
+                    <Skeleton className="h-4 w-32" />
+                </td>
+                <td className="p-4">
+                    <Skeleton className="h-4 w-40" />
+                </td>
+                <td className="p-4">
+                    <Skeleton className="h-4 w-28" />
+                </td>
+                <td className="p-4">
+                    <Skeleton className="h-4 w-60" />
+                </td>
+                <td className="p-4">
+                    <Skeleton className="h-5 w-5 ml-4" />
+                </td>
+            </tr>
+        ))
+    }
+
+    const renderNoDataFound = () => {
+        return <tr className='text-center'>
+            <td colSpan={6} >
+                <div className='bg-gray-100 font-bold h-60 m-auto flex items-center justify-center'>
+                    No data found
+                </div>
+            </td>
+        </tr>
+    }
+
   return (
     <div className='p-8'>
 
@@ -85,7 +179,7 @@ const AdminContactUsPage = () => {
               <p className="text-2xl font-bold">All Support Requests</p>
 
               {/* Search Bar & Delete All  */}
-              <div className="flex  items-baseline sm:items-center sm:flex-row flex-col gap-2 space-x-2 w-full md:w-[60%] my-5">
+              <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
                   {/* Search Input */}
                   <div className="relative w-full">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -93,25 +187,25 @@ const AdminContactUsPage = () => {
                       </span>
                       <input
                           type="text"
-                          // value={searchQuery}
-                          // onChange={(e) => searchEvents(e.target.value)}
+                          value={searchQuery}
+                          onChange={(e) => handleSearch(e.target.value)}
                           placeholder="Search requests"
                           className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                       />
                   </div>
 
+                  <button
+                      onClick={deleteRequestById}
+                      disabled={selectedIds.length === 0}
+                      className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                  >
+                      <TrashIcon className="w-5 h-5 font-bold" />
+                      <p className="hidden md:block">Delete</p>
+                  </button>
               </div>
-
-              {/* Selected Row */}
-              {selectedIds.length > 0 &&
-                <div className='px-6 py-4 flex justify-between bg-blue-100 items-center mb-5'>
-                  <p className='text-gray-700 font-bold'>{selectedIds.length} selected</p>
-                  <TrashIcon onClick={deleteRequestById} className='h-5 w-5 text-gray-800 cursor-pointer' />
-              </div>
-              }
 
               {/* TABLE  */}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto my-2">
                   <table className="min-w-full bg-white">
                       <thead className="bg-gray-700 whitespace-nowrap">
                           <tr>
@@ -119,7 +213,7 @@ const AdminContactUsPage = () => {
                                   <input
                                       type="checkbox"
                                       className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
-                                      checked={selectedIds.length === dummyData.length}
+                                      checked={selectedIds.length === allRequestsData.length}
                                       onChange={() => selectAllRowsId()}
                                   />
                               </th>
@@ -131,36 +225,22 @@ const AdminContactUsPage = () => {
                           </tr>
                       </thead>
                       <tbody className="whitespace-nowrap">
-                          {dummyData.map(item => 
-                              <tr key={item.id} className="even:bg-blue-50">
-                                  <td className="pl-4 w-8">
-                                      <input
-                                          type="checkbox"
-                                          className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
-                                          checked={selectedIds.includes(item.id)}
-                                          onChange={() => selectParticulartRowId(item.id)}
-                                      />
-                                  </td>
-                                  <td className="p-4 text-slate-900 font-medium">{item.name}</td>
-                                  <td className="p-4 text-slate-600 font-medium">{item.email}</td>
-                                  <td className="p-4 text-slate-600 font-medium">{item.subject}</td>
-                                  <td className="p-4 text-slate-600 font-medium">
-                                    <TooltipWrapper tooltip={`${item.message}`}>
-                                         <p className='max-w-60 truncate'>{item.message}</p>
-                                    </TooltipWrapper>
-                                  </td>
-                                  <td className="p-4">
-                                      <button
-                                          className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                                      >
-                                          <EyeIcon className="h-5 w-5" />
-                                      </button>
-                                  </td>
-                              </tr>
-                          )}
+                        {loading ? renderSlkeleton() : tableRowData.length > 0 ? renderTableRows() : renderNoDataFound()}
                       </tbody>
                   </table>
               </div>
+
+              {/* Pagination */}
+              {!loading && requestsData.length > 0 && (
+                  <Pagination
+                      totalItems={totalItems}
+                      totalPages={totalPages}
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                      onPageChange={setCurrentPage}
+                      onItemsPerPageChange={setItemsPerPage}
+                  />
+              )}
 
           </ChartCard>
 
