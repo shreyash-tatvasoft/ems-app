@@ -11,6 +11,7 @@ interface FormikTextFieldProps {
     endIcon?:React.ReactNode; 
     readOnly?: boolean;
     disabled?: boolean;
+    rows?: number;
 }
 
 const FormikTextField: React.FC<FormikTextFieldProps> = ({
@@ -22,6 +23,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
     endIcon,
     readOnly = false,
     disabled = false,
+    rows,
 }) => {
 
     const [field, meta] = useField(name);
@@ -37,9 +39,11 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
             <div className='relative'>
             <Field
                 {...field}
+                as={type === "textarea" ? "textarea" : undefined}
                 type={type}
                 name={name}
                 id={name}
+                rows={rows}
                 placeholder={placeholder}
                 className={`w-full px-4 py-2 border disabled:bg-gray-100 disabled:text-gray-500
                     ${hasError ? "border-red-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"} 

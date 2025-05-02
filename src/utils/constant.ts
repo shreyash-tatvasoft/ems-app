@@ -52,7 +52,8 @@ export const API_ROUTES = {
             RESET_PASSWORD: "/reset_setting_password"
         },
         USER_DETAILS : "/user_details"
-    }
+    },
+    CONNNTACT_US : "/contact-us"
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
