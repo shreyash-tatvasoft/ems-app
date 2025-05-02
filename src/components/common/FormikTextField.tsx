@@ -39,6 +39,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
             <div className='relative'>
             <Field
                 {...field}
+                as={type === "textarea" ? "textarea" : undefined}
                 type={type}
                 name={name}
                 id={name}

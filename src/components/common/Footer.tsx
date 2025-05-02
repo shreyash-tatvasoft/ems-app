@@ -60,7 +60,7 @@ function Footer() {
                     </div>
                 </div>
                 <div className="text-center text-gray-400 mt-8 text-sm">
-                    © {new Date().getFullYear()} Evently. All rights reserved. || 
+                    © {new Date().getFullYear()} Evently. All rights reserved. || &nbsp;
                     <span className='hover:text-white hover:underline cursor-pointer'>
                         <Link href={ROUTES.TERMS_AND_CONDITIONS}>Terms & Condiotions</Link>
                     </span>

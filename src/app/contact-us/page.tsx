@@ -84,7 +84,7 @@ export default function ContactUsPage() {
                 label="Message *"
                 placeholder="Enter message"
                 type='textarea'
-                rows={5}
+                rows={8}
               />
 
               <div className="text-end">
