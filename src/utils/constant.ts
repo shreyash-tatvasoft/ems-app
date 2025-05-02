@@ -13,6 +13,7 @@ export const ROUTES = {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
+        CONTACT_US : "/admin/contact-us"
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -96,6 +97,7 @@ export const BALANCED_COLORS = [
 export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
