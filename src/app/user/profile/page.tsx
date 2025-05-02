@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react'
 
-// Common constatns
+// Common constatns & helpers
 import { API_ROUTES, PROFILE_TAB_OPTIONS } from '@/utils/constant';
+import { setUserLogo } from '@/utils/helper';
 
 // Helper Function imports
 import { TAB_OPTIONS, InitialChangePasswordFormValues, ChangePasswordSchema, InitalNewEmailFormValues, ChangeEmailSchema, InitalOtpFormValues, VerifyOTPSchema, InitialProfileInfoValues, ProfileInfoSchema, INITIAL_USER_INFO } from './helper';
@@ -15,6 +16,7 @@ import { toast } from 'react-toastify';
 // Custom components
 import FormikTextField from "@/components/common/FormikTextField";
 import FormikFileUpload from '@/components/common/FormikFileUpload';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Icons
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -24,7 +26,6 @@ import { IChangeNewEmailValues, IChangePasswordFormValues, IOtpValues, IProfileI
 
 // API Services
 import { apiCall } from '@/utils/services/request';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState(TAB_OPTIONS.PERSONAL);
@@ -63,7 +64,22 @@ const UserProfilePage = () => {
     actions: FormikHelpers<IChangePasswordFormValues>
   ) => {
     actions.setSubmitting(true);
-    actions.resetForm();
+    const body = { "newPassword" : values.newPassword }
+
+    const result = await apiCall({
+       endPoint: API_ROUTES.USER.PROFILE.RESET_PASSWORD,
+       method : "PUT",
+       body: body,
+       withToken: true
+    })
+
+    if(result && result.success) {
+      toast.success("Password updated successfully")
+      actions.resetForm();
+    } else {
+       const msg = result?.message ?? "Someting went wrong. Try again later";
+       toast.error(msg)
+    }
     actions.setSubmitting(false);
   }
 
@@ -127,7 +143,30 @@ const UserProfilePage = () => {
     actions: FormikHelpers<IProfileInfoValues>
   ) => {
     actions.setSubmitting(true);
-    actions.resetForm();
+    
+
+    const formData = new FormData()
+
+    formData.append("name", values.userName)
+    formData.append("address", values.address)
+    values.profileImage !== null && formData.append("profileimage", values.profileImage)
+
+
+
+    const result = await apiCall({
+        headers : {},
+       endPoint: API_ROUTES.USER.PROFILE.UPDATE_USER_INFO,
+       method : "PUT",
+       body: formData,
+       isFormData: true,
+       withToken: true
+    })
+    
+    
+    if(result && result.success) {
+      toast.success("Profile Updated successfully")      
+      fetchUserInfo()
+    }
     actions.setSubmitting(false);
   }
 
@@ -145,16 +184,18 @@ const UserProfilePage = () => {
         "_id": receivedObj._id,
         "name": receivedObj.name,
         "email": receivedObj.email,
-        "address": "",
-        "profileimage": receivedObj.profileimage !== null ? "" : null
+        "address":receivedObj.address ? receivedObj.address : "",
+        "profileimage": receivedObj.profileimage !== null ? receivedObj.profileimage.url : null
       }
 
       const initialProfileVal = {
         userName: receivedObj.name,
-        address: '',
+        address: receivedObj.address,
         profileImage: null
       }
 
+      const imgUrl = receivedObj.profileimage !== null ? receivedObj.profileimage.url : ""
+      setUserLogo(imgUrl)
       setInitialProfileInfoValues(initialProfileVal)
       setUserInfo(userInfo)
       setIsLoading(false)
@@ -205,7 +246,7 @@ const UserProfilePage = () => {
                           <Form className="space-y-5">
                             <FormikFileUpload
                               name="profileImage"
-                              defaultImage='/assets/ProfileIcon.svg'
+                              defaultImage={`${userInfo.profileimage ? userInfo.profileimage : "/assets/ProfileIcon.svg"}`}
                             />
 
                             <FormikTextField
