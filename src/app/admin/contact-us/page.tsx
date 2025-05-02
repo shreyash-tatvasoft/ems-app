@@ -5,6 +5,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
 import Pagination from '@/components/admin-components/Pagination'
+import DeleteModal from '@/components/common/DeleteModal'
+import ContactModal from '@/components/admin-components/ViewContactInfo'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon } from "@heroicons/react/24/outline"
@@ -14,12 +16,13 @@ import { IRequestResponse, IRequestType } from './types'
 
 // Helpers & Constant
 import { API_ROUTES } from '@/utils/constant'
-import { getPaginatedData, getSearchResults } from './helper'
+import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO } from './helper'
 
 
 //  Services
 import { apiCall } from '@/utils/services/request'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'react-toastify'
 
 const AdminContactUsPage = () => {
 
@@ -28,7 +31,11 @@ const AdminContactUsPage = () => {
     const [tableRowData, setTableRowData] = useState<IRequestType[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
 
+    const [contactInfo, setContactInfo] = useState<IRequestType>(INITIAL_CONTATC_INFO)
+
     const [loading, setLoading] = useState(true)
+    const [deleteModal, setDeleteModal] = useState(false)
+    const [viewModal, setViewModal] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
 
     const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -66,8 +73,48 @@ const AdminContactUsPage = () => {
           );
     }
 
-    const deleteRequestById = () => {
-        console.log("first", selectedIds)
+    const openViewModal = (item : IRequestType) => {
+        setContactInfo(item)
+        setViewModal(true)
+    }
+
+    const closeViewModal = () => {
+        setContactInfo(INITIAL_CONTATC_INFO)
+        setViewModal(false)
+    }
+
+    const openDeleteModal = () => {
+        setDeleteModal(true)
+    }
+
+    const closeDeleteModal = () => {
+        setDeleteModal(false)
+    }
+
+    const deleteRequestById = async () => {
+        setDeleteModal(false)
+        setLoading(true);
+        try {
+            const httpBody = {
+                    "ids": selectedIds
+            }
+            const response = await apiCall({ 
+                endPoint: API_ROUTES.CONNNTACT_US, 
+                method: 'DELETE',
+                body :  httpBody
+            });
+
+            if(response && response.success) {
+                await fetchRequestData()
+                toast.success("Item Deleted Successfully")
+                setCurrentPage(1)
+                setSelectedIds([])
+            }
+        } catch (err) {
+            console.error('Error fetching chart data', err);
+        } finally {
+            setLoading(false);
+        }
     }
 
     // Fecth Contact Us Data 
@@ -129,6 +176,7 @@ const AdminContactUsPage = () => {
                 <td className="p-4">
                     <button
                         className="text-blue-500 hover:text-blue-700 cursor-pointer ml-4"
+                        onClick={() => openViewModal(item)}
                     >
                         <EyeIcon className="h-5 w-5" />
                     </button>
@@ -137,7 +185,7 @@ const AdminContactUsPage = () => {
         )
     }
 
-    const renderSlkeleton = () => {
+    const renderSkeleton = () => {
         return Array.from({ length: itemsPerPage }).map((_, i) => (
             <tr key={i} className="even:bg-blue-50">
                 <td className="pl-4 w-8">
@@ -165,7 +213,7 @@ const AdminContactUsPage = () => {
     const renderNoDataFound = () => {
         return <tr className='text-center'>
             <td colSpan={6} >
-                <div className='bg-gray-100 font-bold h-60 m-auto flex items-center justify-center'>
+                <div className='font-bold h-20 m-auto flex items-center justify-center'>
                     No data found
                 </div>
             </td>
@@ -195,7 +243,7 @@ const AdminContactUsPage = () => {
                   </div>
 
                   <button
-                      onClick={deleteRequestById}
+                      onClick={openDeleteModal}
                       disabled={selectedIds.length === 0}
                       className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
                   >
@@ -213,7 +261,7 @@ const AdminContactUsPage = () => {
                                   <input
                                       type="checkbox"
                                       className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
-                                      checked={selectedIds.length === allRequestsData.length}
+                                      checked={!loading && selectedIds.length === allRequestsData.length}
                                       onChange={() => selectAllRowsId()}
                                   />
                               </th>
@@ -225,7 +273,7 @@ const AdminContactUsPage = () => {
                           </tr>
                       </thead>
                       <tbody className="whitespace-nowrap">
-                        {loading ? renderSlkeleton() : tableRowData.length > 0 ? renderTableRows() : renderNoDataFound()}
+                        {loading ? renderSkeleton() : tableRowData.length > 0 ? renderTableRows() : renderNoDataFound()}
                       </tbody>
                   </table>
               </div>
@@ -243,6 +291,21 @@ const AdminContactUsPage = () => {
               )}
 
           </ChartCard>
+
+          {/* Delete Modal */}
+          <DeleteModal
+                isOpen={deleteModal}
+                onClose={closeDeleteModal}
+                onConfirm={deleteRequestById}
+                description='Are you sure you want to delete selected items?'
+          />
+
+          {/* View Modal */}
+          <ContactModal
+                isOpen={viewModal}
+                onClose={closeViewModal}
+                contactInfo={contactInfo}
+          />
 
     </div>
   )

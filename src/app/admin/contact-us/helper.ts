@@ -2,6 +2,18 @@
 // Types
 import { IRequestType } from "./types";
 
+export const INITIAL_CONTATC_INFO = {
+    _id: "",
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    status: "",
+    createdAt: "",
+    __v: 0
+}
+
+
 export const getPaginatedData = (dataArray : IRequestType[], currentPage : number,  itemsPerPage : number ) => {
     const result = dataArray.slice(
         (currentPage - 1) * itemsPerPage,
