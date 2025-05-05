@@ -76,6 +76,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   if (!event || !eventId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        {loading && <Loader />}
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Event not found
@@ -104,7 +105,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
             onClick={() => navigateToHome()}
-            className="mr-4 p-1 rounded-full hover:bg-gray-100"
+            className="mr-4 p-1 rounded-full hover:bg-gray-100 cursor-pointer"
             aria-label="Back to events"
           >
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
@@ -119,7 +120,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <div className="lg:col-span-2 lg:mb-0">
             <div
               className="bg-white shadow rounded-lg overflow-hidden"
-              style={{ height: '400px' }}
+              style={{ height: '450px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
@@ -129,7 +130,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 {event.title}
               </h2>
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3">
                 <div className="flex items-center text-gray-600">
                   <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>

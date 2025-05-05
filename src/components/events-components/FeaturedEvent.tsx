@@ -11,12 +11,19 @@ import {
   ArrowRightIcon,
   ChevronLeft,
   ChevronRight,
+  MapPin,
 } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { useRouter } from 'next/navigation'
-
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 interface FeaturedEventProps {
   event: EventData[]
 }
@@ -37,7 +44,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
 
     intervalRef.current = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % event.length)
-    }, 5000)
+    }, 10000)
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
@@ -93,7 +100,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
           return (
             <div
               key={ev.id}
-              className="w-full flex-shrink-0 px-4"
+              className="w-full flex-shrink-0"
               style={{ width: '100%' }}
             >
               <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
@@ -106,7 +113,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                     />
                     <button
                       onClick={() => handleLikeEvent(ev.id)}
-                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md"
+                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md cursor-pointer"
                     >
                       <HeartIcon
                         className={`h-6 w-6 ${
@@ -130,25 +137,40 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                       className="text-gray-600 mb-6"
                       dangerouslySetInnerHTML={{ __html: ev.description }}
                     />
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center text-gray-600">
-                        <CalendarIcon className="h-5 w-5 mr-3" />
-                        <span>{formattedDate}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <ClockIcon className="h-5 w-5 mr-3" />
-                        <span>{formattedDate}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <TagIcon className="h-5 w-5 mr-3" />
-                        <span className="font-medium">{ev.priceRange}</span>
-                      </div>
+                  <div className="mt-auto space-y-2 mb-4">
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Square3Stack3DIcon className="h-4 w-4 mr-2" />
+                      <span className='font-bold'>{ev.category}</span>
                     </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="truncate max-w-60 font-bold">
+                            {ev.location}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="font-bold cursor-pointer">
+                              {ev.location}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <CalendarIcon className="h-4 w-4 mr-2" />
+                      <span className='font-bold'>{formattedDate}</span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <TagIcon className="h-4 w-4 mr-2" />
+                      <span className='font-bold'>{ev.priceRange}</span>
+                    </div>
+                  </div>
                     <div className="mt-auto">
                       <button
                         disabled={ev.isSoldOut}
                         onClick={()=>navigateToEventDetails(ev.id)}
-                        className={`py-3 px-6 rounded-md font-medium ${
+                        className={`py-3 px-6 rounded-md font-medium cursor-pointer ${
                           ev.isSoldOut
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -169,13 +191,13 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md cursor-pointer"
           >
             <ChevronLeft />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md cursor-pointer"
           >
             <ChevronRight />
           </button>

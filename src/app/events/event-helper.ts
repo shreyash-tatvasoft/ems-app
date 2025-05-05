@@ -85,7 +85,7 @@ return events
 
 export const getTicketStatus = (ticket: Ticket): {
   status: 'Available' | 'Filling Fast' | 'Almost Full' | 'Sold Out';
-  color: 'green' | 'yellow' | 'red' | 'gray';
+  color: 'bg-green-100 text-green-800' | 'bg-yellow-100 text-yellow-800' | 'bg-red-100 text-red-800' | 'gray';
 } => {
   const availableSeats = ticket.totalSeats - ticket.totalBookedSeats;
   const ratio = availableSeats / ticket.totalSeats;
@@ -93,11 +93,11 @@ export const getTicketStatus = (ticket: Ticket): {
   if (availableSeats <= 0) {
     return { status: 'Sold Out', color: 'gray' };
   } else if (ratio > 0.5) {
-    return { status: 'Available', color: 'green' };
+    return { status: 'Available', color: 'bg-green-100 text-green-800' };
   } else if (ratio > 0.2) {
-    return { status: 'Filling Fast', color: 'yellow' };
+    return { status: 'Filling Fast', color: 'bg-yellow-100 text-yellow-800' };
   } else {
-    return { status: 'Almost Full', color: 'red' };
+    return { status: 'Almost Full', color: 'bg-red-100 text-red-800' };
   }
 };
 

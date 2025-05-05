@@ -10,10 +10,10 @@ export const getTicketPriceRange = (data: EventTicket[]) => {
 
     const priceRange =
         minPrice === 0
-            ? `${maxPrice === 0 ? "Free" : `Free - ${maxPrice}`}`
+            ? `${maxPrice === 0 ? "Free" : `Free - $${maxPrice}`}`
             : minPrice === maxPrice
-                ? `${minPrice}`
-                : `${minPrice} - ${maxPrice}`;
+                ? `$ ${minPrice}`
+                : `$ ${minPrice} - $ ${maxPrice}`;
     return priceRange
 };
 

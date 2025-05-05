@@ -19,7 +19,7 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <Link href={`/events/${event._id}`} key={event._id} className="block">
-            <div className="bg-white overflow-hidden shadow rounded-lg transition-shadow hover:shadow-md flex">
+            <div className="bg-white overflow-hidden shadow rounded-lg transition-shadow hover:shadow-md flex cursor-pointer">
               <div className="w-1/3">
                 <img
                   src={event.images[0].url}
@@ -41,7 +41,7 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
                 </div>
                 <div className="mt-2 text-xs font-medium">
                    
-                    <span className="text-gray-900">${getTicketPriceRange(event.tickets)}</span>
+                    <span className="text-gray-900">{getTicketPriceRange(event.tickets)}</span>
                   
                 </div>
               </div>

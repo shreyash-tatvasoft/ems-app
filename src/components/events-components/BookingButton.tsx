@@ -46,7 +46,7 @@ const BookingButton: React.FC<BookingButtonProps> = ({
       <button
         disabled={status}
         onClick={handleBookingClick}
-        className={`w-full py-3 px-4 font-medium rounded-md transition-colors ${status ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+        className={`w-full py-3 px-4 font-medium rounded-md transition-colors ${status ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}`}
       >
         {status ? "Event Ended":"Book Tickets"}
       </button>

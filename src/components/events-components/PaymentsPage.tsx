@@ -123,8 +123,8 @@ const PaymentResultPage = () => {
             onClick={() => router.push('/events')}
             className={`w-full py-3 px-4 rounded-md font-medium ${
               isSuccess
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-red-600 text-white hover:bg-red-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                : 'bg-red-600 text-white hover:bg-red-700 cursor-pointer' 
             }`}
           >
             {isSuccess ? 'Back to Events' : 'Try Again / View Events'}

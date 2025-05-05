@@ -59,7 +59,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         />
         <button
           onClick={handleLikeEvent}
-          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm"
+          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
         >
           <HeartIcon
             className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
@@ -109,7 +109,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="px-4 pb-4">
         <button
           disabled={event.isSoldOut}
-          className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+          className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}`}
           onClick={()=>navigateToEventDetails(event.id)}
         >
           {event.isSoldOut ? 'Sold Out' : 'View Details'}
