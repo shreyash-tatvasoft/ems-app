@@ -13,7 +13,9 @@ export const ROUTES = {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
-        CONTACT_US : "/admin/contact-us"
+        CONTACT_US : "/admin/contact-us",
+        FAQs : "/admin/faqs",
+        CREATE_FAQs : "/admin/faqs/add",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -54,7 +56,8 @@ export const API_ROUTES = {
         },
         USER_DETAILS : "/user_details"
     },
-    CONNNTACT_US : "/contact-us"
+    CONNNTACT_US : "/contact-us",
+    FAQs : "/faq"
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -98,6 +101,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
+    { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [

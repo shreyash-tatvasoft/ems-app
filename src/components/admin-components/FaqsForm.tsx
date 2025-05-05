@@ -1,0 +1,125 @@
+"use client"
+import React from 'react';
+
+// Library support
+import { Formik, Form, FieldArray, FormikHelpers } from 'formik';
+import {toast} from "react-toastify"
+
+// Custom Components
+import FormikTextField from '../common/FormikTextField';
+
+// Constants & Helpers import
+import { FaqsValidationSchema, InitialFaqsValues } from '@/app/admin/faqs/helper';
+import { apiCall } from '@/utils/services/request';
+import { API_ROUTES } from '@/utils/constant';
+
+// types
+import { IFaqsFormProps, IFAQsFormValues } from '@/app/admin/faqs/types';
+
+// Icons
+import {  TrashIcon } from "@heroicons/react/24/outline"
+
+const FAQForm : React.FC<IFaqsFormProps> = ({ faqId }) => {
+    const isEditMode = faqId !== "add" ? true : false 
+
+    const handleSubmit = async (
+        values: IFAQsFormValues,
+        actions: FormikHelpers<IFAQsFormValues>
+      ) => {
+        actions.setSubmitting(true);
+
+        const result = await apiCall({
+           endPoint: API_ROUTES.FAQs,
+           method : "POST",
+           body: values.faqs,
+           withToken: true
+        })
+    
+        if(result && result.success) {
+          toast.success("FAQs Created successfully")
+          actions.resetForm()
+        }
+       
+        actions.setSubmitting(false);
+      }
+
+  return (
+    <div className="m-10">
+
+          <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
+              <p className="text-2xl font-bold mb-2">
+                  {isEditMode ? "Update" : "Create"} FAQs
+              </p>
+              <Formik
+                  initialValues={InitialFaqsValues}
+                  validationSchema={FaqsValidationSchema}
+                  onSubmit={handleSubmit}
+              >
+                  {({ values, isSubmitting }) => (
+                      <Form className="space-y-6">
+                          <FieldArray name="faqs">
+                              {({ push, remove }) => (
+                                  <>
+                                      <div className='text-end'>
+                                          <button
+                                              type="button"
+                                              onClick={() => push({ question: '', answer: '' })}
+                                              className="underline text-blue-500 font-bold cursor-pointer"
+                                          >
+                                              Add Questions
+                                          </button>
+                                      </div>
+
+
+                                      {values.faqs.map((faq, index) => (
+                                          <div key={index} className='border border-gray-300 p-5 rounded-xl shadow-md'>
+                                            {values.faqs.length > 1 && (
+                                                  <div className='text-end'>
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => remove(index)}
+                                                      className='cursor-pointer'
+                                                  >
+                                                      <TrashIcon className='h-5 w-5 text-gray-800' />
+                                                  </button>
+                                                </div>
+                                              )}
+                                              <div className="flex flex-col gap-4">
+                                                  <FormikTextField
+                                                      name={`faqs[${index}].question`}
+                                                      placeholder="Enter your question"
+                                                      label='Question *'
+                                                  />
+
+                                                  <FormikTextField
+                                                      name={`faqs[${index}].answer`}
+                                                      placeholder="Enter your answer"
+                                                      label='Answer *'
+                                                  />
+                                              </div>
+                                              
+                                          </div>
+                                      ))}
+                                  </>
+                              )}
+                          </FieldArray>
+
+                          <div className="text-end my-6">
+                              <button
+                                  disabled={isSubmitting}
+                                 type='submit'
+                                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
+                              >
+                                  {isSubmitting ? "Submitting..." : "Submit"}
+                              </button>
+                          </div>
+                      </Form>
+                  )}
+              </Formik>
+          </div>
+      </div>
+    
+  );
+};
+
+export default FAQForm;

@@ -27,8 +27,6 @@ export default function ContactUsPage() {
     ) => {
       actions.setSubmitting(true);
 
-      const body = values
-  
       const result = await apiCall({
          endPoint: API_ROUTES.CONNNTACT_US,
          method : "POST",
