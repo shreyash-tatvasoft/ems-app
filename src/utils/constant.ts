@@ -13,6 +13,7 @@ export const ROUTES = {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
+        CONTACT_US : "/admin/contact-us"
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -96,6 +97,7 @@ export const BALANCED_COLORS = [
 export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
@@ -142,9 +144,10 @@ export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
 export const PAGINATION_OPTIONS = [
+    { value: 5, label: '5' },
     { value: 10, label: '10' },
-    { value: 15, label: '15' },
     { value: 20, label: '20' },
+    { value: 50, label: '50' },
 ];
 
 export const LOCATION_OPTIONS = [

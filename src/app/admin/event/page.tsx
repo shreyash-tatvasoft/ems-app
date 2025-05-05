@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Loader from '@/components/common/Loader';
 import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
+import ChartCard from '@/components/admin-components/dashboard/ChartCard';
+import Pagination from '@/components/admin-components/Pagination';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
@@ -16,7 +18,6 @@ import { useRouter } from 'next/navigation';
 import moment from 'moment';
 import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
-import Select from 'react-select';
 import {
   Tooltip,
   TooltipContent,
@@ -25,18 +26,17 @@ import {
 } from "@/components/ui/tooltip"
 
 // constant import
-import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
+import { API_ROUTES, ROUTES } from '@/utils/constant';
 
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice, getPaginatedData } from './helper';
-import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
@@ -55,16 +55,6 @@ function EventsListpage() {
 
   const totalItems = eventsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const handlePageChange = (page: number) => setCurrentPage(page);
 
   const navToCreateEventPage = () => {
     router.push(ROUTES.ADMIN.CREATE_EVENT)
@@ -435,90 +425,17 @@ function EventsListpage() {
 
         {/* Pagination */}
         {eventsData.length > 0 && (
-          <div className="flex items-center justify-between p-4">
-            <span className="text-sm font-medium">
-              Total items: {totalItems}
-            </span>
-
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handlePrev}
-                className="px-2 py-1 text-sm rounded border hover:bg-gray-200"
-                disabled={currentPage === 1}
-              >
-                &lt;
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 text-sm rounded border ${currentPage === page
-                      ? "bg-black text-white"
-                      : "bg-white text-black"
-                      }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
-
-              <button
-                onClick={handleNext}
-                className="px-2 py-1 text-sm rounded border hover:bg-gray-200"
-                disabled={currentPage === totalPages}
-              >
-                &gt;
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-sm whitespace-nowrap hidden md:block">
-                Show items on one page:
-              </span>
-              <Select
-                options={PAGINATION_OPTIONS}
-                defaultValue={PAGINATION_OPTIONS.find(
-                  (opt) => opt.value === itemsPerPage
-                )}
-                onChange={(option) => {
-                  if (option) {
-                    setItemsPerPage(option.value);
-                  }
-                  setCurrentPage(1);
-                }}
-                className="w-20 text-sm"
-                styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    minHeight: "32px",
-                    height: "32px",
-                  }),
-                  indicatorsContainer: (provided) => ({
-                    ...provided,
-                    height: "32px",
-                  }),
-                  valueContainer: (provided) => ({
-                    ...provided,
-                    height: "32px",
-                    padding: "0 6px",
-                  }),
-                  input: (provided) => ({
-                    ...provided,
-                    margin: 0,
-                    padding: 0,
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    fontSize: "0.875rem",
-                  }),
-                }}
-                isSearchable={false}
-              />
-            </div>
-          </div>
+          <Pagination
+            totalItems={totalItems}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         )}
+
+        
       </ChartCard>
 
       {/* Delete Popup */}
