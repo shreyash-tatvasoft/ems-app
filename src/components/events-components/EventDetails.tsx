@@ -116,7 +116,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       </header>
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2 mb-6 lg:mb-0">
+          <div className="lg:col-span-2 lg:mb-0">
             <div
               className="bg-white shadow rounded-lg overflow-hidden"
               style={{ height: '400px' }}
@@ -158,7 +158,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                     Duration - ({event.duration})
                   </span>
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-top text-gray-600">
                   <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
                   <span >{event.location.address}</span>
                 </div>

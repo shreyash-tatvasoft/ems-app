@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react'
 import Loader from '@/components/common/Loader'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
 import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
+import FeedbackModal from '@/components/events-components/FeedbackModal'
 
 // Contsant & Helper Imports
 import { apiCall } from '@/utils/services/request'
@@ -29,7 +30,7 @@ const MyEventsPage = () => {
     const [loading, setLoading] = useState(true)
     const [tickeModal, setTicketModal] = useState(false)
     const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null)
-
+    const [showFeedbackModal, setFeedbackModal] = useState(false);
     const openDownloadTicketModal = (events: IBooking) => {
         setTicketSuumary(events)
         setTicketModal(true)
@@ -105,7 +106,7 @@ const MyEventsPage = () => {
                         FINISHED
                     </button>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
-                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline'>Feedback</span> here.
+                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline' onClick={()=>setFeedbackModal(true)}>Feedback</span> here.
                     </div>
                 </div>
             </div>
@@ -246,7 +247,14 @@ const MyEventsPage = () => {
                     eventData={ticketSummary}
                     onClose={closeDownloadTicketModal}
                 />
-
+                
+                <FeedbackModal
+                    isOpen={showFeedbackModal}
+                    onClose={() => setFeedbackModal(false)}
+                    onSubmit={(formData) => {
+                    console.log('Submitted Feedback:', formData)
+                    }}
+                />
             </div>
         </div>
     )

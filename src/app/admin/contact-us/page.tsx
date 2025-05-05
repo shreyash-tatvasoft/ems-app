@@ -156,7 +156,7 @@ const AdminContactUsPage = () => {
 
     const renderTableRows = () => {
         return tableRowData.map(item =>
-            <tr key={item._id} className="even:bg-blue-50">
+            <tr key={item._id} className="border-b hover:bg-gray-50">
                 <td className="pl-4 w-8">
                     <input
                         type="checkbox"
@@ -255,7 +255,7 @@ const AdminContactUsPage = () => {
               {/* TABLE  */}
               <div className="overflow-x-auto my-2">
                   <table className="min-w-full bg-white">
-                      <thead className="bg-gray-700 whitespace-nowrap">
+                      <thead className="bg-gray-100 whitespace-nowrap">
                           <tr>
                               <th className="pl-4 w-8">
                                   <input
@@ -265,11 +265,11 @@ const AdminContactUsPage = () => {
                                       onChange={() => selectAllRowsId()}
                                   />
                               </th>
-                              <th className="p-4 text-left font-medium text-white">Name</th>
-                              <th className="p-4 text-left font-medium text-white">Email</th>
-                              <th className="p-4 text-left font-medium text-white">Subject</th>
-                              <th className="p-4 text-left font-medium text-white">Message</th>
-                              <th className="p-4 text-left font-medium text-white">Actions</th>
+                              <th className="p-4 text-left font-medium">Name</th>
+                              <th className="p-4 text-left font-medium">Email</th>
+                              <th className="p-4 text-left font-medium">Subject</th>
+                              <th className="p-4 text-left font-medium">Message</th>
+                              <th className="p-4 text-left font-medium">Actions</th>
                           </tr>
                       </thead>
                       <tbody className="whitespace-nowrap">
