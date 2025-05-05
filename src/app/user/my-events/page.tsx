@@ -19,7 +19,8 @@ import { IBooking, IEventBookingResponse, IEventsState } from './types'
 import moment from 'moment'
 
 // Icons imports
-import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode } from 'lucide-react'
+import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode, MoreVertical } from 'lucide-react'
+import { FeedbackModal } from '@/components/events-components/FeedbackModal'
 
 
 const MyEventsPage = () => {
@@ -29,7 +30,13 @@ const MyEventsPage = () => {
     const [loading, setLoading] = useState(true)
     const [tickeModal, setTicketModal] = useState(false)
     const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null)
-
+    const [showFeedbackDropDown,setDropDown] = useState(false);
+    const [showFeedbackModal,setModal] = useState(false);
+    const toggleDropdown = () => setDropDown(!showFeedbackDropDown)
+    const handleFeedbackClick = () => {
+      setModal(true)
+      setDropDown(false)
+    }
     const openDownloadTicketModal = (events: IBooking) => {
         setTicketSuumary(events)
         setTicketModal(true)
@@ -156,7 +163,7 @@ const MyEventsPage = () => {
 
     return (
         <div>
-            {loading && <Loader />}
+                    {loading && <Loader />}
 
             <div className='mx-auto p-10'>
                 <h1 className="text-3xl font-bold mb-6">My Events</h1>
@@ -193,6 +200,23 @@ const MyEventsPage = () => {
                                 />
 
                                 <div>
+                                <div className='relative'>
+                                    <div className="flex justify-end">
+                                    <button onClick={toggleDropdown} className="p-2 text-gray-600 hover:text-black">
+                                        <MoreVertical className="h-5 w-5" />
+                                    </button>
+                                    {showFeedbackDropDown && (
+                                        <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10">
+                                        <button
+                                            onClick={handleFeedbackClick}
+                                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                        >
+                                            Give Feedback
+                                        </button>
+                                        </div>
+                                        )}
+                                    </div>
+                                    </div>
                                     <p className='text-xl font-bold mb-1'>{item.eventName}</p>
                                     <p className='text-gray-500 mb-3'>{item.eventCatogory}</p>
 
@@ -246,7 +270,13 @@ const MyEventsPage = () => {
                     eventData={ticketSummary}
                     onClose={closeDownloadTicketModal}
                 />
-
+                 <FeedbackModal
+                    isOpen={showFeedbackModal}
+                    onClose={() => setModal(false)}
+                    onSubmit={(formData) => {
+                    console.log('Submitted Feedback:', formData)
+                    }}
+                />
             </div>
         </div>
     )

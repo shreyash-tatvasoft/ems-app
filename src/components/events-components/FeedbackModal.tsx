@@ -116,29 +116,6 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, o
               rows={4}
             ></textarea>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Upload Images (up to 3)</label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-              className="mt-1"
-            />
-            <div className="mt-2 flex flex-wrap gap-2">
-              {images.map((img, index) => (
-                <div key={index} className="relative w-20 h-20 border rounded overflow-hidden">
-                  <Image
-                    src={URL.createObjectURL(img)}
-                    alt={`preview-${index}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className="mt-6 flex justify-end space-x-3">
