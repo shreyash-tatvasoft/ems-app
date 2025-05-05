@@ -62,7 +62,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, o
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 bg-opacity-30 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
           <XIcon className="h-5 w-5" />
