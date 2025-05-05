@@ -2,6 +2,7 @@
 import React from 'react';
 
 // Library support
+import { useRouter } from 'next/navigation';
 import { Formik, Form, FieldArray, FormikHelpers } from 'formik';
 import {toast} from "react-toastify"
 
@@ -11,16 +12,17 @@ import FormikTextField from '../common/FormikTextField';
 // Constants & Helpers import
 import { FaqsValidationSchema, InitialFaqsValues } from '@/app/admin/faqs/helper';
 import { apiCall } from '@/utils/services/request';
-import { API_ROUTES } from '@/utils/constant';
+import { API_ROUTES, ROUTES } from '@/utils/constant';
 
 // types
-import { IFaqsFormProps, IFAQsFormValues } from '@/app/admin/faqs/types';
+import { IFAQsFormValues } from '@/app/admin/faqs/types';
 
 // Icons
 import {  TrashIcon } from "@heroicons/react/24/outline"
 
-const FAQForm : React.FC<IFaqsFormProps> = ({ faqId }) => {
-    const isEditMode = faqId !== "add" ? true : false 
+const FAQForm : React.FC = () => {
+
+    const rounter = useRouter()
 
     const handleSubmit = async (
         values: IFAQsFormValues,
@@ -38,6 +40,7 @@ const FAQForm : React.FC<IFaqsFormProps> = ({ faqId }) => {
         if(result && result.success) {
           toast.success("FAQs Created successfully")
           actions.resetForm()
+          rounter.push(ROUTES.ADMIN.FAQs)
         }
        
         actions.setSubmitting(false);
@@ -47,8 +50,8 @@ const FAQForm : React.FC<IFaqsFormProps> = ({ faqId }) => {
     <div className="m-10">
 
           <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
-              <p className="text-2xl font-bold mb-2">
-                  {isEditMode ? "Update" : "Create"} FAQs
+              <p className="text-2xl font-bold mb-5">
+                  Create FAQs
               </p>
               <Formik
                   initialValues={InitialFaqsValues}
@@ -60,41 +63,40 @@ const FAQForm : React.FC<IFaqsFormProps> = ({ faqId }) => {
                           <FieldArray name="faqs">
                               {({ push, remove }) => (
                                   <>
-                                      <div className='text-end'>
-                                          <button
-                                              type="button"
-                                              onClick={() => push({ question: '', answer: '' })}
-                                              className="underline text-blue-500 font-bold cursor-pointer"
-                                          >
-                                              Add Questions
-                                          </button>
-                                      </div>
-
-
                                       {values.faqs.map((faq, index) => (
-                                          <div key={index} className='border border-gray-300 p-5 rounded-xl shadow-md'>
-                                            {values.faqs.length > 1 && (
-                                                  <div className='text-end'>
-                                                    <button
+                                          <div key={index} className='px-5'>
+                                              <div className='flex items-center justify-between'>
+                                                  <div className='text-xl font-bold'>
+                                                        Qustion-{index+1}
+                                                  </div>
+                                                  
+                                                  {index === 0 ? <button
+                                                      type="button"
+                                                      onClick={() => push({ question: '', answer: '' })}
+                                                      className="underline text-blue-500 font-bold cursor-pointer"
+                                                  >
+                                                      Add Field
+                                                  </button> : <button
                                                       type="button"
                                                       onClick={() => remove(index)}
                                                       className='cursor-pointer'
                                                   >
                                                       <TrashIcon className='h-5 w-5 text-gray-800' />
-                                                  </button>
-                                                </div>
-                                              )}
-                                              <div className="flex flex-col gap-4">
+                                                  </button>}
+                                              </div>
+                                              <div className="flex flex-col gap-3 my-5">
                                                   <FormikTextField
                                                       name={`faqs[${index}].question`}
                                                       placeholder="Enter your question"
-                                                      label='Question *'
+                                                      label='Question'
                                                   />
 
                                                   <FormikTextField
                                                       name={`faqs[${index}].answer`}
                                                       placeholder="Enter your answer"
-                                                      label='Answer *'
+                                                      label='Answer'
+                                                      type='textarea'
+                                                      rows={5}
                                                   />
                                               </div>
                                               

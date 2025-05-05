@@ -1,11 +1,3 @@
-export interface IFaqsPage {
-    params: Promise<{ faqId: string }>;
-}
-
-export interface IFaqsFormProps {
-    faqId: string
-}
-
 export interface IFAQsItem {
     question: string;
     answer: string;
@@ -14,3 +6,19 @@ export interface IFAQsItem {
 export interface IFAQsFormValues {
     faqs: IFAQsItem[];
 }
+
+export interface IFaqData {
+    _id: string;
+    question: string;
+    answer: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  }
+  
+  export interface IFaqApiResponse {
+    success: boolean;
+    data: IFaqData[];
+    message: string;
+  }
+  

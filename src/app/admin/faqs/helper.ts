@@ -2,7 +2,7 @@
 import * as Yup from "yup";
 
 // types
-import { IFAQsFormValues } from "./types";
+import { IFaqData, IFAQsFormValues } from "./types";
 
 
 export const InitialFaqsValues: IFAQsFormValues = {
@@ -17,3 +17,22 @@ export const FaqsValidationSchema = Yup.object({
         })
     ),
 })
+
+export const getPaginatedData = (dataArray: IFaqData[], currentPage: number, itemsPerPage: number) => {
+    const result = dataArray.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+    return result
+}
+
+export const getSearchResults = (
+    faqs: IFaqData[],
+    keyword: string
+) => {
+    const lowerKeyword = keyword.toString().toLowerCase();
+    return faqs.filter(faq =>
+      faq.answer.toLowerCase().includes(lowerKeyword) ||
+      faq.question.toLowerCase().includes(lowerKeyword)
+    );
+}

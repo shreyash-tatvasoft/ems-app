@@ -15,7 +15,7 @@ export const ROUTES = {
         CREATE_EVENT: "/admin/event/create",
         CONTACT_US : "/admin/contact-us",
         FAQs : "/admin/faqs",
-        CREATE_FAQs : "/admin/faqs/add",
+        CREATE_FAQs : "/admin/faqs/create",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -132,9 +132,9 @@ export enum ROLE {
 }
 
 export const INITIAL_TICKETS_TYPES = [
-    { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
-    { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
-    { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission" },
+    { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies", _id: "" },
+    { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access", _id: "" },
+    { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission", _id: "" },
 ]
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
