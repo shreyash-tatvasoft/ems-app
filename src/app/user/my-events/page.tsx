@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react'
 import Loader from '@/components/common/Loader'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
 import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
+import FeedbackModal from '@/components/events-components/FeedbackModal'
 
 // Contsant & Helper Imports
 import { apiCall } from '@/utils/services/request'
@@ -20,7 +21,6 @@ import moment from 'moment'
 
 // Icons imports
 import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode } from 'lucide-react'
-import FeedbackModal from '@/components/events-components/FeedbackModal'
 
 
 const MyEventsPage = () => {
@@ -247,6 +247,7 @@ const MyEventsPage = () => {
                     eventData={ticketSummary}
                     onClose={closeDownloadTicketModal}
                 />
+                
                 <FeedbackModal
                     isOpen={showFeedbackModal}
                     onClose={() => setFeedbackModal(false)}
