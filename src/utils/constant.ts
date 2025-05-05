@@ -49,7 +49,7 @@ export const API_ROUTES = {
         PROFILE : {
             UPDATE_USER_INFO : "/update/user",
             RESET_EMAIL : "/reset_setting_email",
-            VERIFY_EMAIL : "/veset_setting_email",
+            VERIFY_EMAIL : "/verify_setting_email",
             RESET_PASSWORD: "/reset_setting_password"
         },
         USER_DETAILS : "/user_details"
