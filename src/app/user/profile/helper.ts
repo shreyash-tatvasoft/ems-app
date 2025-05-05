@@ -29,8 +29,16 @@ export const InitalOtpFormValues = {
 export const InitialProfileInfoValues = {
     userName: '',
     address: '',
-    profileImage: null as File | null,
+    profileImage:  null,
   };
+
+export const INITIAL_USER_INFO = {
+    _id: "",
+    name: "",
+    email: "",
+    address: "",
+    profileimage: "",
+}
 
 
 export const ChangePasswordSchema = Yup.object({
@@ -81,11 +89,14 @@ export const ProfileInfoSchema = Yup.object({
     userName: Yup.string().required('User Name is required'),
     address: Yup.string().required('Address is required'),
     profileImage: Yup.mixed()
-        .required('Profile Image is required')
-        .test('fileSize', 'File size must be less than 2MB', (value) =>
-            value instanceof File ? value.size <= MAX_FILE_SIZE_BYTES : false
-        )
-        .test('fileFormat', 'Unsupported file format', (value) =>
-            value instanceof File ? ALLOWED_FILE_FORMATS.includes(value.type.split('/')[1]) : false
-        ),
+    .nullable() // explicitly allow null
+    .test('fileSize', 'File size must be less than 2MB', (value) => {
+      if (!value || !(value instanceof File)) return true;
+      return value.size <= MAX_FILE_SIZE_BYTES;
+    })
+    .test('fileFormat', 'Unsupported file format', (value) => {
+      if (!value || !(value instanceof File)) return true;
+      const format = value.type.split('/')[1];
+      return ALLOWED_FILE_FORMATS.includes(format);
+    }),
 });

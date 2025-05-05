@@ -1,41 +1,26 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import moment from 'moment';
 import BarChart from '../charts/BarChart';
 import { Skeleton } from '@/components/ui/skeleton';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
 import { chartTitle } from './ChartCard';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
-import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
-
-type FilterType = 'monthly' | 'yearly' | 'overall';
-interface Filter {
-    type: FilterType;
-    value: string;
-}
-
-interface IData {
-    totalValue: number;
-    category: string;
-    bookings: number
-}
-
-const currentYear = moment().format('YYYY')
+import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { IFilter, IRevenueByCategoryData } from '@/app/admin/dashboard/types';
 
 const RevenueByCategory = () => {
-    const [filter, setFilter] = useState<Filter>({ type: 'yearly', value: currentYear });
+    const [filter, setFilter] = useState<IFilter>({ type: 'yearly', value: getCurrentYear });
     const [loading, setLoading] = useState(true);
-    const [data, setData] = useState<IData[]>([]);
+    const [data, setData] = useState<IRevenueByCategoryData[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const endpoint = `${API_ROUTES.ADMIN.REVENUE_BY_CATEGORY}?period=${filter.type}&reference=${filter.value}`;
             const response = await apiCall({ endPoint: endpoint, method: 'GET' });
-            console.log("response3666", response)
-            const result = response?.data?.data as IData[] || []
+            const result = response?.data?.data as IRevenueByCategoryData[] || []
             setData(result);
         } catch (error) {
             console.error('Error fetching revenue by category:', error);

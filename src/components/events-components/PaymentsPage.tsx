@@ -1,83 +1,90 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { CheckCircleIcon } from 'lucide-react'
+import { CheckCircleIcon, XCircleIcon } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
-import { CheckoutTicket } from '@/app/events/types';
+import { CheckoutTicket } from '@/app/events/types'
 
-const PaymentSuccessPage = () => {
+const PaymentResultPage = () => {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [ticketDetails, setTicketDetails] = useState<CheckoutTicket | null>(null)
-    const [eventTitle, setEventTitle] = useState<string>('')
-    const [hasSubmitted, setHasSubmitted] = useState(false)
-   const searchParams = useSearchParams();
-    useEffect(() => {
-      const storedTickets = sessionStorage.getItem('tickets')
-      const storedEventTitle = sessionStorage.getItem('eventTitle')
-      const storedEventId = sessionStorage.getItem('eventId')
-  
-      const paymentId = searchParams.get('session_id')
-  
-      if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
-        router.push('/events')
-        return
-      }
-  
-      try {
-        const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
-        setTicketDetails(parsedTickets)
-        setEventTitle(storedEventTitle)
-  
-        const creationDate = new Date().toString().split(' (')[0]
-  
-        if (!hasSubmitted) {
-          const formData = new FormData()
-          formData.append('eventId', storedEventId)
-          formData.append('ticketId', parsedTickets.ticketId)
-          formData.append('seats', parsedTickets.quantity.toString())
-          formData.append('totalAmount', parsedTickets.totalPrice.toString())
-          formData.append('paymentId', paymentId)
-          formData.append('bookingDate', creationDate)
-  
-          apiCall({
-            endPoint: API_ROUTES.EVENT.PAYMENT,
-            method: 'POST',
-            body: formData,
-            isFormData: true,
-            headers: {
-              'Content-Type':'application/json'
-            },
-          }).then(() => {
-            setHasSubmitted(true)
-          })
+  const [eventTitle, setEventTitle] = useState<string>('')
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    const storedTickets = sessionStorage.getItem('tickets')
+    const storedEventTitle = sessionStorage.getItem('eventTitle')
+    const storedEventId = sessionStorage.getItem('eventId')
+    const paymentId = searchParams.get('session_id')
+
+    if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
+      setIsSuccess(false)
+      return
+    }
+
+    try {
+      const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
+      setTicketDetails(parsedTickets)
+      setEventTitle(storedEventTitle)
+
+      const creationDate = new Date().toString().split(' (')[0]
+
+      const formData = new FormData()
+      formData.append('eventId', storedEventId)
+      formData.append('ticketId', parsedTickets.ticketId)
+      formData.append('seats', parsedTickets.quantity.toString())
+      formData.append('totalAmount', parsedTickets.totalPrice.toString())
+      formData.append('paymentId', paymentId)
+      formData.append('bookingDate', creationDate)
+
+      apiCall({
+        endPoint: API_ROUTES.EVENT.PAYMENT,
+        method: 'POST',
+        body: formData,
+        isFormData: true,
+      }).then(res => {
+        if (res.success) {
+          setIsSuccess(true)
+        } else {
+          setIsSuccess(false)
         }
-  
-        sessionStorage.removeItem('tickets')
-        sessionStorage.removeItem('eventTitle')
-        sessionStorage.removeItem('eventId')
-      } catch (err) {
-        console.error('Error parsing session data:', err)
-        router.push('/')
-      }
-    }, [router, searchParams, hasSubmitted])
-  
-  if (!ticketDetails) return null
+      }).catch(() => {
+        setIsSuccess(false)
+      })
+
+      sessionStorage.removeItem('tickets')
+      sessionStorage.removeItem('eventTitle')
+      sessionStorage.removeItem('eventId')
+    } catch (err) {
+      console.error('Error parsing session data:', err)
+      setIsSuccess(false)
+    }
+  }, [searchParams])
+
+  if (isSuccess === null || !ticketDetails) return null
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <CheckCircleIcon className="h-16 w-16 text-green-500" />
+            {isSuccess ? (
+              <CheckCircleIcon className="h-16 w-16 text-green-500" />
+            ) : (
+              <XCircleIcon className="h-16 w-16 text-red-500" />
+            )}
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Payment Successful!
+            {isSuccess ? 'Payment Successful!' : 'Payment Failed'}
           </h1>
           <p className="text-gray-600 mb-6">
-            Thank you for your purchase. Your tickets have been confirmed.
+            {isSuccess
+              ? 'Thank you for your purchase. Your tickets have been confirmed.'
+              : 'Unfortunately, your payment could not be processed. Please try again or contact support.'}
           </p>
         </div>
 
@@ -108,13 +115,19 @@ const PaymentSuccessPage = () => {
 
         <div className="text-center">
           <p className="text-sm text-gray-500 mb-4">
-            A confirmation email has been sent to your registered email address.
+            {isSuccess
+              ? 'A confirmation email has been sent to your registered email address.'
+              : 'If you were charged, your money will be refunded automatically.'}
           </p>
           <button
             onClick={() => router.push('/events')}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700"
+            className={`w-full py-3 px-4 rounded-md font-medium ${
+              isSuccess
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
           >
-            Back to Events
+            {isSuccess ? 'Back to Events' : 'Try Again / View Events'}
           </button>
         </div>
       </div>
@@ -122,4 +135,4 @@ const PaymentSuccessPage = () => {
   )
 }
 
-export default PaymentSuccessPage
+export default PaymentResultPage

@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react'
 // Custom Components
 import Loader from '@/components/common/Loader'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
+import DownloadTicketModal from '@/components/events-components/DownloadTicketModal'
+import FeedbackModal from '@/components/events-components/FeedbackModal'
 
 // Contsant & Helper Imports
 import { apiCall } from '@/utils/services/request'
@@ -12,13 +14,13 @@ import { API_ROUTES } from '@/utils/constant'
 import { formatDateTime, getEventStatus, getTicketTypes } from './helper'
 
 // Types import
-import { IEventBookingResponse, IEventsState } from './types'
+import { IBooking, IEventBookingResponse, IEventsState } from './types'
 
 // Library imports
 import moment from 'moment'
 
 // Icons imports
-import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon } from 'lucide-react'
+import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode } from 'lucide-react'
 
 
 const MyEventsPage = () => {
@@ -26,6 +28,18 @@ const MyEventsPage = () => {
     const [allMyEvents, setAllMyEvents] = useState<IEventsState[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [loading, setLoading] = useState(true)
+    const [tickeModal, setTicketModal] = useState(false)
+    const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null)
+    const [showFeedbackModal, setFeedbackModal] = useState(false);
+    const openDownloadTicketModal = (events: IBooking) => {
+        setTicketSuumary(events)
+        setTicketModal(true)
+    }
+
+    const closeDownloadTicketModal = () => {
+        setTicketSuumary(null)
+        setTicketModal(false)
+    }
 
     const fetchMyEvents = async () => {
         const result : IEventBookingResponse = await apiCall({
@@ -49,7 +63,8 @@ const MyEventsPage = () => {
                     eventTicketType : getTicketTypes(item.event.tickets, item.ticket),
                     eventTicketPrice: item.totalAmount,
                     eventStatus : getEventStatus(item.event.startDateTime, item.event.endDateTime),
-                    eventImage : item.event.images.length > 0 ? item.event.images[0].url  : ""
+                    eventImage : item.event.images.length > 0 ? item.event.images[0].url  : "",
+                    eventFullResponse : item,
                 }
             })
 
@@ -62,6 +77,7 @@ const MyEventsPage = () => {
     useEffect(() => {
         fetchMyEvents()
     },[])
+
 
     const renderUpcomingSection = () => {
         return (
@@ -90,7 +106,7 @@ const MyEventsPage = () => {
                         FINISHED
                     </button>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
-                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline'>Feedback</span> here.
+                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline' onClick={()=>setFeedbackModal(true)}>Feedback</span> here.
                     </div>
                 </div>
             </div>
@@ -163,7 +179,13 @@ const MyEventsPage = () => {
                 <div className='grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5'>
                     {myEvents.length > 0 && myEvents.map(item =>
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
-                            <p className='text-lg pb-2 border-b border-b-gray-200'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
+                            <div className='pb-2 border-b border-b-gray-200 flex justify-between items-center'>
+                                <p className='text-lg'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
+                                <TooltipWrapper tooltip='Get QR'>
+                                    <QrCode onClick={() => openDownloadTicketModal(item.eventFullResponse)} className='h-5 w-5 cursor-pointer' />
+                                </TooltipWrapper>
+                            </div>
+
                             <div className='flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200'>
                                 
                                 <img
@@ -220,6 +242,19 @@ const MyEventsPage = () => {
                     <p className="text-gray-500">No bookings found.</p>
                 </div>}
 
+                <DownloadTicketModal
+                    isOpen={tickeModal}
+                    eventData={ticketSummary}
+                    onClose={closeDownloadTicketModal}
+                />
+                
+                <FeedbackModal
+                    isOpen={showFeedbackModal}
+                    onClose={() => setFeedbackModal(false)}
+                    onSubmit={(formData) => {
+                    console.log('Submitted Feedback:', formData)
+                    }}
+                />
             </div>
         </div>
     )

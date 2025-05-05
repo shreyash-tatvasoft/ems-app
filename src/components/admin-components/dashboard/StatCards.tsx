@@ -7,13 +7,7 @@ import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { getTruthyNumber, formatNumberShort } from '@/utils/helper';
 import TooltipWrapper from '@/components/common/TooltipWrapper';
-
-interface IStatResponse {
-    totalUsers: number;
-    totalRevenue: number;
-    totalEvents: number;
-    totalLocations: number;
-}
+import { IStatResponse } from '@/app/admin/dashboard/types';
 
 const iconMap = {
     Users: Users,
@@ -22,11 +16,11 @@ const iconMap = {
     Places: MapPinCheck,
 };
 
-type StatKey = keyof typeof iconMap;
+type TStatKey = keyof typeof iconMap;
 
 const StatCards: React.FC = () => {
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState<Record<StatKey, number>>({
+    const [stats, setStats] = useState<Record<TStatKey, number>>({
         Users: 0,
         Revenue: 0,
         Events: 0,
@@ -59,7 +53,7 @@ const StatCards: React.FC = () => {
     }, [fetchStats]);
 
     const cards = useMemo(() => {
-        return (Object.keys(iconMap) as StatKey[]).map((key) => ({
+        return (Object.keys(iconMap) as TStatKey[]).map((key) => ({
             label: key,
             value: formatNumberShort(stats[key]),
             rawValue: stats[key],

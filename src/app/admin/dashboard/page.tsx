@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react'
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import StatCards from '@/components/admin-components/dashboard/StatCards';
@@ -11,7 +9,6 @@ import RevenueByCategory from '@/components/admin-components/dashboard/RevenueBy
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
 import { DASHBOARD_TITLE } from './helper';
-
 
 function DashboardPage() {
 

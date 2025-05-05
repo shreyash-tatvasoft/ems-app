@@ -10,15 +10,11 @@ import {
 } from 'chart.js';
 import React from 'react';
 import { BALANCED_COLORS } from '@/utils/constant';
+import { IDoughnutChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface DoughnutChartProps {
-    data: number[];
-    labels: string[];
-}
-
-const DoughnutChart: React.FC<DoughnutChartProps> = ({ data, labels }) => {
+const DoughnutChart: React.FC<IDoughnutChartProps> = ({ data, labels }) => {
     const chartData = {
         labels,
         datasets: [

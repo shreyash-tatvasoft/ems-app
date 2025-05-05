@@ -70,7 +70,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
         tickets: {
           type: selectedType,
           quantity,
-          totalPrice,
+          totalPrice:selectedTicketType?.price,
           ticketId:selectedTicketType?._id
         },
         eventTitle,
@@ -192,7 +192,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               </span>
             </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">
-            <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:totalPrice,quantity:quantity,ticketId:selectedTicketType?._id})}/>
+            <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:selectedTicketType?.price,quantity:quantity,ticketId:selectedTicketType?._id})}/>
             <input type="hidden" name="eventTitle" value={eventTitle}/>
             <button
               type="submit"

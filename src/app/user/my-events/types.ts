@@ -79,5 +79,6 @@ export interface IEventsState {
     eventTicketType : string,
     eventTicketPrice: number,
     eventStatus : string,
-    eventImage : string
+    eventImage : string,
+    eventFullResponse : IBooking
 }

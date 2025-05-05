@@ -8,14 +8,8 @@ import { Button } from '@/components/ui/button';
 import PieChart from '../charts/PieChart';
 import TableModal from './TableModal';
 import { chartTitle } from './ChartCard';
-import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
-
-interface IData {
-    _id: string;
-    title: string;
-    category: string;
-    likesCount: number;
-}
+import { DASHBOARD_TITLE, LikeTableColumns } from '@/app/admin/dashboard/helper';
+import { ITopEventsChartData } from '@/app/admin/dashboard/types';
 
 const TopEventsChart = () => {
 
@@ -23,7 +17,7 @@ const TopEventsChart = () => {
     const [chartData, setChartData] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(true);
-    const [tableData, setTableData] = useState<IData[]>([]);
+    const [tableData, setTableData] = useState<ITopEventsChartData[]>([]);
     const [open, setOpen] = useState(false);
 
     // Fetch chart data
@@ -31,7 +25,7 @@ const TopEventsChart = () => {
         setLoading(true);
         try {
             const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}?limit=5`, method: 'GET' });
-            const result = response?.data as IData[];
+            const result = response?.data as ITopEventsChartData[] || [];
 
             const dynamicLabel = result.map(e => e.title)
             const dynamicValue = result.map(e => e.likesCount)
@@ -50,7 +44,7 @@ const TopEventsChart = () => {
         setTableLoading(true);
         try {
             const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}`, method: 'GET' });
-            const result = response?.data as IData[];
+            const result = response?.data as ITopEventsChartData[] || {};
             setTableData(result);
         } catch (error) {
             console.error('Error fetching detailed data:', error);
@@ -105,14 +99,10 @@ const TopEventsChart = () => {
             <TableModal
                 open={open}
                 onClose={() => setOpen(false)}
-                columns={[
-                    { label: 'Event Title', key: 'title' },
-                    { label: 'Category', key: 'category' },
-                    { label: 'Likes', key: 'likesCount' },
-                ]}
+                columns={LikeTableColumns}
                 data={tableData}
                 loading={tableLoading}
-                title='All Events Likes'
+                title={DASHBOARD_TITLE.LIKE_MODAL_TITLE}
                 pagesize={5}
             />
         </div>

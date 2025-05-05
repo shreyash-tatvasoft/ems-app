@@ -2,13 +2,9 @@
 
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import ApexCharts from 'apexcharts';
+import { IHeatmapChartProps } from '@/app/admin/dashboard/types';
 
-interface HeatmapChartProps {
-    series: ApexAxisChartSeries;
-    categories: string[];
-}
-
-const HeatmapChart: React.FC<HeatmapChartProps> = ({ series, categories }) => {
+const HeatmapChart: React.FC<IHeatmapChartProps> = ({ series, categories }) => {
     const chartRef = useRef<HTMLDivElement | null>(null);
     const chartInstance = useRef<ApexCharts | null>(null);
 
