@@ -7,6 +7,10 @@ import {
   TagIcon,
   ArrowBigLeftIcon,
   ArrowBigRightIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { API_ROUTES, ROUTES } from '@/utils/constant'
@@ -70,7 +74,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
       router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
   }
   return (
-    <div className="relative w-full max-w-5xl mx-auto overflow-hidden">
+    <div className="relative w-full mx-auto overflow-hidden">
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{
@@ -167,13 +171,13 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
             onClick={prevSlide}
             className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
           >
-            <ArrowBigLeftIcon />
+            <ChevronLeft />
           </button>
           <button
             onClick={nextSlide}
             className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
           >
-            <ArrowBigRightIcon />
+            <ChevronRight />
           </button>
         </>
       )}
