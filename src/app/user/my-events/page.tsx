@@ -40,6 +40,19 @@ const MyEventsPage = () => {
         setTicketModal(false)
     }
 
+    const getEventsStatus =(startDateTime:string, endDateTime:string, now = moment())=> {
+        const start = moment(startDateTime);
+        const end = moment(endDateTime);
+    
+        if (start.isBefore(now) && end.isAfter(now)) {
+            return 0; // Ongoing
+        } else if (start.isAfter(now)) {
+            return 1; // Upcoming
+        } else {
+            return 2; // Past
+        }
+    }
+
     const fetchMyEvents = async () => {
         const result : IEventBookingResponse = await apiCall({
             endPoint : API_ROUTES.EVENT.MY_EVENTS,
@@ -47,8 +60,17 @@ const MyEventsPage = () => {
             withToken : true
         })
 
-        if(result && result.success) {
-            const eventsArray = result.data.map(item => {
+        if(result?.success) {
+            let data = result.data.toSorted((a, b) => {
+                const aStatus = getEventsStatus(a.event.startDateTime, a.event.endDateTime);
+                const bStatus = getEventsStatus(b.event.startDateTime, b.event.endDateTime);
+                if (aStatus !== bStatus) {
+                    return aStatus - bStatus;
+                } else {
+                    return moment(b.event.startDateTime).diff(moment(a.event.startDateTime));
+                }
+            });
+            let eventsArray = data.map(item => {
                 return {
                     id : item._id,
                     eventBookedOn : moment(item.bookingDate).format("DD MMM YYYY, [at] hh:mm:ss A"),
@@ -82,11 +104,9 @@ const MyEventsPage = () => {
         return (
             <div>
                 <div className='flex gap-3 items-center'>
-                    <button
-                        className='px-4 py-2 mr-0 sm:mr-3 bg-blue-900 hover:bg-blue-950 text-white rounded-[8px]'
-                    >
-                        UPCOMING
-                    </button>
+                    <div>
+                        Upcoming
+                    </div>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
                          Get ready for your upcoming event. Click here to <span className='text-blue-500 cursor-pointer hover:underline'>Cancel.</span>
                     </div>
@@ -99,11 +119,9 @@ const MyEventsPage = () => {
         return (
             <div>
                 <div className='flex gap-3 items-center'>
-                    <button
-                        className='px-4 py-2 mr-0 sm:mr-3 bg-red-900 hover:bg-red-950 text-white rounded-[8px]'
-                    >
-                        FINISHED
-                    </button>
+                    <div>
+                        Finished
+                    </div>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
                         Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline'>Feedback</span> here.
                     </div>
@@ -116,13 +134,11 @@ const MyEventsPage = () => {
         return (
             <div>
                 <div className='flex gap-3 items-center'>
-                    <button
-                        className='px-4 py-2 mr-0 sm:mr-3 bg-yellow-700 hover:bg-yellow-800 text-white rounded-[8px]'
-                    >
-                        ONGOING
-                    </button>
+                    <div>
+                        Ongoing
+                    </div>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
-                        You're currently attending this event. 
+                        You've secured your spot. Stay tuned for updates and notifications.
                     </div>
                 </div>
                  
@@ -143,10 +159,23 @@ const MyEventsPage = () => {
         }
     }
 
+    const formateDate = (date: string) => {
+        return moment(date, 'DD MMM YYYY, [at] hh:mm:ss A').format('DD MMM YYYY, [at] hh:mm A');
+    }
+
     const handleSearchQuery = (query: string) => {
         const filteredEvents = allMyEvents
-            .filter((event) =>
-                event.eventName.toLowerCase().includes(query.toLowerCase())
+            .filter((event) =>(
+                    event.eventName.toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventCatogory.toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventLocation.toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventStatus.toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventTicketPrice.toString().toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventDuration.toString().toLowerCase().includes(query.toLowerCase()) ||
+                    formateDate(event.eventBookedOn).toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventStartTime.toLowerCase().includes(query.toLowerCase()) ||
+                    event.eventEndTime.toLowerCase().includes(query.toLowerCase()) 
+                )
         )
 
         setMyEvents(filteredEvents)
@@ -179,7 +208,7 @@ const MyEventsPage = () => {
                     {myEvents.length > 0 && myEvents.map(item =>
                         <div key={item.id} className='bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg'>
                             <div className='pb-2 border-b border-b-gray-200 flex justify-between items-center'>
-                                <p className='text-lg'>Tickets booked on : <span className='font-bold'>{item.eventBookedOn}</span></p>
+                                <p className='text-lg'>Tickets booked on : <span className='font-bold'>{formateDate(item.eventBookedOn)}</span></p>
                                 <TooltipWrapper tooltip='Get QR'>
                                     <QrCode onClick={() => openDownloadTicketModal(item.eventFullResponse)} className='h-5 w-5 cursor-pointer' />
                                 </TooltipWrapper>
@@ -188,6 +217,7 @@ const MyEventsPage = () => {
                             <div className='flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200'>
                                 
                                 <img
+                                    alt="not found"
                                     src={item.eventImage}
                                     className='rounded-lg  h-60 w-full md:w-[50%] lg:w-[40%] object-cover'
                                 />
@@ -198,7 +228,7 @@ const MyEventsPage = () => {
 
                                     <div className='flex gap-3 items-center my-2'>
                                         <CalendarDays className='h-5 w-5' />
-                                        <p className='text-gray-800 text-md'>{item.eventStartTime} - {item.eventEndTime}</p>
+                                        <p className='text-gray-800 text-md'>{item.eventStartTime} <span className='font-bold'>to</span> {item.eventEndTime}</p>
                                     </div>
 
                                     <div className='flex gap-3 items-center my-2'>
@@ -209,7 +239,7 @@ const MyEventsPage = () => {
                                     <div className='flex gap-3 items-center my-2'>
                                         <MapPin className='h-5 w-5' />
                                         <TooltipWrapper tooltip={item.eventLocation}>
-                                            <p className='text-gray-800 text-md truncate  max-w-[250px] sm:max-w-[250px]'>{item.eventLocation}</p>
+                                            <p className='text-gray-800 text-md truncate  max-w-[275px] sm:max-w-[275px]'>{item.eventLocation}</p>
                                         </TooltipWrapper>
                                     </div>
 
@@ -217,16 +247,16 @@ const MyEventsPage = () => {
                                         <Ticket className='h-5 w-5' />
                                         <div className='text-gray-800 font-bold'>{item.eventTicketCount} {item.eventTicketCount === 1 ? "ticket" : "tickets"} of
                                             <span className='text-blue-500'> &nbsp;
-                                                <TooltipWrapper tooltip={`Cost per ticket : ${item.eventTicketPrice/item.eventTicketCount} Rs.`}>
+                                                <TooltipWrapper tooltip={`Cost per ticket : ${item.eventTicketPrice/item.eventTicketCount}`}>
                                                     {item.eventTicketType}
                                                 </TooltipWrapper>
-                                            </span> catogory
+                                            </span> category
                                         </div>
                                     </div>
 
                                     <div className='flex gap-3 items-center my-2'>
                                         <IndianRupee className='h-5 w-5' />
-                                        <p className='text-gray-800 font-bold'>Total Paid : {item.eventTicketPrice} Rs.</p>
+                                        <p className='text-gray-800 font-bold'>Total Paid : ₹ {item.eventTicketPrice}</p>
                                     </div>
 
                                 </div>
