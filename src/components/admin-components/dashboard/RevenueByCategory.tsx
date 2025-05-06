@@ -39,8 +39,9 @@ const RevenueByCategory = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center gap-4 mb-6">
-                {chartTitle(DASHBOARD_TITLE.BAR_CHART2)}
+
+            {chartTitle(DASHBOARD_TITLE.BAR_CHART2)}
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['monthly', 'yearly']}
@@ -48,7 +49,7 @@ const RevenueByCategory = () => {
                     initialValue={filter.value}
                 />
             </div>
-
+            
             {loading ? (
                 <Skeleton className="h-75 w-full rounded-md" />
             ) : (

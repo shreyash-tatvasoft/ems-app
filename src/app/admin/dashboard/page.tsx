@@ -8,7 +8,6 @@ import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRev
 import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
-import { DASHBOARD_TITLE } from './helper';
 
 function DashboardPage() {
 
@@ -38,7 +37,7 @@ function DashboardPage() {
                     </ChartCard>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
+                    <ChartCard>
                         <BookingByTicketType />
                     </ChartCard>
                 </div>

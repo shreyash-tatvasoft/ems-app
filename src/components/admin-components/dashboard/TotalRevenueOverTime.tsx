@@ -57,8 +57,9 @@ const TotalRevenueOverTime: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
-                {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
+
+            {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['monthly', 'yearly']}

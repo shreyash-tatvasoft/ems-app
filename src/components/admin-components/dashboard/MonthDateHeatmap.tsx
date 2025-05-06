@@ -54,8 +54,9 @@ const MonthDateHeatmap: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between mb-6">
-                {chartTitle(DASHBOARD_TITLE.HEATMAP)}
+
+            {chartTitle(DASHBOARD_TITLE.HEATMAP)}
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['yearly']}

@@ -33,6 +33,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
 
     const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 display: false,

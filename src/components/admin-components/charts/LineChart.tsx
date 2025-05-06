@@ -59,6 +59,11 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
                     count: 6,
                 },
             },
+            x: {
+                grid: {
+                    display: false, 
+                },
+            },
 
         },
     };

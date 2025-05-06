@@ -92,10 +92,9 @@ export default function DateRangeFilter({
             : value;
 
     return (
-        <div>
+        <div className='flex justify-between items-center'>
             <p className="text-sm mb-1 font-bold">
-                Filter By:
-                <span className="ml-2 text-md text-black">{displayValue}</span>
+                <span className="text-[16px] text-black">{displayValue}</span>
             </p>
 
             <div className="flex text-black gap-2 items-center">
