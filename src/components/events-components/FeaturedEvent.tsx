@@ -24,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { toast } from 'react-toastify'
 interface FeaturedEventProps {
   event: EventData[]
 }
@@ -51,11 +52,16 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
     }
   }, [event.length])
 
-  const handleLikeEvent = async (eventId: string) => {
-    const response = await apiCall({
-      endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${eventId}/like`,
-      method: 'POST',
-    })
+const handleLikeEvent = async (eventId: string) => {
+  let likeCheck = event.findIndex((ev)=>ev.id==eventId);
+  if(!event[likeCheck].isLiked)
+    toast.success("Liked an Event");
+   else 
+    toast.error("Disliked an Event");
+   const response = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${eventId}/like`,
+      method: "POST",
+    });
     if (response.success) {
       setLikedEvents(prev => ({
         ...prev,
@@ -138,33 +144,24 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                       dangerouslySetInnerHTML={{ __html: ev.description }}
                     />
                   <div className="mt-auto space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Square3Stack3DIcon className="h-4 w-4 mr-2" />
-                      <span className='font-bold'>{ev.category}</span>
+                    <div className="flex items-center text-gray-600">
+                      <Square3Stack3DIcon className="h-5 w-5 mr-3" />
+                      <span>{ev.category}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger className="truncate max-w-60 font-bold">
-                            {ev.location}
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="font-bold cursor-pointer">
-                              {ev.location}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <CalendarIcon className="h-4 w-4 mr-2" />
-                      <span className='font-bold'>{formattedDate}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <TagIcon className="h-4 w-4 mr-2" />
-                      <span className='font-bold'>{ev.priceRange}</span>
-                    </div>
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center text-gray-600">
+                        <CalendarIcon className="h-5 w-5 mr-3" />
+                        <span>{formattedDate}</span>
+                      </div>
+                      <div className="flex items-top text-gray-600">
+                       <MapPin className="h-6 w-6 mr-3 shrink-0" />
+                        <span>{ev.location}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <TagIcon className="h-5 w-5 mr-3" />
+                        <span className="font-medium">{ev.priceRange}</span>
+                      </div>
+                      </div>
                   </div>
                     <div className="mt-auto">
                       <button

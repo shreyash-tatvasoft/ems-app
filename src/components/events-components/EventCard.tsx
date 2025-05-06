@@ -5,7 +5,7 @@ import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
-
+import { toast } from 'react-toastify'
 import {
   Tooltip,
   TooltipContent,
@@ -37,6 +37,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   }
 
   const handleLikeEvent = async () => {
+    if(!isLiked)
+      toast.success("Liked the Event !!")
+    else
+      toast.error("Disliked the Event !!");
     const response = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${event.id}/like`,
       method: "POST",

@@ -132,7 +132,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 {event.title}
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-3 pb-4">
                 <div className="flex items-center text-gray-600">
                   <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>
@@ -164,14 +164,13 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 <div className="flex items-top text-gray-600">
                   <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
                   <span >{event.location.address}</span>
-                  <Map className="h-5 w-5 mr-2 text-gray-400 shrink-0" onClick={()=>openMapDirection(event.location)}/>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>{event.category}</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow w-full max-w-lg">
+              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full max-w-lg">
                 <div className="flex flex-col">
                   <span className="font-semibold text-md mb-1">
                     {onwardPriceRange(event.tickets)}
@@ -194,9 +193,14 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <EventDescription description={event.description} />
         </div>
         <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Location
-          </h2>
+          <div className='flex items-center justify-between mb-4'>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Location
+            </h2>
+            <button className='text-sm text-blue-600 hover:underline font-medium cursor-pointer' onClick={()=>openMapDirection(event.location)}>
+              Get Directions
+            </button>
+          </div>
           <GoogleMap
             location={{lat:event.location.lat,lng:event.location.lng}}
             locationName={event.location.address}

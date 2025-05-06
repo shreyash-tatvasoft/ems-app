@@ -3,7 +3,12 @@ import Link from 'next/link'
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
 import { EventDataObjResponse } from '../../app/events/types'
 import { getTicketPriceRange } from '@/app/admin/event/helper'
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 interface SimilarEventsProps {
   events: EventDataObjResponse[] | undefined;
 }
@@ -33,11 +38,26 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
                 </h3>
                 <div className="flex items-center text-xs text-gray-500 mb-1">
                   <CalendarIcon className="h-3 w-3 mr-1" />
-                  <span>{new Date(event.startDateTime).toLocaleDateString()}</span>
+                  <span>{new Date(event.startDateTime).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric"
+                    })}</span>
                 </div>
                 <div className="flex items-center text-xs text-gray-500">
-                  <MapPinIcon className="h-3 w-3 mr-1" />
-                  <span className="truncate">{event.location.address}</span>
+                  <MapPinIcon className="h-3 w-3 mr-1 shrink-0" />
+                  <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="truncate max-w-60 text-gray-500">
+                      {event.location.address}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className=" text-white font-bold">
+                        {event.location.address}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 </div>
                 <div className="mt-2 text-xs font-medium">
                    
