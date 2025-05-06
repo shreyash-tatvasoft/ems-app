@@ -183,21 +183,21 @@ const handleLikeEvent = async (eventId: string) => {
           )
         })}
       </div>
-      <div className="flex justify-center mt-4 space-x-2">
-        {event.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`h-3 w-3 rounded-full transition-all duration-300 ${
-              currentSlide === index
-                ? 'bg-blue-600 scale-110'
-                : 'bg-gray-300 hover:bg-gray-400'
-            }`}
-          />
-        ))}
-      </div>
       {event.length > 1 && (
         <>
+          <div className="flex justify-center mt-4 mb-4 space-x-2">
+            {event.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                  currentSlide === index
+                    ? 'bg-blue-600 scale-110'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
           <button
             onClick={prevSlide}
             className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md cursor-pointer"
