@@ -180,20 +180,23 @@ function EventsListpage() {
   }
 
   const deleteEvents = async () => {
-    setLoading(true)
-    const result = await apiCall({
-      endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
-      method: "DELETE",
-    })
+    try {
+      const result = await apiCall({
+        endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
+        method: "DELETE",
+      })
 
-    if (result && result.success) {
-      fetchEvents()
-      setDeletableId("")
-      toast.success("Event deleted successfully")
-      setCurrentPage(1)
-    } else {
-      toast.warning("Something went wrong. try again later")
-      setLoading(false)
+      if (result && result.success) {
+        setDeletableId("")
+        toast.success("Event deleted successfully")
+        setLoading(true)
+        fetchEvents()
+      } else {
+        toast.warning("Something went wrong. try again later")
+      }
+
+    } catch (err) {
+      console.log("ERROR_AT_EVENT_DELETE", err)
     }
   }
 
