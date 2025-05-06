@@ -13,6 +13,15 @@ export const setUserLogo = (imgUrl : string) => {
     return localStorage.setItem("profileImage", imgUrl)
 }
 
+export const setUserName = (name: string) => {
+    localStorage.setItem("name", name);
+}
+
+export const getUserName = () => {
+    const name = localStorage.getItem("name");
+    return name;
+}
+
 export const getTruthyString = (value: number | string | undefined | null): string => {
     if (value === null || value === undefined) return "";
 
