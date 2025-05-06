@@ -57,6 +57,7 @@ export const API_ROUTES = {
         USER_DETAILS : "/user_details"
     },
     CONNNTACT_US : "/contact-us",
+    UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq"
 }
 export const LIGHT_COLORS = [

@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Third-party Libraries
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from 'react-toastify';
+import Cookie from 'js-cookie'
+import { jwtVerify } from "jose";
 
 // Constant & Helpers import 
 import { API_ROUTES } from '@/utils/constant';
@@ -20,6 +22,8 @@ import { ContactFormSchema, InitialContactFormValues } from './helper';
 import { TContactFormValues } from './types';
 
 export default function ContactUsPage() {
+
+  const [initialValues, setInitialValues] = useState(InitialContactFormValues)
 
   const handleSubmit = async (
       values: TContactFormValues,
@@ -44,6 +48,30 @@ export default function ContactUsPage() {
       actions.setSubmitting(false);
     }
 
+  const fetchToken = async (token : string) => {
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_TOKEN_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    const userName = payload.name as string;
+    const userEmail = payload.email as string;
+    const savedUserContactFormValues = {
+      name: userName,
+      email: userEmail,
+      subject: '',
+      message: '',
+    };
+
+    setInitialValues(savedUserContactFormValues)
+
+    console.log("first", savedUserContactFormValues)
+  }
+
+  useEffect(() => {
+    const token = Cookie.get("authToken")
+    if(token) {
+       fetchToken(token)
+    }
+  },[])
+
   return (
     <section className="py-16 px-8">
       <div className="max-w-6xl mx-auto">
@@ -53,33 +81,36 @@ export default function ContactUsPage() {
         </p>
 
         <Formik
-          initialValues={InitialContactFormValues}
+          initialValues={initialValues}
           validationSchema={ContactFormSchema}
           onSubmit={handleSubmit}
+          enableReinitialize
         >
           {({ isSubmitting }) => (
             <Form className="space-y-5 bg-white rounded-lg shadow-lg border-2 border-gray-100 p-8">
               <FormikTextField
                 name="name"
                 placeholder="Enter your name"
-                label="Name *"
+                label="Name"
+                disabled={initialValues.name !== ""}
               />
 
               <FormikTextField
                 name="email"
-                label="Email *"
+                label="Email"
                 placeholder="Enter email address"
+                disabled={initialValues.email !== ""}
               />
 
               <FormikTextField
                 name="subject"
                 placeholder="Enter subject"
-                label="Subject *"
+                label="Subject"
               />
 
               <FormikTextField
                 name="message"
-                label="Message *"
+                label="Message"
                 placeholder="Enter message"
                 type='textarea'
                 rows={8}

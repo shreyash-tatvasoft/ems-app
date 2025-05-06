@@ -13,6 +13,10 @@ export const INITIAL_CONTATC_INFO = {
     __v: 0
 }
 
+export const statusColor = {
+    pending: "bg-yellow-100 text-yellow-700",
+    responded: "bg-green-100 text-green-700",
+  };
 
 export const getPaginatedData = (dataArray : IRequestType[], currentPage : number,  itemsPerPage : number ) => {
     const result = dataArray.slice(
@@ -20,6 +24,17 @@ export const getPaginatedData = (dataArray : IRequestType[], currentPage : numbe
         currentPage * itemsPerPage
       );
     return result
+}
+
+export const getStatusChip = (status : string) => {
+    switch(status) {
+        case "pending": 
+          return "Pending"
+        case "responded":
+            return "Acknowledge"
+        default:
+            break;
+    }  
 }
 
 export const getSearchResults = (
@@ -30,6 +45,7 @@ export const getSearchResults = (
     return events.filter(event =>
       event.name.toLowerCase().includes(lowerKeyword) ||
       event.email.toLowerCase().includes(lowerKeyword) ||
-      event.subject.toLowerCase().includes(lowerKeyword)
+      event.subject.toLowerCase().includes(lowerKeyword) || 
+      event.message.toLowerCase().includes(lowerKeyword)
     );
 }
