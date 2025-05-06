@@ -186,7 +186,7 @@ export const convertFiltersToArray = (filters: IApplyFiltersKey): LabelValue[] =
 
   if (priceRange && priceRange.min > -1 && priceRange.max) {
     result.push({
-      label:  `${priceRange.min} - ${priceRange.max}`,
+      label:  `₹${priceRange.min} - ₹${priceRange.max}`,
       value: `${priceRange.min} - ${priceRange.max}`,
       rowKey: "priceRange"
     });

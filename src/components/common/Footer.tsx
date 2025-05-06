@@ -1,4 +1,6 @@
-import React from 'react'
+"use client";
+
+import React, { useState, useEffect } from 'react'
 
 // Next Library support
 import Image from 'next/image'
@@ -15,12 +17,21 @@ import { getAuthToken } from '@/utils/helper'
 function Footer() {
     const router = useRouter();
 
+    const [authToken, setAuthToken] = useState("")
+
     const handleLogout = () => {
         localStorage.clear();
         sessionStorage.clear();
         Cookie.remove("authToken");
         router.push(ROUTES.LOGIN);
     }
+
+    useEffect(() => {
+        const token = getAuthToken()
+        if (token !== "") {
+          setAuthToken(token)
+        }
+      }, [authToken])
 
     return (
         <div>
@@ -46,7 +57,7 @@ function Footer() {
                         <h4 className="font-semibold mb-2">Quick Links</h4>
                         <Link href={ROUTES.HOME} className="text-gray-300 hover:underline">Home</Link>
                         <Link href={ROUTES.USER_EVENTS} className="text-gray-300 hover:underline">Browse Events</Link>
-                        {!!getAuthToken() && (
+                        {authToken !== "" && (
                             <>
                                 <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Events</Link>
                                 <Link href={ROUTES.USER_PROFILE} className="text-gray-300 hover:underline">Profile</Link>
