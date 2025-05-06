@@ -104,7 +104,10 @@ const UserProfilePage = () => {
       setNewEmail(values.email)
       setIsVerifyEmail(true)
     }
-   
+    
+    if (!result.success && result.message) {
+      toast.error(result.message)
+    }
     actions.setSubmitting(false);
   }
 
@@ -117,19 +120,19 @@ const UserProfilePage = () => {
 
     const body = {
       "email": newEmail,
-      "otp": values.otp
+      "otp": String(values.otp)
     }
 
     const result = await apiCall({
        endPoint: API_ROUTES.USER.PROFILE.VERIFY_EMAIL,
        method : "PUT",
-       body: JSON.stringify(body),
+       body: body,
        withToken: true
     })
 
     if(result && result.success) {
-      toast.success("Email verified successfully")
-      actions.resetForm();
+      toast.success("Email verified successfully")      
+      setUserInfo({ ...userInfo, email: newEmail })
       cancelButtonClick()
     }
     
@@ -149,9 +152,10 @@ const UserProfilePage = () => {
 
     formData.append("name", values.userName)
     formData.append("address", values.address)
-    values.profileImage !== null && formData.append("profileimage", values.profileImage)
 
-
+    if (values.profileImage) {
+      formData.append("profileimage", values.profileImage)
+    }
 
     const result = await apiCall({
         headers : {},
