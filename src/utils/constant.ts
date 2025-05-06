@@ -126,6 +126,8 @@ export const CATOGORIES_ITEMS = [
 
 export const SIGN_UP_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?semt=ais_hybrid&w=740"
 export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.net/Eventtitans-new-img/EventTitans-inner/inner-page-img15.png"
+export const FAQ_BANNER_LINK = "https://backend-23.nubeseo.es/wp-content/uploads/2024/12/faqs-que-es.jpg"
 
 export enum ROLE {
     Admin = "admin",
@@ -142,14 +144,13 @@ const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
 
 export const AUTOCOMPLETE_API = (debouncedQuery: string) => `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(
     debouncedQuery
-)}&format=json&limit=5`
+)}&format=json`
 
 
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
 export const PAGINATION_OPTIONS = [
-    { value: 5, label: '5' },
     { value: 10, label: '10' },
     { value: 20, label: '20' },
     { value: 50, label: '50' },

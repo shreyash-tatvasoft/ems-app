@@ -57,8 +57,9 @@ const TotalRevenueOverTime: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between mb-6">
-                {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
+
+            {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['monthly', 'yearly']}
@@ -70,7 +71,7 @@ const TotalRevenueOverTime: React.FC = () => {
             {loading ? (
                 <Skeleton className="w-full h-100 rounded-xl" />
             ) : (
-                <div className="min-h-[300px] max-h-[450px] w-full flex items-center justify-center">
+                <div className="w-full flex items-center justify-center h-[400px]">
                     <LineChart data={data} labels={chartLabels} />
                 </div>
             )}

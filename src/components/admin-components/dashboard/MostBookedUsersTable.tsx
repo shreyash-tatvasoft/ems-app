@@ -18,6 +18,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
+import { chartTitle } from './ChartCard';
+import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
 interface IUser {
     totalBookings: number;
@@ -113,6 +115,9 @@ export default function MostBookedUsersTable() {
 
     return (
         <div>
+            <div className="mb-6">
+                {chartTitle(DASHBOARD_TITLE.TABLE)}
+            </div>
             <Table>{tableContent}</Table>
         </div>
     );
