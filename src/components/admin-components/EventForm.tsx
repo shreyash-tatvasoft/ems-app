@@ -43,6 +43,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     price: "",
     maxQty: 0,
     description: "",
+    _id : "",
   });
 
   const [editCache, setEditCache] = useState<{ [key: string]: Partial<ITicket> }>({});
@@ -147,7 +148,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
       id: Date.now().toString(),
     };
     setTickets([...tickets, newItem]);
-    setNewTicket({ type: "", price: "", maxQty: 0, description: "" });
+    setNewTicket({ type: "", price: "", maxQty: 0, description: "", _id: "" });
     setAddRowVisible(false)
   };
 
@@ -444,6 +445,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     
     // Append ticket_type array items
     tickets.forEach((ticket, index) => {
+      isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
       formData.append(`tickets[${index}][totalSeats]`, `${ticket.maxQty}`);
@@ -507,7 +509,8 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
           type: item.type, 
           price: item.price.toString(), 
           maxQty: item.totalSeats - item.totalBookedSeats, 
-          description: item.description
+          description: item.description,
+          _id: item._id
         }
        })
 

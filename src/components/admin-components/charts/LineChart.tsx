@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { ILineChartProps } from '@/app/admin/dashboard/types';
+import { formatNumberShort } from '@/utils/helper';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -39,7 +40,14 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
             title: { display: false },
         },
         scales: {
-            y: { beginAtZero: true },
+            y: { 
+                beginAtZero: true,
+                ticks: {
+                    callback: (value) => formatNumberShort(Number(value)),
+                    color: '#6B7280',
+                },
+             },
+            
         },
     };
 
