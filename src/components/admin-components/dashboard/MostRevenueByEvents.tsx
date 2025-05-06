@@ -63,7 +63,7 @@ const MostRevenueByEvents = () => {
 
     return (
         <div className="w-full max-w-2xl mx-auto">
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between gap-4 items-center mb-6">
                 {chartTitle(DASHBOARD_TITLE.BAR_CHART1)}
 
                 {loading ? (
@@ -80,9 +80,9 @@ const MostRevenueByEvents = () => {
             </div>
 
             {loading ? (
-                <Skeleton className="h-75 w-full rounded-md" />
+                <Skeleton className="h-90 w-full rounded-md" />
             ) : (
-                <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
+                <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
                     <BarChart data={chartData} labels={chartLabels} />
                 </div>
             )}

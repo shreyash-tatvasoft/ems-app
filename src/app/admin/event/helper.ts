@@ -16,7 +16,12 @@ export const getTicketPriceRange = (data: EventTicket[]) => {
                 : `₹${minPrice} - ₹${maxPrice}`;
     return priceRange
 };
-
+export const onwardPriceRange=(data:EventTicket[])=>{
+    const price = data.map((ticket)=>ticket.price);
+    const minPrice = Math.min(...price);
+    const priceOnwards =  minPrice===0 ? 'Starting from Free' : `₹ ${minPrice} onwards`
+    return priceOnwards;
+}
 export const getMaxTicketPrice = (events: EventsDataTypes[]): number => {
     let maxPrice = 0;
   

@@ -13,7 +13,7 @@ const HeatmapChart: React.FC<IHeatmapChartProps> = ({ series, categories }) => {
         chart: {
             type: 'heatmap',
             height: 400,
-            toolbar: { show: true },
+            toolbar: { show: false },
         },
         plotOptions: {
             heatmap: {
@@ -29,14 +29,26 @@ const HeatmapChart: React.FC<IHeatmapChartProps> = ({ series, categories }) => {
                 },
             },
         },
+        legend: {
+            position: 'bottom',
+            offsetY: 16, 
+            offsetX: 0,  
+            markers: {
+                size: 12,
+                height: 12,
+                radius: 8,
+            },
+            itemMargin: {
+                horizontal: 8,
+                vertical: 8, 
+            },
+        },
         dataLabels: { enabled: false },
         xaxis: {
             type: 'category',
-            title: { text: 'Date (Day)' },
             categories,
         },
         yaxis: {
-            title: { text: 'Month' },
             labels: {
                 rotate: 0,
                 offsetY: 4,
