@@ -75,7 +75,7 @@ export interface IAddressAutoCompleteProps {
   getLocationData: (locationData: ILocationField) => void
   label: string,
   name: string,
-  required: boolean
+  required?: boolean
   placeholder?: string;
   errorMsg?: string;
   errorKey?: boolean

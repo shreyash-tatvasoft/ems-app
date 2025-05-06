@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 // library support
 import { XMarkIcon } from "@heroicons/react/24/solid";
@@ -11,7 +11,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import moment from "moment";
-import { X } from "lucide-react"; // if using lucide-react
+import { X } from "lucide-react"; 
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 // types support
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
@@ -64,36 +66,21 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     to: undefined,
   })
 
- 
-    const range = useRef<HTMLDivElement>(null)
-    const [minVal, setMinVal] = useState<string | number>("0")
-    const [maxVal, setMaxVal] = useState(100)
+    const [rangeVal, setRangeVal] = useState<number[]>([MIN,MAX]);
+    const [isPriceFilterAdded, setIsPriceFilterAdded] = useState(false)
   
     useEffect(() => {
       if(maxTicketPrice) {
-         setMaxVal(maxTicketPrice)
+        setRangeVal([MIN,maxTicketPrice])
       }
     },[maxTicketPrice])
-
-    const getPercent = (value: number) =>
-      Math.round(((value - MIN) / (MAX - MIN)) * 100)
-  
-    useEffect(() => {
-      if (range.current) {
-        const minimumVal = minVal === "0" ? 0 : minVal as number
-        const minPercent = getPercent(minimumVal)
-        const maxPercent = getPercent(maxVal)
-        range.current.style.left = `${minPercent}%`
-        range.current.style.width = `${maxPercent - minPercent}%`
-      }
-    }, [minVal, maxVal])
 
 
     useEffect(() => {
       if(filterValues) {
 
-        setMaxVal(filterValues.priceRange?.max ?? maxTicketPrice)
-        setMinVal(filterValues.priceRange?.min === -1 ? "0" : String(filterValues.priceRange?.min ?? 0));
+        setRangeVal([filterValues.priceRange?.min === -1 ? 0 : (filterValues.priceRange?.min as number ?? 0), filterValues.priceRange?.max as number ?? maxTicketPrice])
+        setIsPriceFilterAdded(filterValues.priceRange ? true : false)
         setDate({
           from: filterValues.eventsDates?.from ? new Date(filterValues.eventsDates.from) : undefined,
           to: filterValues.eventsDates?.to ? new Date(filterValues.eventsDates.to) : undefined,
@@ -139,8 +126,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       from : undefined, to : undefined
     }
 
-    setMaxVal(maxTicketPrice)
-    setMinVal("0")
+    setRangeVal([MIN,MAX])
     setDate(emptyDate)
     setSelectedStatus("")
     setSelectedTicket("")
@@ -158,8 +144,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     }
 
     const priceObj = {
-      max : maxVal,
-      min : minVal === "0" ? -1 : minVal as number,
+      max : rangeVal[1],
+      min : rangeVal[0],
     }
 
     const filterValues: IApplyFiltersKey = {
@@ -168,7 +154,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
       status: selectedStatus,
       ticketsTypes : selectedTicket,
       eventsDates : dateObj,
-      priceRange : priceObj,
+      ...isPriceFilterAdded && { priceRange : priceObj },
       ...(isUserRole && { likeEvent : isLikedEvent ? "true" : ""}),
       ...(isUserRole && { locationRadius : locationRadius}),
     };
@@ -230,59 +216,26 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               {/* Display Range Label */}
               <div className="text-center mb-6 relative">
                 <div className="inline-block bg-blue-600 text-white text-sm font-semibold py-1 px-4 rounded-md relative">
-                  ${minVal} – ${maxVal}
+                  ₹{rangeVal[0]} – ₹{rangeVal[1]}
                   <div className="absolute left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-600 rotate-45" />
                 </div>
               </div>
 
-              {/* Slider Track */}
-              <div className="relative h-2 rounded-full bg-gray-200">
-                {/* Filled Range */}
-                <div
-                  ref={range}
-                  className="absolute h-full bg-blue-600 rounded-full"
-                />
-
-                {/* Min Range Input */}
-                <input
-                  type="range"
-                  min={MIN}
-                  max={MAX}
-                  value={minVal}
-                  onChange={(e) =>
-                    setMinVal(Math.min(Number(e.target.value), maxVal - 1))
-                  }
-                  className="absolute z-20 w-full appearance-none pointer-events-none bg-transparent h-2 
-          [&::-webkit-slider-thumb]:appearance-none 
-          [&::-webkit-slider-thumb]:h-5 
-          [&::-webkit-slider-thumb]:w-5 
-          [&::-webkit-slider-thumb]:rounded-full 
-          [&::-webkit-slider-thumb]:bg-black 
-          [&::-webkit-slider-thumb]:cursor-pointer 
-          [&::-webkit-slider-thumb]:pointer-events-auto"
-                />
-
-                {/* Max Range Input */}
-                <input
-                  type="range"
-                  min={MIN}
-                  max={MAX}
-                  value={maxVal}
-                  onChange={(e) =>{
-                    const minValue = minVal === "0" ? 0 : minVal
-                    setMinVal(minValue)
-                    setMaxVal(Math.max(Number(e.target.value), minVal as number + 1))
-                  }}
-                  className="absolute z-10 w-full appearance-none pointer-events-none bg-transparent h-2 
-          [&::-webkit-slider-thumb]:appearance-none 
-          [&::-webkit-slider-thumb]:h-5 
-          [&::-webkit-slider-thumb]:w-5 
-          [&::-webkit-slider-thumb]:rounded-full 
-          [&::-webkit-slider-thumb]:bg-black 
-          [&::-webkit-slider-thumb]:cursor-pointer 
-          [&::-webkit-slider-thumb]:pointer-events-auto"
-                />
-              </div>
+              <Slider
+                range
+                min={MIN}
+                max={MAX}
+                value={rangeVal}
+                onChange={(val) => {
+                  setIsPriceFilterAdded(true)
+                  setRangeVal(val as number[])
+                }}
+                styles={{
+                  track: { backgroundColor: "#3b82f6", height: 10 },
+                  handle: { backgroundColor: "#000", borderColor: "#000", height: 18, width: 18 },
+                  rail: { backgroundColor: "#ddd", height: 10 },
+                }}
+              />
 
               {/* Inputs */}
               <div className="mt-6 flex items-center gap-4">
@@ -291,7 +244,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <input
                     type="number"
                     className="w-full mt-1 border bg-gray-100 rounded-md px-3 py-1"
-                    value={minVal}
+                    value={rangeVal[0]}
                     disabled
                     readOnly
                   />
@@ -301,7 +254,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <input
                     type="number"
                     className="w-full mt-1 bg-gray-100 border rounded-md px-3 py-1"
-                    value={maxVal}
+                    value={rangeVal[1]}
                     disabled
                     readOnly
                   />

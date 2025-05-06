@@ -144,7 +144,7 @@ const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
 
 export const AUTOCOMPLETE_API = (debouncedQuery: string) => `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(
     debouncedQuery
-)}&format=json&limit=5`
+)}&format=json`
 
 
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];

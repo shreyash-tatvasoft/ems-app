@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
 import Pagination from '@/components/admin-components/Pagination';
 import DeleteModal from '@/components/common/DeleteModal';
-import Loader from '@/components/common/Loader';
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
@@ -26,6 +25,7 @@ import { IFaqApiResponse, IFaqData, IFAQsItem } from './types';
 
 // Library support
 import { toast } from 'react-toastify';
+import TableSkeleton from '@/components/common/TableSkeloton';
 
 const AdminFaqsPage = () => {
   const router = useRouter()
@@ -155,9 +155,6 @@ const AdminFaqsPage = () => {
   return (
     <div className='p-8'>
 
-      {loading && <Loader />}
-
-
       <ChartCard>
         <p className="text-2xl font-bold">All FAQs</p>
 
@@ -193,22 +190,24 @@ const AdminFaqsPage = () => {
             <thead className="bg-gray-100 text-xs uppercase">
               <tr>
                 <th className="p-3">No</th>
-                <th className="p-3 text-center">
+                <th className="p-3">
                   Question
                 </th>
-                <th className="p-3 text-center">Answer</th>
-                <th className="p-3 text-center">Actions</th>
+                <th className="p-3">Answer</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {tableRowData.length > 0 ? (
+              {loading ? 
+                 <TableSkeleton rows={itemsPerPage} columns={4} /> 
+               : tableRowData.length > 0 ? (
                 tableRowData.map((item, idx) => {
                   return (
                     <tr key={idx} className="border-b hover:bg-gray-50">
-                      <td className="p-3 w-1/12">{idx + 1}</td>
-                      <td className="p-3 w-4/12 text-center">{item.question}</td>
-                      <td className="p-3 w-5/12 text-center">{item.answer}</td>
-                      <td className="p-3 w-2/12 space-x-2 text-center">
+                      <td className="p-3">{idx + 1}</td>
+                      <td className="p-3">{item.question}</td>
+                      <td className="p-3">{item.answer}</td>
+                      <td className="p-3 space-x-2 text-center">
                         <button
                           // onClick={() => openEditModal(item)}
                           className="text-blue-500 hover:text-blue-700 cursor-pointer"
@@ -228,7 +227,7 @@ const AdminFaqsPage = () => {
               ) : (
                 <tr>
                   <td colSpan={4} className="text-center">
-                    <p className="my-3 font-bold">No events found</p>
+                    <p className="my-3 font-bold">No data found</p>
                   </td>
                 </tr>
               )}

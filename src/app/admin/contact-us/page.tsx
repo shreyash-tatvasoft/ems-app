@@ -7,6 +7,7 @@ import TooltipWrapper from '@/components/common/TooltipWrapper'
 import Pagination from '@/components/admin-components/Pagination'
 import DeleteModal from '@/components/common/DeleteModal'
 import ContactModal from '@/components/admin-components/ViewContactInfo'
+import TableSkeleton from '@/components/common/TableSkeloton'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
@@ -22,7 +23,6 @@ import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor }
 
 //  Services
 import { apiCall } from '@/utils/services/request'
-import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'react-toastify'
 
 const AdminContactUsPage = () => {
@@ -235,31 +235,9 @@ const AdminContactUsPage = () => {
     }
 
     const renderSkeleton = () => {
-        return Array.from({ length: itemsPerPage }).map((_, i) => (
-            <tr key={i} className="even:bg-blue-50">
-                <td className="pl-4 w-8">
-                    <Skeleton className="h-5 w-5 rounded-sm" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-32" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-40" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-28" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-60" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-60" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-5 w-5 ml-4" />
-                </td>
-            </tr>
-        ))
+        return (
+            <TableSkeleton rows={itemsPerPage} columns={7} />
+        ) 
     }
 
     const renderNoDataFound = () => {

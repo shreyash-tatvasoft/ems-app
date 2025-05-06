@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 // Custom Compoents
-import Loader from '@/components/common/Loader';
 import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import Pagination from '@/components/admin-components/Pagination';
+import TableSkeleton from '@/components/common/TableSkeloton';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
@@ -191,6 +191,7 @@ function EventsListpage() {
         toast.success("Event deleted successfully")
         setLoading(true)
         fetchEvents()
+        setCurrentPage(1)
       } else {
         toast.warning("Something went wrong. try again later")
       }
@@ -237,8 +238,6 @@ function EventsListpage() {
 
   return (
     <div className="p-8">
-      {loading && <Loader />}
-
       <ChartCard>
         <p className="text-2xl font-bold">All Events</p>
 
@@ -350,7 +349,9 @@ function EventsListpage() {
               </tr>
             </thead>
             <tbody>
-              {rowData.length > 0 ? (
+              {loading ?
+                <TableSkeleton rows={itemsPerPage} columns={10} />
+               : rowData.length > 0 ? (
                 rowData.map((event, idx) => {
                   const status = getStatus(
                     event.startTime,
