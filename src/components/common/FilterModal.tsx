@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import moment from "moment";
+import { X } from "lucide-react"; // if using lucide-react
 
 // types support
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
@@ -289,7 +290,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <label className="text-sm">Min Price</label>
                   <input
                     type="number"
-                    className="w-full mt-1 border bg-gray-100 rounded px-3 py-2"
+                    className="w-full mt-1 border bg-gray-100 rounded-md px-3 py-1"
                     value={minVal}
                     disabled
                     readOnly
@@ -299,7 +300,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                   <label className="text-sm">Max Price</label>
                   <input
                     type="number"
-                    className="w-full mt-1 bg-gray-100 border rounded px-3 py-2"
+                    className="w-full mt-1 bg-gray-100 border rounded-md px-3 py-1"
                     value={maxVal}
                     disabled
                     readOnly
@@ -315,28 +316,40 @@ const FilterModal: React.FC<IFilterModalProps> = ({
             <div className="w-full">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal border-gray-300",
-                      !date.from && !date.to && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-5 w-5 text-gray-500" />
-                    {date.from ? (
-                      date.to ? (
-                        <>
-                          {moment(date.from).format("MMM DD, YYYY")} -{" "}
-                          {moment(date.to).format("MMM DD, YYYY")}
-                        </>
+                  <div className="relative w-full">
+                    <Button
+                      id="date"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-gray-300 pr-10",
+                        !date.from && !date.to && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-5 w-5 text-gray-500" />
+                      {date.from ? (
+                        date.to ? (
+                          <>
+                            {moment(date.from).format("MMM DD, YYYY")} -{" "}
+                            {moment(date.to).format("MMM DD, YYYY")}
+                          </>
+                        ) : (
+                          moment(date.from).format("MMM DD, YYYY")
+                        )
                       ) : (
-                        moment(date.from).format("MMM DD, YYYY")
-                      )
-                    ) : (
-                      <span className="text-black">Select a date range</span>
+                        <span className="text-black">Select a date range</span>
+                      )}
+                    </Button>
+                    {date.from && date.to && (
+                      <X
+                        size={16}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-red-500"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent popover from opening
+                          setDate({ from: undefined, to: undefined });
+                        }}
+                      />
                     )}
-                  </Button>
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <Calendar
@@ -415,10 +428,11 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
             <div className="flex w-full gap-4">
               {STATUS_OPTIONS.map((item, index) => {
+                const isSelected = selectedStatus === item.value;
                 return (
                   <button
                     key={index}
-                    onClick={() => setSelectedStatus(item.value)}
+                    onClick={() => setSelectedStatus(isSelected ? "" : item.value)}
                     className={`flex-1 border-[1px] border-blue-500 font-semibold px-4 py-2 rounded-md  transition cursor-pointer
                   ${
                     selectedStatus === item.value
@@ -444,7 +458,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                 return (
                   <button
                     key={index}
-                    onClick={() => setSelectedTicket(item.value)}
+                    onClick={() => setSelectedTicket(isSelected ? "" : item.value)}
                     className={`flex-1 font-semibold p-2 rounded-md transition cursor-pointer
                       ${classes.border} border-[1px]
                       ${isSelected

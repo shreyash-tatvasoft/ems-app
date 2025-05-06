@@ -36,7 +36,7 @@ import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTick
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
@@ -83,8 +83,10 @@ function EventsListpage() {
     if (key === sortByKey) {
       newOrder = sortOrder === "asc" ? "desc" : "asc";
     }
-    const result = sortEvents(rowData, key, newOrder);
-    setRowData(result);
+    const result = sortEvents(eventsData, key, newOrder);
+    const rowResult = getPaginatedData(result, 1, itemsPerPage);
+    setRowData(rowResult);
+    setEventsData(result)
     setSortOrder(newOrder);
     setSortByKey(key);
   };
@@ -188,6 +190,7 @@ function EventsListpage() {
       fetchEvents()
       setDeletableId("")
       toast.success("Event deleted successfully")
+      setCurrentPage(1)
     } else {
       toast.warning("Something went wrong. try again later")
       setLoading(false)

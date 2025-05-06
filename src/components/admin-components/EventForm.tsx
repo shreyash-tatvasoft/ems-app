@@ -695,7 +695,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                     <th className="border px-4 py-2 w-1/5 font-semibold">
                       Ticket Type
                     </th>
-                    <th className="border px-4 py-2 w-1/5">Price ($/₹)</th>
+                    <th className="border px-4 py-2 w-1/5">Price (₹)</th>
                     <th className="border px-4 py-2 w-1/5">Max Qty</th>
                     <th className="border px-4 py-2 w-1/5">Description</th>
                     <th className="border px-4 py-2 w-1/5 text-center">

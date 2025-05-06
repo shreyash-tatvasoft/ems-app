@@ -10,14 +10,14 @@ import ContactModal from '@/components/admin-components/ViewContactInfo'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
-import { SquareCheckBig , SquareCheck } from 'lucide-react'
+import { SquareCheckBig } from 'lucide-react'
 
 // Types
 import { IRequestResponse, IRequestType } from './types'
 
 // Helpers & Constant
 import { API_ROUTES } from '@/utils/constant'
-import { getPaginatedData, getSearchResults, getStatusChip, INITIAL_CONTATC_INFO, statusColor } from './helper'
+import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
 
 
 //  Services
@@ -39,7 +39,7 @@ const AdminContactUsPage = () => {
     const [viewModal, setViewModal] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
 
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalItems = requestsData.length;
@@ -203,7 +203,7 @@ const AdminContactUsPage = () => {
                     <span
                         className={`px-2 py-1 rounded-full text-xs capitalize font-semibold ${statusColor[item.status as keyof typeof statusColor]}`}
                     >
-                        {getStatusChip(item.status)}
+                        {item.status}
                     </span>
                 </td>
                 <td className="p-4">

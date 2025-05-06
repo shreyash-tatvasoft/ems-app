@@ -26,17 +26,6 @@ export const getPaginatedData = (dataArray : IRequestType[], currentPage : numbe
     return result
 }
 
-export const getStatusChip = (status : string) => {
-    switch(status) {
-        case "pending": 
-          return "Pending"
-        case "responded":
-            return "Acknowledge"
-        default:
-            break;
-    }  
-}
-
 export const getSearchResults = (
     events: IRequestType[],
     keyword: string
@@ -46,6 +35,7 @@ export const getSearchResults = (
       event.name.toLowerCase().includes(lowerKeyword) ||
       event.email.toLowerCase().includes(lowerKeyword) ||
       event.subject.toLowerCase().includes(lowerKeyword) || 
-      event.message.toLowerCase().includes(lowerKeyword)
+      event.message.toLowerCase().includes(lowerKeyword) || 
+      event.status.toLowerCase().includes(lowerKeyword)
     );
 }

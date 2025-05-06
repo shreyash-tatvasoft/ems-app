@@ -45,7 +45,7 @@ const AdminFaqsPage = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalItems = faqsData.length;
