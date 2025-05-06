@@ -62,6 +62,7 @@ export type ITicket = {
     maxQty: number;
     description: string;
     isEditing?: boolean;
+    _id : string,
 };
 
 export interface ISuggestion {
