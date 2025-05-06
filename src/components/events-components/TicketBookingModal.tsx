@@ -127,7 +127,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                       </p>
                     </div>
                     <span className="font-semibold text-gray-900">
-                      ${ticket.price}
+                    ₹{ticket.price}
                     </span>
                   </div>
 
@@ -172,7 +172,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                     )}
                     <div className="flex flex-col gap-1 text-sm text-gray-500">
                       <span>
-                        Status: <span className={`rounded ${color} `}>{status}</span>
+                        Status: <span className={`rounded-md ${color} p-1`}>{status}</span>
                       </span>
                       <span>
                         {available} seat{available !== 1 ? 's' : ''} left
@@ -188,7 +188,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-900 font-medium">Total Amount:</span>
               <span className="text-xl font-semibold text-gray-900">
-                ${totalPrice.toFixed(2)}
+              ₹{totalPrice.toFixed(2)}
               </span>
             </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">

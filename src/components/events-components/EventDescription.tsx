@@ -1,5 +1,6 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState,useMemo } from 'react'
+import he from 'he';
 interface EventDescriptionProps {
   description: string
   initiallyExpanded?: boolean
@@ -8,6 +9,7 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
   description,
   initiallyExpanded = false,
 }) => {
+  const decodedHTML = useMemo(()=>he.decode(description),[description]);
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex justify-between items-center mb-2">
@@ -18,7 +20,7 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
       >
             <div
             className="prose max-w-none"
-            dangerouslySetInnerHTML={{ __html: description }}
+            dangerouslySetInnerHTML={{ __html: decodedHTML }}
         />      
         </div>
     </div>

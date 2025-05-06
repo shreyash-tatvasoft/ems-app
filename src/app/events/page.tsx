@@ -210,7 +210,6 @@ const EventsPage: React.FC = () => {
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event</h2>
           <FeaturedEvent event={featuredEvent} />
-          <hr className="border-t border-dotted border-gray-400 my-4" />
         </div>
       )}
       <div className="mb-8">

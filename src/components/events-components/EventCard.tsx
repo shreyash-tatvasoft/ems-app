@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip"
 
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import he from 'he'
 
 interface EventCardProps {
   event: EventData
@@ -48,7 +49,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   useEffect(()=>{
    setIsLiked(event.isLiked)
   },[event])
- 
+  const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -75,7 +76,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
         </div>
-        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:event.description}}/>
+        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:decodedHTML}}/>
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
             <Square3Stack3DIcon className="h-4 w-4 mr-2" />

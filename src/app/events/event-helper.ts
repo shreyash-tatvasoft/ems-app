@@ -53,8 +53,8 @@ export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 
           const a =
             Math.sin(dLat / 2) ** 2 +
             Math.cos(toRad(userLat)) *
-              Math.cos(toRad(targetLat)) *
-              Math.sin(dLng / 2) ** 2;
+            Math.cos(toRad(targetLat)) *
+            Math.sin(dLng / 2) ** 2;
   
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
           const distance = R * c;
@@ -69,9 +69,36 @@ export function getEventStatus(startTime: string, endTime: string): 'ongoing' | 
     });
   };
 
+export const openMapDirection=(location: {
+  lat: number;
+  lng: number;
+})=>{
+  const url = `https://www.openstreetmap.org/?mlat=${location.lat}&mlon=${location.lng}#map=18/${location.lat}/${location.lng}`
+  window.open(url, '_blank')
+}
+
 export const areAllTicketsBooked = (tickets : Ticket[]): boolean => {
     return tickets.every(ticket => ticket.totalBookedSeats >= ticket.totalSeats);
-  };
+};
+
+export const getAllTicketStatus=(tickets:Ticket[])=>{
+  let totalTicket=0,bookedTickets=0;
+  tickets.map((ticket)=>{
+    totalTicket+=ticket.totalSeats;
+    bookedTickets+=ticket.totalBookedSeats;
+  })
+  const availableSeats = totalTicket - bookedTickets;
+  const ratio = availableSeats / totalTicket;
+  if (availableSeats <= 0) {
+    return { status: 'Sold Out', color: 'gray' };
+  } else if (ratio > 0.5) {
+    return { status: 'Available', color: 'text-green-800' };
+  } else if (ratio > 0.2) {
+    return { status: 'Filling Fast', color: 'text-yellow-800' };
+  } else {
+    return { status: 'Almost Full', color: 'text-red-800' };
+  }
+}
 
 export const getSimilarEvents = (events:EventDataObjResponse[] | null,currentEventId :string) => {
 if(events){

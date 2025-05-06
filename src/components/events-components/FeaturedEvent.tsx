@@ -186,7 +186,19 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
           )
         })}
       </div>
-
+      <div className="flex justify-center mt-4 space-x-2">
+        {event.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`h-3 w-3 rounded-full transition-all duration-300 ${
+              currentSlide === index
+                ? 'bg-blue-600 scale-110'
+                : 'bg-gray-300 hover:bg-gray-400'
+            }`}
+          />
+        ))}
+      </div>
       {event.length > 1 && (
         <>
           <button

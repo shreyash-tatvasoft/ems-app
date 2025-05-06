@@ -107,7 +107,7 @@ const PaymentResultPage = () => {
             <div className="flex justify-between">
               <span className="text-gray-600">Total Amount</span>
               <span className="font-medium text-gray-900">
-                ${ticketDetails.totalPrice.toFixed(2)}
+              ₹{ticketDetails.totalPrice.toFixed(2)}
               </span>
             </div>
           </div>

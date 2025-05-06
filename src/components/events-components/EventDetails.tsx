@@ -5,19 +5,21 @@ import {
   CalendarIcon,
   ClockIcon,
   MapPinIcon,
-  TagIcon,
+  TagIcon,Map
 } from 'lucide-react'
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
 import { EventDataObjResponse, EventDetails } from '@/app/events/types'
-import { getTicketPriceRange } from '@/app/admin/event/helper'
+import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
 import {
   areAllTicketsBooked,
+  getAllTicketStatus,
   getEventStatus,
   getSimilarEvents,
   hasEventEnded,
   isNearbyWithUserLocation,
+  openMapDirection,
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
@@ -97,7 +99,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   }
 
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
-
+  const {status,color} = getAllTicketStatus(event.tickets);
   return (
     <div className="min-h-screen bg-gray-50">
       {loading && <Loader />}
@@ -120,7 +122,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <div className="lg:col-span-2 lg:mb-0">
             <div
               className="bg-white shadow rounded-lg overflow-hidden"
-              style={{ height: '450px' }}
+              style={{ height: '380px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
@@ -162,39 +164,29 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 <div className="flex items-top text-gray-600">
                   <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
                   <span >{event.location.address}</span>
+                  <Map className="h-5 w-5 mr-2 text-gray-400 shrink-0" onClick={()=>openMapDirection(event.location)}/>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>{event.category}</span>
                 </div>
               </div>
-              <div className="border-t border-gray-200 pt-4 mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-600">Price:</span>
-                  <span className="font-semibold text-lg">
-                    {getTicketPriceRange(event.tickets)}
+              <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow w-full max-w-lg">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-md mb-1">
+                    {onwardPriceRange(event.tickets)}
+                  </span>
+                  <span className={`${color} text-md`}>
+                    {status}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Availability:</span>
-                  <span
-                    className={`font-medium ${
-                      areAllTicketsBooked(event.tickets)
-                        ? 'text-red-600'
-                        : 'text-green-600'
-                    }`}
-                  >
-                    {areAllTicketsBooked(event.tickets)
-                      ? 'Sold Out'
-                      : 'Available'}
-                  </span>
-                </div>
+
+                <BookingButton
+                  tickets={event.tickets}
+                  eventTitle={event.title}
+                  status={hasEventEnded(event.endDateTime)}
+                />
               </div>
-              <BookingButton
-                tickets={event.tickets}
-                eventTitle={event.title}
-                status={hasEventEnded(event.endDateTime)}
-              />
             </div>
           </div>
         </div>
