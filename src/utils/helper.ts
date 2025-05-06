@@ -44,3 +44,5 @@ export const getTruthyNumber = (value: number | string | undefined | null): numb
 
     return isNaN(num) ? 0 : num;
 };
+
+export const RupeeSymbol = "₹"
