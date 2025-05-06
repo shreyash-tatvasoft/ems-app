@@ -55,9 +55,9 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
 const handleLikeEvent = async (eventId: string) => {
   let likeCheck = event.findIndex((ev)=>ev.id==eventId);
   if(!event[likeCheck].isLiked)
-    toast.success("Liked an Event");
+    toast.success("Liked an Event!");
    else 
-    toast.error("Disliked an Event");
+    toast.error("Disliked an Event!");
    const response = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${eventId}/like`,
       method: "POST",

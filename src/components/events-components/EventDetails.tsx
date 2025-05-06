@@ -133,7 +133,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 {event.title}
               </h2>
               <div className="space-y-3 pb-4">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-top text-gray-600">
                   <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>
                     {new Date(event.startDateTime).toLocaleDateString(
