@@ -170,7 +170,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                   <span>{event.category}</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full max-w-lg">
+              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full">
                 <div className="flex flex-col">
                   <span className="font-semibold text-md mb-1">
                     {onwardPriceRange(event.tickets)}

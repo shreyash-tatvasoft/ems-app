@@ -1,6 +1,7 @@
 'use client'
 import React, { useState,useMemo } from 'react'
 import he from 'he';
+import "../../app/customDescription.css";
 interface EventDescriptionProps {
   description: string
   initiallyExpanded?: boolean
@@ -16,10 +17,10 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
         <h3 className="text-lg font-medium text-gray-900">Description</h3>
       </div>
       <div
-        className={`overflow-hidden transition-all duration-300 max-h-96`}
+        className={`transition-all duration-300`}
       >
             <div
-            className="prose max-w-none"
+            className="prose max-w-none prose-blue  no-scrollbar overflow-auto custom-description-class"
             dangerouslySetInnerHTML={{ __html: decodedHTML }}
         />      
         </div>
