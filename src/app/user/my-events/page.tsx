@@ -18,6 +18,7 @@ import { IBooking, IEventBookingResponse, IEventsState } from './types'
 
 // Library imports
 import moment from 'moment'
+import Footer from '@/components/common/Footer'
 
 // Icons imports
 import { CalendarDays, Clock9, MapPin, IndianRupee, Ticket, SearchIcon, QrCode } from 'lucide-react'
@@ -187,8 +188,8 @@ const MyEventsPage = () => {
     return (
         <div>
             {loading && <Loader />}
-
-            <div className='mx-auto p-10'>
+            <div className='min-h-[calc(100vh-76px)] flex flex-col'>
+            <div className='mx-auto p-10 w-full'>
                 <h1 className="text-3xl font-bold mb-6">My Events</h1>
 
                 {/* Search Bar  */}
@@ -285,6 +286,10 @@ const MyEventsPage = () => {
                     console.log('Submitted Feedback:', formData)
                     }}
                 />
+            </div>
+            <div className="mt-auto">
+                <Footer />
+            </div>
             </div>
         </div>
     )

@@ -33,7 +33,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-40">
-      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full relative">
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm relative w-[300px] md:w-full">
         <div className='absolute top-4 right-3'>
           <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
         </div>
@@ -42,7 +42,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
             <h2 className="text-center text-lg font-semibold">Overview</h2>
           </div>
           <div className="flex justify-center">
-            <div className="w-fit max-w-md py-4 space-y-4 flex flex-col justify-center border" ref={targetRef}>
+            <div className="w-full max-w-md py-4 space-y-4 flex flex-col justify-center border" ref={targetRef}>
               <div className="flex flex-col gap-1 px-6 text-sm space-y-1  text-center">
                 <div><span className='text-black font-bold text-[22px]'>{eventData.event.title}</span></div>
                 <div><span className='text-black font-bold'>{eventData.event.location.address}</span></div>
@@ -65,7 +65,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
             </div>
           </div>
           <div className="p-4">
-            <button onClick={() => downloadTicket()} className="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white py-2 rounded-xl font-medium">
+            <button onClick={() => downloadTicket()} className="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white py-2 rounded-xl font-medium cursor-pointer">
               Download ticket
             </button>
           </div>

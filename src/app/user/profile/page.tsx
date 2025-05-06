@@ -26,6 +26,7 @@ import { IChangeNewEmailValues, IChangePasswordFormValues, IOtpValues, IProfileI
 
 // API Services
 import { apiCall } from '@/utils/services/request';
+import Footer from '@/components/common/Footer';
 
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState(TAB_OPTIONS.PERSONAL);
@@ -211,7 +212,8 @@ const UserProfilePage = () => {
   }, [])
 
     return (
-      <div className="mx-auto p-10">
+      <div className='min-h-[calc(100vh-77px)] flex flex-col'>
+      <div className="mx-auto p-10 w-full">
         <div className="rounded-[12px] bg-white p-5 shadow-lg border-2 border-gray-200">
           {loading ? <Skeleton className='h-80 w-full aspect-square ' /> :
             <div className="w-full mx-auto">
@@ -491,6 +493,10 @@ const UserProfilePage = () => {
             </div>
           }
         </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
+      </div>
       </div>
     );
 }
