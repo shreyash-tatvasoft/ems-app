@@ -65,7 +65,7 @@ const TopEventsChart = () => {
 
     return (
         <div>
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between gap-4 mb-6 items-center">
                 {chartTitle(DASHBOARD_TITLE.PIE_CHART)}
 
                 {loading ?

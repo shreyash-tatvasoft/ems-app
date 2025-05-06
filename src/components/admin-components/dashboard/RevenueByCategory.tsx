@@ -39,7 +39,7 @@ const RevenueByCategory = () => {
 
     return (
         <div>
-            <div className="flex justify-between flex-wrap gap-4 mb-4">
+            <div className="flex justify-between items-center gap-4 mb-6">
                 {chartTitle(DASHBOARD_TITLE.BAR_CHART2)}
                 <DateRangeFilter
                     onChange={setFilter}

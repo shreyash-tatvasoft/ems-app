@@ -9,7 +9,7 @@ interface ChartCardProps {
 }
 export const chartTitle = (title: string) => {
     return (
-        <div className="mb-6 flex items-center gap-[8px]">
+        <div className="flex items-center gap-[8px]">
             <Boxes />
             <h2 className="text-xl text-black font-semibold">{title}</h2>
         </div>

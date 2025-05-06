@@ -63,7 +63,7 @@ const MostRevenueByEvents = () => {
 
     return (
         <div className="w-full max-w-2xl mx-auto">
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between gap-4 items-center mb-6">
                 {chartTitle(DASHBOARD_TITLE.BAR_CHART1)}
 
                 {loading ? (

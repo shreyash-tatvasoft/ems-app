@@ -46,14 +46,14 @@ const BookingByTicketType: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="mt-6 w-full flex justify-center items-center">
+            <div className="mt-14 w-full flex justify-center items-center">
                 <Skeleton className="w-40 sm:w-60 md:w-70 lg:w-75 aspect-square rounded-full" />
             </div>
         );
     }
 
     return (
-        <div className="mt-7 min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center">
+        <div className="mt-14 min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center">
             <DoughnutChart data={data} labels={labels} />
         </div>
     );
