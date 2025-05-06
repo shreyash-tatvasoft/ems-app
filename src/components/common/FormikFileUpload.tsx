@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useField, ErrorMessage } from 'formik';
+import React, { useRef, useState, useEffect } from "react";
+import { useField, ErrorMessage, useFormikContext } from "formik";
 
 // icons
-import { PencilSquareIcon } from "@heroicons/react/24/outline"
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 
 
 
@@ -14,6 +14,7 @@ interface Props {
 
 const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) => {
     const [field, , helpers] = useField(name);
+    const { setFieldValue } = useFormikContext();
     const inputRef = useRef<HTMLInputElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImage || null);
 
@@ -21,7 +22,7 @@ const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) =
         const file = e.currentTarget.files?.[0];
         if (file) {
             helpers.setValue(file);
-
+            setFieldValue("deleteImage", false);
             // Generate preview URL
             const fileUrl = URL.createObjectURL(file);
             setPreviewUrl(fileUrl);
@@ -32,7 +33,14 @@ const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) =
         inputRef.current?.click();
     };
 
-    // Cleanup URL object on unmount or file change
+    const handleDelete = () => {
+        helpers.setValue(null);
+        setPreviewUrl(null);
+        setFieldValue("deleteImage", true);
+        if (inputRef.current) inputRef.current.value = "";
+    };
+
+  // Cleanup URL object on unmount or file change
     useEffect(() => {
         return () => {
             if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -51,7 +59,7 @@ const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) =
                     className="w-40 h-40 rounded-full overflow-hidden cursor-pointer border border-gray-900 flex items-center justify-center"
                 >
                     <img
-                        src={previewUrl || defaultImage}
+                        src={previewUrl || "/assets/ProfileIcon.svg"}
                         alt="Upload"
                         className="w-full h-full object-cover"
                     />
@@ -61,6 +69,12 @@ const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) =
                 <div className="absolute top-25 left-33 rounded-full p-2 bg-blue-500 cursor-pointer">
                     <PencilSquareIcon className="w-5 h-5 text-white font-bold" onClick={handleImageClick} />
                 </div>
+
+                {(previewUrl && previewUrl !== "/assets/ProfileIcon.svg") && (
+                    <div className="absolute top-2 left-33 rounded-full p-2 bg-red-500 cursor-pointer">
+                        <TrashIcon className="w-5 h-5 text-white" onClick={handleDelete} />
+                    </div>
+                )}
             </div>
             
 
