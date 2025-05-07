@@ -8,6 +8,7 @@ import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IMonthDateHeatmapData, TOutputData } from '@/app/admin/dashboard/types';
+import { ChartLegendSkeleton } from '../charts/PieChart';
 
 const HeatmapChart = dynamic(() => import('../charts/HeatmapChart'), { ssr: false });
 
@@ -65,7 +66,10 @@ const MonthDateHeatmap: React.FC = () => {
             </div>
 
             {loading ? (
-                <Skeleton className="w-full h-[400px] rounded-xl" />
+                <>
+                    <Skeleton className="w-full h-[400px] rounded-xl" />
+                    <ChartLegendSkeleton />
+                </>
             ) : (
                 <HeatmapChart series={chartData} categories={days} />
             )}
