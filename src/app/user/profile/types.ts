@@ -16,7 +16,6 @@ export interface IProfileInfoValues {
     userName: string,
     address: string,
     profileImage: File | null,
-    deleteImage?: boolean
 };
 
 export interface IUserInfo {

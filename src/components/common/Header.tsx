@@ -99,9 +99,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   useEffect(() => {
     const handleLogoUpdate = () => {
       const updatedLogo = getUserLogo();
-      if (updatedLogo) {
-        setLogo(updatedLogo);
-      }
+      setLogo(updatedLogo);
     };
   
     window.addEventListener("userLogoUpdated", handleLogoUpdate);
