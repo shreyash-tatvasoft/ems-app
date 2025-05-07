@@ -250,12 +250,9 @@ const UserProfilePage = () => {
                     <div className="mx-auto mt-[-100px]">
                       <FormikFileUpload
                         name="profileImage"
-                        defaultImage={`${
-                          userInfo.profileimage
-                            ? userInfo.profileimage
-                            : "/assets/ProfileIcon.svg"
-                        }`}
+                        defaultImage={userInfo.profileimage || undefined}
                         fetchUserInfo={fetchUserInfo}
+                        userName={userInfo.name}
                       />
                     </div>
                   </>
@@ -281,12 +278,9 @@ const UserProfilePage = () => {
                       <div className="mx-auto mt-[-100px]">
                         <FormikFileUpload
                           name="profileImage"
-                          defaultImage={`${
-                            userInfo.profileimage
-                              ? userInfo.profileimage
-                              : "/assets/ProfileIcon.svg"
-                          }`}
+                          defaultImage={userInfo.profileimage || undefined}
                           fetchUserInfo={fetchUserInfo}
+                          userName={userInfo.name}
                         />
                       </div>
                     </>

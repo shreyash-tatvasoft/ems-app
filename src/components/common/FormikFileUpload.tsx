@@ -6,12 +6,14 @@ import { TrashIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 interface Props {
   name: string;
   defaultImage?: string;
   label?: string;
   fetchUserInfo: () => void;
+  userName: string;
 }
 
 const FormikFileUpload: React.FC<Props> = ({
@@ -19,10 +21,11 @@ const FormikFileUpload: React.FC<Props> = ({
   defaultImage,
   label = "",
   fetchUserInfo,
+  userName,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    defaultImage || "/assets/ProfileIcon.svg"
+    defaultImage || null
   );
   const [isImageLoading, setIsImageLoading] = useState(false);
 
@@ -54,7 +57,7 @@ const FormikFileUpload: React.FC<Props> = ({
   }, [previewUrl]);
 
   useEffect(() => {
-    setPreviewUrl(defaultImage || "/assets/ProfileIcon.svg");
+    setPreviewUrl(defaultImage || null);
   }, [defaultImage]);
 
   const handleProfileImageSubmit = async (
@@ -99,11 +102,19 @@ const FormikFileUpload: React.FC<Props> = ({
       )}
       <div className="relative mb-5">
         <div className="w-50 h-50 rounded-full overflow-hidden cursor-pointer border-8 border-white flex items-center justify-center">
-          <img
-            src={previewUrl || "/assets/ProfileIcon.svg"}
-            alt="Upload"
-            className="w-full h-full object-cover bg-white"
-          />
+          {previewUrl ? (
+            <Image
+              height={30}
+              width={30}
+              src={previewUrl}
+              alt="Logo"
+              className="w-full h-full object-cover bg-white"
+            />
+          ) : (
+            <button className="w-full h-full text-8xl rounded-full bg-indigo-600 text-white font-bold">
+              {userName?.charAt(0).toUpperCase()}
+            </button>
+          )}
         </div>
       </div>
 
