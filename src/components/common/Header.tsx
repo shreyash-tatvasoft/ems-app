@@ -279,7 +279,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                     </button>
                   </div>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[200px]">
+                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[160px]">
                       {!isAdmiRole && (
                         <>
                           <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
