@@ -7,7 +7,7 @@ const AddressAutocomplete: React.FC<IAddressAutoCompleteProps> = ({
   getLocationData,
   label,
   name,
-  required,
+  required = false,
   errorKey,
   errorMsg,
   placeholder = "Enter event location",
