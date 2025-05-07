@@ -97,6 +97,19 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   }, [authToken])
 
   useEffect(() => {
+    const handleLogoUpdate = () => {
+      const updatedLogo = getUserLogo();
+      setLogo(updatedLogo);
+    };
+  
+    window.addEventListener("userLogoUpdated", handleLogoUpdate);
+  
+    return () => {
+      window.removeEventListener("userLogoUpdated", handleLogoUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
     const logoUrl = getUserLogo()
     if (logoUrl !== "") {
       setLogo(logoUrl)
@@ -130,7 +143,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   return (
     <div>
       <header className="text-gray-600 body-font border-b border-b-gray-200">
-        <div className="mx-auto flex flex-wrap py-3 px-10 flex-row items-center justify-between">
+        <div className="mx-auto flex flex-wrap py-3 px-10 flex-row items-center justify-between h-20">
           <div className="flex gap-2">
             <Link
               className="flex title-font font-medium items-center text-gray-900 md:mb-0"
